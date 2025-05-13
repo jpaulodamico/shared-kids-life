@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
 
 // Sample data
 const contacts = [
@@ -37,61 +38,123 @@ const contacts = [
   }
 ];
 
-// Sample messages for active conversation
-const sampleMessages = [
-  {
-    id: 1,
-    senderId: 1,
-    text: "Bom dia! Precisamos resolver a inscrição da Sofia nas aulas de violão.",
-    timestamp: "10:30"
-  },
-  {
-    id: 2,
-    senderId: "me",
-    text: "Oi Lúcia! Sim, concordo. Você sabe quanto custa a mensalidade?",
-    timestamp: "10:32"
-  },
-  {
-    id: 3,
-    senderId: 1,
-    text: "R$ 150,00 por mês. A professora disse que as aulas são às terças e quintas, das 15h às 16h.",
-    timestamp: "10:35"
-  },
-  {
-    id: 4,
-    senderId: "me",
-    text: "Perfeito! Acho que vai se encaixar bem no horário dela. Podemos dividir o custo igualmente?",
-    timestamp: "10:38"
-  },
-  {
-    id: 5,
-    senderId: 1,
-    text: "Sim, claro. Vou fazer a inscrição amanhã e te envio o comprovante para dividirmos.",
-    timestamp: "10:40"
-  },
-  {
-    id: 6,
-    senderId: 1,
-    text: "Ah, também precisamos decidir sobre aqueles documentos da escola que te enviei.",
-    timestamp: "10:41"
-  }
-];
+// Message interface for type safety
+interface Message {
+  id: number;
+  senderId: number | string;
+  text: string;
+  timestamp: string;
+}
 
 const MessagesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeContact, setActiveContact] = useState(contacts[0]);
   const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      senderId: 1,
+      text: "Bom dia! Precisamos resolver a inscrição da Sofia nas aulas de violão.",
+      timestamp: "10:30"
+    },
+    {
+      id: 2,
+      senderId: "me",
+      text: "Oi Lúcia! Sim, concordo. Você sabe quanto custa a mensalidade?",
+      timestamp: "10:32"
+    },
+    {
+      id: 3,
+      senderId: 1,
+      text: "R$ 150,00 por mês. A professora disse que as aulas são às terças e quintas, das 15h às 16h.",
+      timestamp: "10:35"
+    },
+    {
+      id: 4,
+      senderId: "me",
+      text: "Perfeito! Acho que vai se encaixar bem no horário dela. Podemos dividir o custo igualmente?",
+      timestamp: "10:38"
+    },
+    {
+      id: 5,
+      senderId: 1,
+      text: "Sim, claro. Vou fazer a inscrição amanhã e te envio o comprovante para dividirmos.",
+      timestamp: "10:40"
+    },
+    {
+      id: 6,
+      senderId: 1,
+      text: "Ah, também precisamos decidir sobre aqueles documentos da escola que te enviei.",
+      timestamp: "10:41"
+    }
+  ]);
   
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  // Scroll to bottom of messages when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const sendMessage = () => {
     if (newMessage.trim()) {
-      // Here you would normally add the message to your state or database
-      console.log("Sending message:", newMessage);
+      // Create the new message object
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      
+      const newMessageObj: Message = {
+        id: messages.length + 1,
+        senderId: "me",
+        text: newMessage.trim(),
+        timestamp: `${hours}:${minutes}`
+      };
+      
+      // Add the new message to the messages array
+      setMessages([...messages, newMessageObj]);
+      
+      // Clear the input field
       setNewMessage("");
+      
+      // Update the last message for the active contact
+      const updatedContacts = contacts.map(contact => {
+        if (contact.id === activeContact.id) {
+          return {
+            ...contact,
+            lastMessage: newMessage.trim(),
+            time: "Agora"
+          };
+        }
+        return contact;
+      });
+      
+      // Show success toast
+      toast.success("Mensagem enviada");
     }
+  };
+
+  // Handle contact change
+  const handleContactChange = (contact: typeof contacts[0]) => {
+    // Mark messages as read
+    const updatedContacts = contacts.map(c => {
+      if (c.id === contact.id) {
+        return {
+          ...c,
+          unread: 0
+        };
+      }
+      return c;
+    });
+    
+    setActiveContact(contact);
   };
 
   return (
@@ -125,7 +188,7 @@ const MessagesPage = () => {
                   className={`flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-muted ${
                     activeContact.id === contact.id ? "bg-muted" : ""
                   }`}
-                  onClick={() => setActiveContact(contact)}
+                  onClick={() => handleContactChange(contact)}
                 >
                   <div className="relative">
                     <Avatar>
@@ -172,7 +235,7 @@ const MessagesPage = () => {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto py-4 px-4 space-y-4">
-            {sampleMessages.map((message) => (
+            {messages.map((message) => (
               <div 
                 key={message.id}
                 className={`flex ${message.senderId === "me" ? "justify-end" : "justify-start"}`}
@@ -191,6 +254,7 @@ const MessagesPage = () => {
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </CardContent>
           <div className="p-4 border-t">
             <div className="flex gap-2">
