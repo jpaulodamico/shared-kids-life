@@ -1,9 +1,12 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { DollarSign, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NewExpenseForm } from "@/components/expenses/NewExpenseForm";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample data
 const expenses = [
@@ -78,7 +81,20 @@ const categories = [
 ];
 
 const ExpensesPage = () => {
+  const { toast } = useToast();
+  const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false);
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  
+  const handleNewExpense = (data: any) => {
+    // Em uma aplicação real, isso seria enviado para o backend
+    // e o estado seria atualizado após sucesso
+    toast({
+      title: "Despesa adicionada",
+      description: "A nova despesa foi registrada com sucesso."
+    });
+    
+    console.log("Dados da nova despesa:", data);
+  };
   
   return (
     <div className="space-y-6">
@@ -89,10 +105,19 @@ const ExpensesPage = () => {
             Gerencie e compartilhe as despesas relacionadas às crianças
           </p>
         </div>
-        <Button className="gap-1">
+        <Button 
+          className="gap-1"
+          onClick={() => setIsNewExpenseOpen(true)}
+        >
           <PlusCircle className="h-4 w-4" />
           Nova Despesa
         </Button>
+        
+        <NewExpenseForm 
+          open={isNewExpenseOpen}
+          onOpenChange={setIsNewExpenseOpen}
+          onSubmit={handleNewExpense}
+        />
       </div>
 
       <Tabs defaultValue="all">
