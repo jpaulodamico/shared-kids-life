@@ -1,14 +1,43 @@
 
-import { Calendar as CalendarIcon } from "lucide-react";
+import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { addDays, format, startOfWeek, startOfMonth, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, parse, isValid } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { EventCalendar } from "@/components/calendar/EventCalendar";
+import { EventForm } from "@/components/calendar/EventForm";
+import { EventList } from "@/components/calendar/EventList";
+import { DayView } from "@/components/calendar/DayView";
+import { WeekView } from "@/components/calendar/WeekView";
+import { MonthView } from "@/components/calendar/MonthView";
+
+export type EventType = 'medical' | 'school' | 'activity' | 'family' | 'other';
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  date: Date;
+  time: string;
+  description: string;
+  type: EventType;
+  location: string;
+  isRecurring?: boolean;
+  recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  endRecurrenceDate?: Date;
+}
 
 const CalendarPage = () => {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-
-  // Sample events data
-  const events = [
+  const [date, setDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<CalendarEvent[]>([
     {
       id: 1,
       title: "Consulta Pediatra",
@@ -34,7 +63,9 @@ const CalendarPage = () => {
       time: "16:00",
       description: "Levar toalha e troca de roupa",
       type: "activity",
-      location: "Academia Central"
+      location: "Academia Central",
+      isRecurring: true,
+      recurrencePattern: "weekly"
     },
     {
       id: 4,
@@ -45,10 +76,17 @@ const CalendarPage = () => {
       type: "family",
       location: "Casa dos avós"
     }
-  ];
+  ]);
+
+  const [view, setView] = useState<'day' | 'week' | 'month'>('month');
+  const [showDialog, setShowDialog] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<EventType[]>(['medical', 'school', 'activity', 'family', 'other']);
+  
+  // Filter events based on selected types
+  const filteredEvents = events.filter(event => activeFilters.includes(event.type));
 
   // Filter events for the selected date
-  const selectedDateEvents = events.filter(
+  const selectedDateEvents = filteredEvents.filter(
     (event) => 
       date && 
       event.date.getDate() === date.getDate() && 
@@ -65,76 +103,177 @@ const CalendarPage = () => {
     }).format(date);
   };
 
+  const handleAddEvent = (event: Omit<CalendarEvent, "id">) => {
+    const newEvent = {
+      ...event,
+      id: events.length + 1
+    };
+    setEvents([...events, newEvent]);
+    setShowDialog(false);
+  };
+
+  const toggleFilter = (type: EventType) => {
+    setActiveFilters(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
+  };
+
+  const getBackgroundColor = (type: EventType) => {
+    switch(type) {
+      case "medical": return "bg-destructive";
+      case "school": return "bg-family-600";
+      case "activity": return "bg-accent-green-500";
+      case "family": return "bg-warm-500";
+      default: return "bg-muted";
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Calendário</h1>
-        <p className="text-muted-foreground">
-          Gerencie os compromissos e eventos das crianças
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Selecionar Data</span>
-              <CalendarIcon className="w-5 h-5" />
-            </CardTitle>
-            <CardDescription>Clique em uma data para ver os eventos</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border w-full"
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>
-              {date ? formatDate(date) : "Selecione uma data"}
-            </CardTitle>
-            <CardDescription>
-              {selectedDateEvents.length} evento(s) programado(s)
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {selectedDateEvents.length === 0 ? (
-              <div className="text-center py-6 text-muted-foreground">
-                Não há eventos programados para esta data
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Calendário</h1>
+          <p className="text-muted-foreground">
+            Gerencie os compromissos e eventos das crianças
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Dialog open={showDialog} onOpenChange={setShowDialog}>
+            <DialogTrigger asChild>
+              <Button>
+                <FilePlus2 className="mr-2 h-4 w-4" />
+                Novo Evento
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Adicionar Novo Evento</DialogTitle>
+                <DialogDescription>
+                  Preencha os detalhes do evento abaixo.
+                </DialogDescription>
+              </DialogHeader>
+              <EventForm onSubmit={handleAddEvent} />
+            </DialogContent>
+          </Dialog>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
+                Filtrar
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56">
+              <div className="space-y-2">
+                <h4 className="font-medium">Tipos de Evento</h4>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant={activeFilters.includes('medical') ? "default" : "outline"}
+                    className={cn(
+                      "flex items-center gap-1",
+                      activeFilters.includes('medical') ? "text-white" : ""
+                    )}
+                    onClick={() => toggleFilter('medical')}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-destructive" />
+                    Médico
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={activeFilters.includes('school') ? "default" : "outline"}
+                    className={cn(
+                      "flex items-center gap-1",
+                      activeFilters.includes('school') ? "text-white" : ""
+                    )}
+                    onClick={() => toggleFilter('school')}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-family-600" />
+                    Escola
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={activeFilters.includes('activity') ? "default" : "outline"}
+                    className={cn(
+                      "flex items-center gap-1",
+                      activeFilters.includes('activity') ? "text-white" : ""
+                    )}
+                    onClick={() => toggleFilter('activity')}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-accent-green-500" />
+                    Atividade
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={activeFilters.includes('family') ? "default" : "outline"}
+                    className={cn(
+                      "flex items-center gap-1",
+                      activeFilters.includes('family') ? "text-white" : ""
+                    )}
+                    onClick={() => toggleFilter('family')}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-warm-500" />
+                    Família
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={activeFilters.includes('other') ? "default" : "outline"}
+                    className={cn(
+                      "flex items-center gap-1",
+                      activeFilters.includes('other') ? "text-white" : ""
+                    )}
+                    onClick={() => toggleFilter('other')}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-muted" />
+                    Outro
+                  </Button>
+                </div>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {selectedDateEvents.map((event) => (
-                  <div key={event.id} className="flex items-start">
-                    <div className={`w-3 h-3 mt-1.5 rounded-full mr-3 ${
-                      event.type === "medical" 
-                        ? "bg-destructive" 
-                        : event.type === "school" 
-                        ? "bg-family-600" 
-                        : event.type === "activity"
-                        ? "bg-accent-green-500"
-                        : "bg-warm-500"
-                    }`} />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-medium">{event.title}</h3>
-                        <span className="text-sm text-muted-foreground">{event.time}</span>
-                      </div>
-                      <p className="text-sm">{event.description}</p>
-                      <p className="text-sm text-muted-foreground">{event.location}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
+      
+      <Tabs value={view} onValueChange={(v) => setView(v as 'day' | 'week' | 'month')} className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="day">Dia</TabsTrigger>
+          <TabsTrigger value="week">Semana</TabsTrigger>
+          <TabsTrigger value="month">Mês</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="day" className="w-full">
+          <DayView 
+            date={date} 
+            events={filteredEvents} 
+            onSelectDate={setDate}
+            getBackgroundColor={getBackgroundColor}
+          />
+        </TabsContent>
+        
+        <TabsContent value="week" className="w-full">
+          <WeekView 
+            date={date} 
+            events={filteredEvents} 
+            onSelectDate={setDate}
+            getBackgroundColor={getBackgroundColor}
+          />
+        </TabsContent>
+        
+        <TabsContent value="month" className="w-full">
+          <MonthView
+            date={date}
+            events={filteredEvents}
+            onSelectDate={setDate}
+            selectedDateEvents={selectedDateEvents}
+            formatDate={formatDate}
+            getBackgroundColor={getBackgroundColor}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
