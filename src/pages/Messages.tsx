@@ -1,14 +1,13 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import ContactsList from "@/components/messages/ContactsList";
+import ConversationWindow from "@/components/messages/ConversationWindow";
+import MessageInput from "@/components/messages/MessageInput";
+import { Contact, Message } from "@/components/messages/types";
 
 // Sample data
-const contacts = [
+const contacts: Contact[] = [
   {
     id: 1,
     name: "Lúcia Moreira",
@@ -38,18 +37,8 @@ const contacts = [
   }
 ];
 
-// Message interface for type safety
-interface Message {
-  id: number;
-  senderId: number | string;
-  text: string;
-  timestamp: string;
-}
-
 const MessagesPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [activeContact, setActiveContact] = useState(contacts[0]);
-  const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -88,61 +77,9 @@ const MessagesPage = () => {
       timestamp: "10:41"
     }
   ]);
-  
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const filteredContacts = contacts.filter(contact => 
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  // Scroll to bottom of messages when messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      // Create the new message object
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      
-      const newMessageObj: Message = {
-        id: messages.length + 1,
-        senderId: "me",
-        text: newMessage.trim(),
-        timestamp: `${hours}:${minutes}`
-      };
-      
-      // Add the new message to the messages array
-      setMessages([...messages, newMessageObj]);
-      
-      // Clear the input field
-      setNewMessage("");
-      
-      // Update the last message for the active contact
-      const updatedContacts = contacts.map(contact => {
-        if (contact.id === activeContact.id) {
-          return {
-            ...contact,
-            lastMessage: newMessage.trim(),
-            time: "Agora"
-          };
-        }
-        return contact;
-      });
-      
-      // Show success toast
-      toast.success("Mensagem enviada");
-    }
-  };
 
   // Handle contact change
-  const handleContactChange = (contact: typeof contacts[0]) => {
+  const handleContactChange = (contact: Contact) => {
     // Mark messages as read
     const updatedContacts = contacts.map(c => {
       if (c.id === contact.id) {
@@ -157,6 +94,39 @@ const MessagesPage = () => {
     setActiveContact(contact);
   };
 
+  // Handle sending a new message
+  const handleSendMessage = (text: string) => {
+    // Create the new message object
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    
+    const newMessageObj: Message = {
+      id: messages.length + 1,
+      senderId: "me",
+      text: text,
+      timestamp: `${hours}:${minutes}`
+    };
+    
+    // Add the new message to the messages array
+    setMessages([...messages, newMessageObj]);
+    
+    // Update the last message for the active contact
+    const updatedContacts = contacts.map(contact => {
+      if (contact.id === activeContact.id) {
+        return {
+          ...contact,
+          lastMessage: text,
+          time: "Agora"
+        };
+      }
+      return contact;
+    });
+    
+    // Show success toast
+    toast.success("Mensagem enviada");
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -167,109 +137,19 @@ const MessagesPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-220px)]">
-        <Card className="lg:col-span-1 flex flex-col">
-          <CardHeader className="pb-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Buscar contatos..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-auto p-0">
-            <div className="px-4 py-2 space-y-1">
-              {filteredContacts.map((contact) => (
-                <div 
-                  key={contact.id}
-                  className={`flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-muted ${
-                    activeContact.id === contact.id ? "bg-muted" : ""
-                  }`}
-                  onClick={() => handleContactChange(contact)}
-                >
-                  <div className="relative">
-                    <Avatar>
-                      <AvatarFallback className="bg-family-100 text-family-700">
-                        {contact.initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    {contact.online && (
-                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-accent-green-500 rounded-full border-2 border-background"></span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between">
-                      <h3 className="font-medium truncate">{contact.name}</h3>
-                      <span className="text-xs text-muted-foreground">{contact.time}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground truncate">{contact.lastMessage}</p>
-                  </div>
-                  {contact.unread > 0 && (
-                    <div className="min-w-5 h-5 rounded-full bg-family-500 text-white text-xs flex items-center justify-center">
-                      {contact.unread}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2 flex flex-col">
-          <CardHeader className="border-b pb-3">
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarFallback className="bg-family-100 text-family-700">
-                  {activeContact.initials}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle>{activeContact.name}</CardTitle>
-                <CardDescription>
-                  {activeContact.online ? "Online" : "Última vez " + activeContact.time}
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-auto py-4 px-4 space-y-4">
-            {messages.map((message) => (
-              <div 
-                key={message.id}
-                className={`flex ${message.senderId === "me" ? "justify-end" : "justify-start"}`}
-              >
-                <div 
-                  className={`max-w-[80%] p-3 rounded-lg ${
-                    message.senderId === "me" 
-                      ? "bg-family-100 text-family-950" 
-                      : "bg-muted"
-                  }`}
-                >
-                  <p className="text-sm">{message.text}</p>
-                  <span className="text-xs text-muted-foreground block text-right mt-1">
-                    {message.timestamp}
-                  </span>
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </CardContent>
-          <div className="p-4 border-t">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Digite sua mensagem..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              />
-              <Button size="icon" onClick={sendMessage}>
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
+        <ContactsList 
+          contacts={contacts} 
+          activeContact={activeContact} 
+          onContactChange={handleContactChange} 
+        />
+        
+        <div className="lg:col-span-2 flex flex-col">
+          <ConversationWindow 
+            activeContact={activeContact} 
+            messages={messages} 
+          />
+          <MessageInput onSendMessage={handleSendMessage} />
+        </div>
       </div>
     </div>
   );
