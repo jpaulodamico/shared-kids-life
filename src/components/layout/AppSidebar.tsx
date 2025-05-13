@@ -23,7 +23,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
@@ -70,7 +69,7 @@ const menuItems = [
 
 export function AppSidebar() {
   const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(isMobile);
 
   return (
     <Sidebar 
@@ -78,7 +77,6 @@ export function AppSidebar() {
         "transition-all duration-300",
         collapsed && !isMobile ? "w-[80px]" : "w-[280px]"
       )}
-      defaultCollapsed={isMobile}
     >
       <SidebarHeader className="flex items-center justify-between h-16 px-4">
         {!collapsed && (
