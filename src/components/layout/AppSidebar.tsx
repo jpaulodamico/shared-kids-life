@@ -81,7 +81,7 @@ export function AppSidebar() {
       <SidebarHeader className="flex items-center justify-between h-16 px-4">
         {!collapsed && (
           <div className="flex items-center">
-            <span className="text-2xl font-bold text-white">FamiliApp</span>
+            <span className="text-2xl font-bold text-white">CoParent</span>
           </div>
         )}
         <button 
