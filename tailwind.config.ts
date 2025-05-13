@@ -19,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				montserrat: ['Montserrat', 'sans-serif'],
+				inter: ['Inter', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -63,7 +68,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom color scheme for co-parenting app
+				// Nova paleta do CoParent
+				"coparent": {
+					"blue": "#4A90E2", // Azul Sereno
+					"gray": "#4A4A4A", // Cinza Neutro
+					"green": "#7ED6A5", // Verde Calmo
+					"yellow": "#FFE082", // Amarelo Suave
+					"pink": "#F7CAC9", // Rosa Pó
+					"light-gray": "#F5F5F5", // Cinza-claro
+					"white": "#FFFFFF", // Branco
+				},
+				// Manter as cores existentes para compatibilidade
 				"family": {
 					"50": "#f0f9ff",
 					"100": "#e0f2fe",
