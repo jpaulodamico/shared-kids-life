@@ -1,4 +1,3 @@
-
 import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -13,8 +12,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { addDays, format, startOfWeek, startOfMonth, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, parse, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { EventCalendar } from "@/components/calendar/EventCalendar";
-import { EventForm } from "@/components/calendar/EventForm";
 import { EventList } from "@/components/calendar/EventList";
 import { DayView } from "@/components/calendar/DayView";
 import { WeekView } from "@/components/calendar/WeekView";
