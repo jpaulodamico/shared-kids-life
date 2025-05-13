@@ -95,7 +95,10 @@ const MessagesPage = () => {
   };
 
   // Handle sending a new message
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (
+    text: string, 
+    attachment?: { type: 'image' | 'document' | 'audio' | 'video', url: string, name: string }
+  ) => {
     // Create the new message object
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -105,7 +108,8 @@ const MessagesPage = () => {
       id: messages.length + 1,
       senderId: "me",
       text: text,
-      timestamp: `${hours}:${minutes}`
+      timestamp: `${hours}:${minutes}`,
+      attachment: attachment
     };
     
     // Add the new message to the messages array
@@ -116,7 +120,9 @@ const MessagesPage = () => {
       if (contact.id === activeContact.id) {
         return {
           ...contact,
-          lastMessage: text,
+          lastMessage: attachment 
+            ? `${text || "Enviou um ${getAttachmentTypeText(attachment.type)}"}`
+            : text,
           time: "Agora"
         };
       }
@@ -124,7 +130,16 @@ const MessagesPage = () => {
     });
     
     // Show success toast
-    toast.success("Mensagem enviada");
+    toast.success(attachment ? "Mensagem e arquivo enviados" : "Mensagem enviada");
+  };
+
+  const getAttachmentTypeText = (type: string) => {
+    switch (type) {
+      case 'image': return 'imagem';
+      case 'audio': return 'áudio';
+      case 'video': return 'vídeo';
+      default: return 'arquivo';
+    }
   };
 
   return (

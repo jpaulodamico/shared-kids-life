@@ -14,4 +14,9 @@ export interface Message {
   senderId: number | string;
   text: string;
   timestamp: string;
+  attachment?: {
+    type: 'image' | 'document' | 'audio' | 'video';
+    url: string;
+    name: string;
+  };
 }
