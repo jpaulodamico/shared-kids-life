@@ -1,3 +1,4 @@
+
 import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { EventList } from "@/components/calendar/EventList";
 import { DayView } from "@/components/calendar/DayView";
 import { WeekView } from "@/components/calendar/WeekView";
 import { MonthView } from "@/components/calendar/MonthView";
+import { EventForm } from "@/components/calendar/EventForm";
 
 export type EventType = 'medical' | 'school' | 'activity' | 'family' | 'other';
 
