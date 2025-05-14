@@ -12,16 +12,15 @@ const AuthPage = () => {
   const { signInWithGoogle, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect to /app if already authenticated
+  // Redirect to /app if already authenticated, only if the welcome screen was already shown
   useEffect(() => {
     if (user) {
-      // Check if this is the first access (welcome not shown)
       const welcomeShown = localStorage.getItem("welcomeShown") === "true";
       
-      if (!welcomeShown) {
-        navigate("/welcome");
-      } else {
+      if (welcomeShown) {
         navigate("/app");
+      } else {
+        navigate("/welcome");
       }
     }
   }, [user, navigate]);

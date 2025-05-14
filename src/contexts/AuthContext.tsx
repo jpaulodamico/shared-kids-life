@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { toast } from "sonner";
 
 type AuthContextType = {
   session: Session | null;
@@ -21,23 +22,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up authentication state change listener
+    console.log("Setting up auth state change listener");
+    // Set up authentication state change listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user || null);
+      (event, newSession) => {
+        console.log("Auth state changed:", event, newSession?.user?.email);
+        setSession(newSession);
+        setUser(newSession?.user || null);
         setLoading(false);
       }
     );
 
-    // Get the current session when the component mounts
+    // THEN check the current session
     const getSession = async () => {
+      console.log("Getting current session");
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
         console.error('Erro ao carregar sessão:', error);
+        toast.error('Erro ao carregar sessão', {
+          description: error.message
+        });
       }
       
+      console.log("Current session:", session?.user?.email);
       setSession(session);
       setUser(session?.user || null);
       setLoading(false);
@@ -46,6 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSession();
 
     return () => {
+      console.log("Unsubscribing from auth state changes");
       subscription.unsubscribe();
     };
   }, []);
@@ -79,17 +88,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      console.log("Signing out");
+      await supabase.auth.signOut();
+      console.log("Signed out successfully");
+    } catch (error) {
+      console.error("Error during sign out:", error);
+      toast.error('Erro ao fazer logout', {
+        description: 'Ocorreu um erro ao encerrar sua sessão.'
+      });
+    }
   };
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin
+    console.log("Initiating Google sign in");
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      
+      if (error) {
+        console.error("Error with Google sign in:", error);
       }
-    });
-    return { error };
+      
+      return { error };
+    } catch (error) {
+      console.error("Unexpected error during Google sign in:", error);
+      return { error };
+    }
   };
 
   const value = {
@@ -104,7 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

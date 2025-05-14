@@ -5,18 +5,26 @@ import { Calendar, MessageSquare, DollarSign, FileText, Users } from "lucide-rea
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
+  // Se o usuário não estiver autenticado, redireciona para a página de login
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
+
   const handleContinue = () => {
+    // Salva no localStorage que o usuário já viu a tela de boas-vindas
+    localStorage.setItem("welcomeShown", "true");
+    
     toast.success("Bem-vindo ao CoParent!", {
       description: "Agora você pode começar a usar todas as funcionalidades do aplicativo."
     });
-    
-    // Salva no localStorage que o usuário já viu a tela de boas-vindas
-    localStorage.setItem("welcomeShown", "true");
     
     // Navegue para a página principal após marcar como visto
     navigate("/app");
@@ -115,7 +123,7 @@ const WelcomePage = () => {
         </div>
 
         <div className="flex justify-center pt-6">
-          <Button onClick={handleContinue} size="lg">
+          <Button onClick={handleContinue} size="lg" className="cursor-pointer">
             Continuar para o Dashboard
           </Button>
         </div>
