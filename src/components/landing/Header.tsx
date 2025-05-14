@@ -13,11 +13,18 @@ export const Header = () => {
           </div>
           <h1 className="text-2xl font-bold text-gray-800">CoParent</h1>
         </div>
-        <Link to="/auth">
-          <Button variant="outline" className="hidden sm:inline-flex">
-            Entrar
-          </Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link to="/auth">
+            <Button variant="primary" className="hidden sm:inline-flex shadow-md hover:shadow-lg transition-shadow">
+              Entrar
+            </Button>
+          </Link>
+          <Link to="/auth">
+            <Button variant="accent" className="hidden sm:inline-flex shadow-md hover:shadow-lg transition-shadow font-medium">
+              Criar conta gratuita
+            </Button>
+          </Link>
+        </div>
       </div>
     </header>
   );

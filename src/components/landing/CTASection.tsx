@@ -12,7 +12,7 @@ export const CTASection = () => {
           Crie sua conta gratuita agora e experimente uma nova forma de compartilhar a criação dos seus filhos.
         </p>
         <Link to="/auth">
-          <Button size="lg" variant="secondary" className="text-primary">
+          <Button size="lg" variant="accent" className="text-accent-foreground font-semibold shadow-lg hover:scale-105 transition-transform">
             Criar conta gratuita
           </Button>
         </Link>
