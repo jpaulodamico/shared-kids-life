@@ -1,6 +1,7 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "./childFormTypes";
 
@@ -47,7 +48,7 @@ export function BasicInfoFields({ form }: BasicInfoFieldsProps) {
             <FormItem>
               <FormLabel>Data de Nascimento</FormLabel>
               <FormControl>
-                <Input placeholder="DD/MM/AAAA" {...field} />
+                <DateInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

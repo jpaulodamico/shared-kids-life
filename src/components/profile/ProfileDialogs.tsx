@@ -46,7 +46,7 @@ export function ProfileDialogs({
           <DialogHeader>
             <DialogTitle>Convidar Responsável</DialogTitle>
           </DialogHeader>
-          <InviteForm />
+          <InviteForm onClose={() => setShowInviteDialog(false)} />
         </DialogContent>
       </Dialog>
     </>

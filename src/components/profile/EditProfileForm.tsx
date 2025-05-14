@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   first_name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres").max(50),
@@ -62,12 +62,17 @@ export function EditProfileForm({ defaultValues, onSuccess }: EditProfileFormPro
       
       if (error) throw error;
       
-      toast.success("Perfil atualizado com sucesso");
+      toast({
+        title: "Sucesso",
+        description: "Perfil atualizado com sucesso"
+      });
       onSuccess();
     } catch (error: any) {
       console.error("Erro ao atualizar perfil:", error);
-      toast.error("Erro ao atualizar perfil", {
-        description: error.message
+      toast({
+        title: "Erro ao atualizar perfil",
+        description: error.message,
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);

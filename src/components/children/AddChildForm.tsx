@@ -3,9 +3,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { Form } from "@/components/ui/form";
-import { Child } from "@/types/children";
 import { formSchema, FormValues } from "./form/childFormTypes";
 import { BasicInfoFields } from "./form/BasicInfoFields";
 import { HealthInfoFields } from "./form/HealthInfoFields";
@@ -34,7 +33,6 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       medications: "",
       height: "",
       weight: "",
-      lastCheckup: "",
       activities: "",
       gender: "female",
     },
@@ -42,7 +40,11 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
 
   const onSubmit = async (data: FormValues) => {
     if (!user) {
-      toast.error("Você precisa estar logado para adicionar uma criança");
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado para adicionar uma criança",
+        variant: "destructive"
+      });
       return;
     }
     
@@ -70,7 +72,6 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
           medications: medicationsArray,
           height: data.height,
           weight: data.weight,
-          last_checkup: data.lastCheckup,
           activities: activitiesArray,
           gender: data.gender,
           image_url: "",
@@ -80,6 +81,7 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
         .single();
       
       if (childError) {
+        console.error("Erro ao adicionar criança:", childError);
         throw childError;
       }
       
@@ -93,18 +95,24 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
         });
       
       if (relationError) {
+        console.error("Erro ao associar criança ao usuário:", relationError);
         throw relationError;
       }
       
       // Mostra mensagem de sucesso
-      toast.success("Criança adicionada com sucesso!");
+      toast({
+        title: "Sucesso",
+        description: "Criança adicionada com sucesso!"
+      });
       
       // Fecha o diálogo
       onSuccess();
-    } catch (error) {
-      console.error(error);
-      toast.error("Erro ao adicionar criança", { 
-        description: "Verifique os dados e tente novamente." 
+    } catch (error: any) {
+      console.error("Erro completo:", error);
+      toast({
+        title: "Erro ao adicionar criança",
+        description: error.message || "Verifique os dados e tente novamente",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);

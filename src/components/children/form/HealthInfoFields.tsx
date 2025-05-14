@@ -1,6 +1,7 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "./childFormTypes";
@@ -34,7 +35,7 @@ export function HealthInfoFields({ form }: HealthInfoFieldsProps) {
             <FormItem>
               <FormLabel>Última Consulta</FormLabel>
               <FormControl>
-                <Input placeholder="DD/MM/AAAA" {...field} />
+                <DateInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

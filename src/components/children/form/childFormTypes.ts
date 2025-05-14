@@ -13,7 +13,6 @@ export const formSchema = z.object({
   medications: z.string().optional(),
   height: z.string().min(1, { message: "Altura é obrigatória" }),
   weight: z.string().min(1, { message: "Peso é obrigatório" }),
-  lastCheckup: z.string().min(1, { message: "Data da última consulta é obrigatória" }),
   activities: z.string().optional(),
   gender: z.enum(["male", "female"], { 
     required_error: "Sexo é obrigatório"
