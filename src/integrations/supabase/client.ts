@@ -25,9 +25,8 @@ export const supabase = createClient<Database>(
     },
     realtime: {
       // Configurações para melhorar a experiência em tempo real
-      presence: {
-        timeout: 60000 // 60 segundos
-      }
+      reconnectAttempts: 5,
+      timeout: 60000 // 60 segundos
     }
   }
 );
