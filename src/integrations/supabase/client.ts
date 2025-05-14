@@ -19,14 +19,15 @@ export const supabase = createClient<Database>(
     },
     global: {
       // Melhorias de desempenho para produção
-      fetch: (...args) => fetch(...args),
       headers: {
         'X-App-Version': '1.0.0'
       }
     },
     realtime: {
       // Configurações para melhorar a experiência em tempo real
-      eventsPerSecond: 10
+      presence: {
+        timeout: 60000 // 60 segundos
+      }
     }
   }
 );
