@@ -3,14 +3,22 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { GoogleButton } from "@/components/auth/GoogleButton";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import { LogIn, UserPlus } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
   const { signInWithGoogle, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
 
   // Redirect to /app if already authenticated, only if the welcome screen was already shown
   useEffect(() => {
@@ -24,6 +32,10 @@ const AuthPage = () => {
       }
     }
   }, [user, navigate]);
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -43,6 +55,45 @@ const AuthPage = () => {
     }
   };
 
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const { error } = await useAuth().signIn(email, password);
+      
+      if (error) {
+        console.error("Login error:", error);
+        toast.error("Falha no login: " + error.message);
+      }
+    } catch (err) {
+      console.error("Unexpected login error:", err);
+      toast.error("Erro ao fazer login");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const { error } = await useAuth().signUp(email, password);
+      
+      if (error) {
+        console.error("Registration error:", error);
+        toast.error("Falha no registro: " + error.message);
+      } else {
+        toast.success("Conta criada com sucesso! Faça login para continuar.");
+        setActiveTab("login");
+      }
+    } catch (err) {
+      console.error("Unexpected registration error:", err);
+      toast.error("Erro ao criar conta");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/50 p-4">
       <div className="w-full max-w-md">
@@ -56,17 +107,46 @@ const AuthPage = () => {
             </CardDescription>
           </CardHeader>
           
-          <CardContent className="flex flex-col items-center py-6">
-            <p className="text-center text-muted-foreground mb-6">
-              Use sua conta Google para acessar o CoParent de forma rápida e segura
-            </p>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-2 w-full">
+              <TabsTrigger value="login" className="flex items-center gap-1">
+                <LogIn className="h-4 w-4" />
+                Login
+              </TabsTrigger>
+              <TabsTrigger value="register" className="flex items-center gap-1">
+                <UserPlus className="h-4 w-4" />
+                Registrar
+              </TabsTrigger>
+            </TabsList>
             
-            <GoogleButton 
-              onClick={handleGoogleSignIn}
-              isLoading={isLoading}
-              label="Continuar com o Google"
-            />
-          </CardContent>
+            <TabsContent value="login">
+              <LoginForm 
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                showPassword={showPassword}
+                toggleShowPassword={toggleShowPassword}
+                handleSignIn={handleSignIn}
+                handleGoogleSignIn={handleGoogleSignIn}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+            
+            <TabsContent value="register">
+              <RegisterForm 
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                showPassword={showPassword}
+                toggleShowPassword={toggleShowPassword}
+                handleSignUp={handleSignUp}
+                handleGoogleSignIn={handleGoogleSignIn}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+          </Tabs>
         </Card>
 
         <div className="mt-6 text-center text-xs text-muted-foreground">

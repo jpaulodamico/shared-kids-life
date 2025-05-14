@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { GoogleButton } from "./GoogleButton";
 import { PasswordInput } from "./PasswordInput";
+import { LogIn } from "lucide-react";
 
 interface LoginFormProps {
   email: string;
@@ -62,7 +63,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       
       <CardFooter className="flex flex-col space-y-4">
         <Button className="w-full" type="submit" disabled={isLoading}>
-          {isLoading ? "Entrando..." : "Entrar"}
+          {isLoading ? "Entrando..." : (
+            <>
+              <LogIn className="mr-2 h-4 w-4" />
+              Entrar
+            </>
+          )}
         </Button>
         
         <div className="relative w-full flex items-center justify-center my-2">

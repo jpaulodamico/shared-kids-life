@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { GoogleButton } from "./GoogleButton";
 import { PasswordInput } from "./PasswordInput";
+import { UserPlus } from "lucide-react";
 
 interface RegisterFormProps {
   email: string;
@@ -66,7 +67,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       
       <CardFooter className="flex flex-col space-y-4">
         <Button className="w-full" type="submit" disabled={isLoading}>
-          {isLoading ? "Registrando..." : "Criar Conta"}
+          {isLoading ? "Registrando..." : (
+            <>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Criar Conta
+            </>
+          )}
         </Button>
         
         <div className="relative w-full flex items-center justify-center my-2">
