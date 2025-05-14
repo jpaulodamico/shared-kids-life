@@ -18,7 +18,7 @@ const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
 
-  // Redireciona para /app se já estiver autenticado
+  // Redirect to /app if already authenticated
   useEffect(() => {
     if (user) {
       navigate("/app");
@@ -30,6 +30,8 @@ const AuthPage = () => {
     setIsLoading(true);
     
     try {
+      // While the buttons should be disabled without a captcha token,
+      // this is an extra safety check
       if (!captchaToken) {
         toast({
           title: "Erro de verificação",

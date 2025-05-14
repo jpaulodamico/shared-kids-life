@@ -11,13 +11,16 @@ export const TurnstileCaptcha: React.FC<TurnstileCaptchaProps> = ({
   onVerify,
   theme = 'light'
 }) => {
-  // Use the site key from your Cloudflare settings image
+  // Use the site key from your Cloudflare settings
   const siteKey = '0x4AAAAAABdKbG9XF0ofwQCl';
   const ref = useRef<HTMLDivElement>(null);
   const turnstile = useTurnstile();
   
   useEffect(() => {
     if (ref.current && turnstile) {
+      // Reset any existing widgets first
+      turnstile.reset();
+      
       turnstile.render(ref.current, {
         sitekey: siteKey,
         theme: theme,

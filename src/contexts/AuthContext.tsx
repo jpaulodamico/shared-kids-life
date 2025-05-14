@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Configura listener para mudanças de autenticação
+    // Set up authentication state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Busca a sessão atual quando o componente é montado
+    // Get the current session when the component mounts
     const getSession = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       
