@@ -1,13 +1,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, FolderPlus, Search, Upload } from "lucide-react";
+import { FileText, FolderPlus, Search, Upload, Folder } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { DocumentUploadDialog } from "@/components/documents/DocumentUploadDialog";
+import { NewFolderDialog } from "@/components/documents/NewFolderDialog";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample data
-const documents = [
+const initialDocuments = [
   {
     id: 1,
     name: "Declaração Escolar.pdf",
@@ -55,23 +57,76 @@ const documents = [
   }
 ];
 
-// Categories
-const categories = [
-  { name: "Todos", count: documents.length },
-  { name: "Escola", count: documents.filter(doc => doc.category === "Escola").length },
-  { name: "Saúde", count: documents.filter(doc => doc.category === "Saúde").length },
-  { name: "Atividades", count: documents.filter(doc => doc.category === "Atividades").length },
-  { name: "Outros", count: documents.filter(doc => !["Escola", "Saúde", "Atividades"].includes(doc.category)).length }
+// Sample folder data
+const initialFolders = [
+  { id: 1, name: "Documentos Importantes", count: 3 }
 ];
 
 const DocumentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const [documents, setDocuments] = useState(initialDocuments);
+  const [folders, setFolders] = useState(initialFolders);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState(false);
+  const { toast } = useToast();
+  
+  // Generate categories from documents
+  const categories = [
+    { name: "Todos", count: documents.length },
+    { name: "Escola", count: documents.filter(doc => doc.category === "Escola").length },
+    { name: "Saúde", count: documents.filter(doc => doc.category === "Saúde").length },
+    { name: "Atividades", count: documents.filter(doc => doc.category === "Atividades").length },
+    { name: "Outros", count: documents.filter(doc => !["Escola", "Saúde", "Atividades"].includes(doc.category)).length }
+  ];
   
   const filteredDocuments = documents.filter(doc => 
     (activeCategory === "Todos" || doc.category === activeCategory) &&
     doc.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleUploadDocument = (newDoc: {
+    name: string;
+    category: string;
+    file: string;
+    size: string;
+    type: string;
+  }) => {
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
+    
+    const newDocument = {
+      id: documents.length + 1,
+      name: newDoc.name,
+      category: newDoc.category,
+      uploadedBy: "Você",
+      date: formattedDate,
+      size: newDoc.size,
+      type: newDoc.type
+    };
+
+    setDocuments([newDocument, ...documents]);
+    
+    toast({
+      title: "Documento adicionado",
+      description: `${newDoc.name} foi adicionado com sucesso.`
+    });
+  };
+
+  const handleCreateFolder = (folderName: string) => {
+    const newFolder = {
+      id: folders.length + 1,
+      name: folderName,
+      count: 0
+    };
+
+    setFolders([...folders, newFolder]);
+    
+    toast({
+      title: "Pasta criada",
+      description: `A pasta ${folderName} foi criada com sucesso.`
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -83,11 +138,18 @@ const DocumentsPage = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-1">
+          <Button 
+            variant="outline" 
+            className="gap-1"
+            onClick={() => setIsNewFolderDialogOpen(true)}
+          >
             <FolderPlus className="h-4 w-4" />
             Nova Pasta
           </Button>
-          <Button className="gap-1">
+          <Button 
+            className="gap-1"
+            onClick={() => setIsUploadDialogOpen(true)}
+          >
             <Upload className="h-4 w-4" />
             Upload
           </Button>
@@ -140,6 +202,28 @@ const DocumentsPage = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {folders.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Pastas</h3>
+                <div className="space-y-2">
+                  {folders.map((folder) => (
+                    <div 
+                      key={folder.id}
+                      className="flex items-center p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                    >
+                      <Folder className="h-8 w-8 text-family-600 mr-3" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium">{folder.name}</h3>
+                        <div className="text-sm text-muted-foreground">
+                          {folder.count} documento(s)
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {filteredDocuments.length === 0 ? (
               <div className="text-center py-10 text-muted-foreground">
                 Nenhum documento encontrado
@@ -170,6 +254,19 @@ const DocumentsPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialogs */}
+      <DocumentUploadDialog
+        open={isUploadDialogOpen}
+        onClose={() => setIsUploadDialogOpen(false)}
+        onUpload={handleUploadDocument}
+      />
+      
+      <NewFolderDialog
+        open={isNewFolderDialogOpen}
+        onClose={() => setIsNewFolderDialogOpen(false)}
+        onCreateFolder={handleCreateFolder}
+      />
     </div>
   );
 };
