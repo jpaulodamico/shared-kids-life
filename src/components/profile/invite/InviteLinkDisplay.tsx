@@ -1,14 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, ExternalLink } from "lucide-react";
+import { Copy, ExternalLink, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface InviteLinkDisplayProps {
   inviteLink: string;
+  onClose?: () => void;
 }
 
-export function InviteLinkDisplay({ inviteLink }: InviteLinkDisplayProps) {
+export function InviteLinkDisplay({ inviteLink, onClose }: InviteLinkDisplayProps) {
   if (!inviteLink) return null;
   
   const handleCopyLink = () => {
@@ -29,7 +30,15 @@ export function InviteLinkDisplay({ inviteLink }: InviteLinkDisplayProps) {
   
   return (
     <div className="mt-6 p-4 border rounded-md bg-muted">
-      <h3 className="font-medium mb-2">Link de convite gerado:</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-medium">Link de convite gerado:</h3>
+        {onClose && (
+          <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+      
       <div className="flex items-center gap-2">
         <Input 
           value={inviteLink} 

@@ -4,14 +4,19 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { InviteFormValues } from "./InviteSchema";
+import { Button } from "@/components/ui/button";
+import { BaseSyntheticEvent } from "react";
 
 interface InviteFormFieldsProps {
   form: UseFormReturn<InviteFormValues>;
+  onSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
+  isSubmitting: boolean;
+  onCancel?: () => void;
 }
 
-export function InviteFormFields({ form }: InviteFormFieldsProps) {
+export function InviteFormFields({ form, onSubmit, isSubmitting, onCancel }: InviteFormFieldsProps) {
   return (
-    <>
+    <form onSubmit={onSubmit} className="space-y-4">
       <FormField
         control={form.control}
         name="email"
@@ -58,6 +63,17 @@ export function InviteFormFields({ form }: InviteFormFieldsProps) {
           </FormItem>
         )}
       />
-    </>
+      
+      <div className="flex justify-end gap-2 pt-2">
+        {onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancelar
+          </Button>
+        )}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Enviando..." : "Enviar convite"}
+        </Button>
+      </div>
+    </form>
   );
 }

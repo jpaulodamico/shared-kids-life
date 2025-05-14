@@ -40,10 +40,8 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
 
   const onSubmit = async (data: FormValues) => {
     if (!user) {
-      toast({
-        title: "Erro",
-        description: "Você precisa estar logado para adicionar uma criança",
-        variant: "destructive"
+      toast.error("Erro", {
+        description: "Você precisa estar logado para adicionar uma criança"
       });
       return;
     }
@@ -100,8 +98,7 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       }
       
       // Mostra mensagem de sucesso
-      toast({
-        title: "Sucesso",
+      toast.success("Sucesso", {
         description: "Criança adicionada com sucesso!"
       });
       
@@ -109,10 +106,8 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       onSuccess();
     } catch (error: any) {
       console.error("Erro completo:", error);
-      toast({
-        title: "Erro ao adicionar criança",
-        description: error.message || "Verifique os dados e tente novamente",
-        variant: "destructive"
+      toast.error("Erro ao adicionar criança", {
+        description: error.message || "Verifique os dados e tente novamente"
       });
     } finally {
       setIsSubmitting(false);

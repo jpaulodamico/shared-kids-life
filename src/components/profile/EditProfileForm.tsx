@@ -62,17 +62,14 @@ export function EditProfileForm({ defaultValues, onSuccess }: EditProfileFormPro
       
       if (error) throw error;
       
-      toast({
-        title: "Sucesso",
+      toast.success("Sucesso", {
         description: "Perfil atualizado com sucesso"
       });
       onSuccess();
     } catch (error: any) {
       console.error("Erro ao atualizar perfil:", error);
-      toast({
-        title: "Erro ao atualizar perfil",
-        description: error.message,
-        variant: "destructive"
+      toast.error("Erro ao atualizar perfil", {
+        description: error.message
       });
     } finally {
       setIsSubmitting(false);

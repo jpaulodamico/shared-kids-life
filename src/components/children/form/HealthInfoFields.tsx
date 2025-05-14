@@ -1,7 +1,6 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "@/components/ui/date-input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { FormValues } from "./childFormTypes";
@@ -28,19 +27,7 @@ export function HealthInfoFields({ form }: HealthInfoFieldsProps) {
           )}
         />
         
-        <FormField
-          control={form.control}
-          name="lastCheckup"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Última Consulta</FormLabel>
-              <FormControl>
-                <DateInput {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Removed lastCheckup field */}
       </div>
       
       <div className="grid grid-cols-2 gap-4">

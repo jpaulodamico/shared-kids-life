@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { inviteFormSchema, InviteFormValues } from "./InviteSchema";
 
 interface UseInviteFormProps {
@@ -19,7 +19,7 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
     resolver: zodResolver(inviteFormSchema),
     defaultValues: {
       email: "",
-      relation: "parente"
+      relation: "parent"
     }
   });
 
@@ -29,10 +29,8 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
 
   const onSubmit = async (values: InviteFormValues) => {
     if (!user) {
-      toast({
-        title: "Erro",
-        description: "Você precisa estar logado para convidar responsáveis",
-        variant: "destructive"
+      toast.error("Erro", {
+        description: "Você precisa estar logado para convidar responsáveis"
       });
       return;
     }
@@ -59,8 +57,7 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
       // Gera o link de convite
       const inviteLink = `${window.location.origin}/app/invite/${inviteCode}`;
       
-      toast({
-        title: "Convite criado",
+      toast.success("Convite criado", {
         description: `Convite para ${values.email} criado com sucesso`
       });
       
@@ -68,10 +65,8 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
       onSuccess(inviteLink);
     } catch (error: any) {
       console.error("Erro ao criar convite:", error);
-      toast({
-        title: "Erro ao criar convite",
-        description: error.message || "Tente novamente mais tarde",
-        variant: "destructive"
+      toast.error("Erro ao criar convite", {
+        description: error.message || "Tente novamente mais tarde"
       });
     } finally {
       setIsSubmitting(false);

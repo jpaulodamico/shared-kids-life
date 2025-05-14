@@ -17,6 +17,7 @@ export const formSchema = z.object({
   gender: z.enum(["male", "female"], { 
     required_error: "Sexo é obrigatório"
   }),
+  // Removed lastCheckup field
 });
 
 export type FormValues = z.infer<typeof formSchema>;
