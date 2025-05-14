@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,12 +11,17 @@ import { AuthFooter } from "@/components/auth/AuthFooter";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { LogIn, UserPlus } from "lucide-react";
 import { useProfileData } from "@/hooks/use-profile-data";
+import { toast } from "sonner";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || "login"
+  );
+  
   const {
     email,
     setEmail,
@@ -33,12 +38,17 @@ const AuthPage = () => {
   // Redirect to /app if already authenticated, based on profile completion
   useEffect(() => {
     if (user && !loadingProfile) {
+      console.log("User authenticated, checking profile status");
       const welcomeShown = localStorage.getItem("welcomeShown") === "true";
       const isProfileComplete = Boolean(profileData?.first_name && profileData?.last_name);
       
+      console.log("Profile status:", { isProfileComplete, welcomeShown });
+      
       if (isProfileComplete || welcomeShown) {
+        console.log("Redirecting to /app");
         navigate("/app");
       } else {
+        console.log("Redirecting to /welcome");
         navigate("/welcome");
       }
     }
