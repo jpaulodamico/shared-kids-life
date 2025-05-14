@@ -1,69 +1,102 @@
 
-import { Calendar } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 // Sample data
-const events = [
+const allEvents = [
   {
     id: 1,
-    title: "Consulta Pediatra",
-    date: "Hoje, 14:30",
-    description: "Dra. Ana Silva",
-    type: "medical"
+    title: "Consulta Médica",
+    date: "Amanhã às 14:00",
+    location: "Clínica Pediátrica",
+    type: "health",
+    childId: "sofia"
   },
   {
     id: 2,
     title: "Reunião Escolar",
-    date: "Amanhã, 10:00",
-    description: "Escola Miraflores",
-    type: "school"
+    date: "Segunda-feira às 10:00",
+    location: "Escola Miraflores",
+    type: "education",
+    childId: "sofia"
   },
   {
     id: 3,
     title: "Aula de Natação",
-    date: "18/05, 16:00",
-    description: "Academia Central",
-    type: "activity"
+    date: "Quarta-feira às 16:30",
+    location: "Academia Splash",
+    type: "activity",
+    childId: "lucas"
   },
   {
     id: 4,
-    title: "Visita Avós",
-    date: "19/05, 11:00",
-    description: "Casa dos avós",
-    type: "family"
+    title: "Festa de Aniversário",
+    date: "Sábado às 15:00",
+    location: "Buffet Infantil Alegria",
+    type: "social",
+    childId: "lucas"
   }
 ];
 
-export function UpcomingEvents() {
+const getBadgeVariant = (type: string) => {
+  switch (type) {
+    case "health": return "destructive";
+    case "education": return "default";
+    case "activity": return "secondary";
+    case "social": return "accent-green";
+    default: return "outline";
+  }
+};
+
+interface UpcomingEventsProps {
+  selectedChildId?: string;
+}
+
+export function UpcomingEvents({ selectedChildId = "all" }: UpcomingEventsProps) {
+  const navigate = useNavigate();
+  
+  // Filtra os eventos com base na criança selecionada
+  const events = selectedChildId === "all"
+    ? allEvents
+    : allEvents.filter(event => event.childId === selectedChildId);
+  
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle>Próximos Eventos</CardTitle>
-          <CardDescription>Compromissos para os próximos dias</CardDescription>
+          <CardDescription>Eventos agendados para as crianças</CardDescription>
         </div>
-        <Calendar className="w-4 h-4 text-muted-foreground" />
+        <CalendarClock className="w-4 h-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {events.map((event) => (
-            <div key={event.id} className="flex items-start">
-              <div className={`w-2 h-2 mt-2 rounded-full mr-3 ${
-                event.type === "medical" 
-                  ? "bg-destructive" 
-                  : event.type === "school" 
-                  ? "bg-family-600" 
-                  : event.type === "activity"
-                  ? "bg-accent-green-500"
-                  : "bg-warm-500"
-              }`} />
-              <div className="flex-1">
-                <h3 className="text-sm font-medium">{event.title}</h3>
-                <p className="text-xs text-muted-foreground">{event.date}</p>
-                <p className="text-xs">{event.description}</p>
+        {events.length > 0 ? (
+          <div className="space-y-4">
+            {events.map((event) => (
+              <div key={event.id} className="flex items-start gap-4">
+                <Badge variant={getBadgeVariant(event.type)} className="mt-1" />
+                <div>
+                  <h3 className="font-medium">{event.title}</h3>
+                  <p className="text-sm text-muted-foreground">{event.date}</p>
+                  <p className="text-xs text-muted-foreground">{event.location}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Não há eventos agendados.</p>
+        )}
+        <div className="mt-4 pt-4 border-t">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate("/calendar")}
+          >
+            Ver calendário completo
+          </Button>
         </div>
       </CardContent>
     </Card>

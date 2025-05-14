@@ -2,78 +2,96 @@
 import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Sample data
-const messages = [
+const allMessages = [
   {
     id: 1,
-    sender: "Lúcia Moreira",
-    message: "Confira os documentos da escola que acabei de enviar.",
-    time: "20 min atrás",
-    read: false,
-    initials: "LM",
+    sender: "Maria Silva",
+    message: "Confirme se Sofia tomou o medicamento para a alergia hoje de manhã.",
+    time: "Hoje, 10:23",
+    unread: true,
+    avatar: "",
+    initials: "MS",
+    childId: "sofia"
   },
   {
     id: 2,
-    sender: "Pedro Santos",
-    message: "Posso buscar as crianças hoje mais cedo?",
-    time: "2h atrás",
-    read: true,
-    initials: "PS",
+    sender: "João Santos",
+    message: "Comprei materiais escolares novos para o Lucas. Estão com você?",
+    time: "Ontem, 18:45",
+    unread: true,
+    avatar: "",
+    initials: "JS",
+    childId: "lucas"
   },
   {
     id: 3,
-    sender: "Escola Miraflores",
-    message: "Reunião de pais confirmada para a próxima semana.",
-    time: "Ontem",
-    read: true,
-    initials: "EM",
+    sender: "Coordenadora Escola",
+    message: "Reunião de pais remarcada para a próxima semana.",
+    time: "Segunda-feira",
+    unread: false,
+    avatar: "",
+    initials: "CE",
+    childId: "all"
   }
 ];
 
-export function RecentMessages() {
+interface RecentMessagesProps {
+  selectedChildId?: string;
+}
+
+export function RecentMessages({ selectedChildId = "all" }: RecentMessagesProps) {
   const navigate = useNavigate();
   
+  // Filtra as mensagens com base na criança selecionada
+  const messages = selectedChildId === "all"
+    ? allMessages
+    : allMessages.filter(msg => msg.childId === selectedChildId || msg.childId === "all");
+  
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle>Mensagens Recentes</CardTitle>
-          <CardDescription>Suas comunicações mais recentes</CardDescription>
+          <CardDescription>Comunicação entre os responsáveis</CardDescription>
         </div>
         <MessageSquare className="w-4 h-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div key={message.id} className="flex gap-3">
-              <Avatar>
-                <AvatarFallback className="bg-family-100 text-family-700">
-                  {message.initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">{message.sender}</h3>
-                  <span className="text-xs text-muted-foreground">{message.time}</span>
+        {messages.length > 0 ? (
+          <div className="space-y-4">
+            {messages.map((msg) => (
+              <div key={msg.id} className="flex items-start gap-4">
+                <Avatar className="w-8 h-8">
+                  <AvatarFallback className="text-xs">{msg.initials}</AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{msg.sender}</p>
+                    {msg.unread && (
+                      <Badge variant="secondary" className="h-5 px-1.5 text-xs">Novo</Badge>
+                    )}
+                  </div>
+                  <p className="text-sm">{msg.message}</p>
+                  <p className="text-xs text-muted-foreground">{msg.time}</p>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-1">{message.message}</p>
               </div>
-              {!message.read && (
-                <div className="w-2 h-2 bg-family-500 rounded-full self-center"></div>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 flex justify-end">
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">Não há mensagens recentes.</p>
+        )}
+        <div className="mt-4 pt-4 border-t">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={() => navigate("/messages")}
           >
-            Ver todas
+            Ver todas as mensagens
           </Button>
         </div>
       </CardContent>
