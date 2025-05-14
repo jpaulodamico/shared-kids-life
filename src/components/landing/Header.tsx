@@ -1,18 +1,16 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const Header = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    console.log("Navigating to /auth");
-    navigate("/auth");
+    navigate("/auth", { state: { activeTab: "login" } });
   };
 
   const handleSignupClick = () => {
-    console.log("Navigating to /auth with register tab");
     navigate("/auth", { state: { activeTab: "register" } });
   };
 

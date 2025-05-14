@@ -1,10 +1,16 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AppTitle } from "@/components/ui/app-title";
 
 export const CTASection = () => {
+  const navigate = useNavigate();
+
+  const handleCreateAccount = () => {
+    navigate("/auth", { state: { activeTab: "register" } });
+  };
+
   return (
     <section className="py-16 bg-primary text-white px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto text-center">
@@ -19,11 +25,14 @@ export const CTASection = () => {
         <p className="text-xl mb-8 max-w-2xl mx-auto">
           Crie sua conta gratuita agora e experimente uma nova forma de compartilhar a criação dos seus filhos.
         </p>
-        <Link to="/auth">
-          <Button size="lg" variant="accent" className="text-accent-foreground font-semibold shadow-lg hover:scale-105 transition-transform">
-            Criar conta gratuita
-          </Button>
-        </Link>
+        <Button 
+          size="lg" 
+          variant="accent" 
+          className="text-accent-foreground font-semibold shadow-lg hover:scale-105 transition-transform"
+          onClick={handleCreateAccount}
+        >
+          Criar conta gratuita
+        </Button>
       </div>
     </section>
   );

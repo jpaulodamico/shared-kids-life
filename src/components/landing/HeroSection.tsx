@@ -1,11 +1,21 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { AppTitle } from "@/components/ui/app-title";
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate("/auth", { state: { activeTab: "register" } });
+  };
+  
+  const handleLearnMore = () => {
+    navigate("/auth", { state: { activeTab: "login" } });
+  };
+
   return (
     <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto">
@@ -28,16 +38,12 @@ export const HeroSection = () => {
               Gerencie em conjunto a vida dos seus filhos com tranquilidade, transparência e organização, mesmo à distância.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link to="/auth">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Começar agora
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  Saber mais
-                </Button>
-              </Link>
+              <Button size="lg" className="w-full sm:w-auto" onClick={handleGetStarted}>
+                Começar agora
+              </Button>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={handleLearnMore}>
+                Saber mais
+              </Button>
             </div>
           </div>
           <div className="md:w-1/2">
