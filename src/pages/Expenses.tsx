@@ -7,6 +7,8 @@ import { DollarSign, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NewExpenseForm } from "@/components/expenses/NewExpenseForm";
 import { useToast } from "@/hooks/use-toast";
+import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
+import { calculateExpenseSummary } from "@/utils/expenseUtils";
 
 // Sample data
 const expenses = [
@@ -18,7 +20,8 @@ const expenses = [
     amount: 850,
     paidBy: "Lúcia Moreira",
     splitPercentage: 50,
-    status: "approved"
+    status: "approved",
+    childId: "1"
   },
   {
     id: 2,
@@ -28,7 +31,8 @@ const expenses = [
     amount: 320,
     paidBy: "Você",
     splitPercentage: 50,
-    status: "pending"
+    status: "pending",
+    childId: "1"
   },
   {
     id: 3,
@@ -38,7 +42,8 @@ const expenses = [
     amount: 450,
     paidBy: "Lúcia Moreira",
     splitPercentage: 50,
-    status: "approved"
+    status: "approved",
+    childId: "2"
   },
   {
     id: 4,
@@ -48,7 +53,8 @@ const expenses = [
     amount: 380,
     paidBy: "Você",
     splitPercentage: 50,
-    status: "approved"
+    status: "approved",
+    childId: "all"
   }
 ];
 
@@ -80,10 +86,25 @@ const categories = [
   }
 ];
 
+// Sample children and parents data
+const children = [
+  { id: "1", name: "Sofia Santos" },
+  { id: "2", name: "Lucas Santos" }
+];
+
+const parents = [
+  { id: "1", name: "Você" },
+  { id: "2", name: "Lúcia Moreira" }
+];
+
 const ExpensesPage = () => {
   const { toast } = useToast();
   const [isNewExpenseOpen, setIsNewExpenseOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  
+  // Calculate expense summaries
+  const expenseSummary = calculateExpenseSummary(expenses, children, parents);
   
   const handleNewExpense = (data: any) => {
     // Em uma aplicação real, isso seria enviado para o backend
@@ -120,7 +141,14 @@ const ExpensesPage = () => {
         />
       </div>
 
-      <Tabs defaultValue="all">
+      {/* Expense Summary Section */}
+      <ExpenseSummary 
+        summary={expenseSummary} 
+        children={children} 
+        parents={parents} 
+      />
+
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="all">Todas</TabsTrigger>
           <TabsTrigger value="pending">Pendentes</TabsTrigger>
