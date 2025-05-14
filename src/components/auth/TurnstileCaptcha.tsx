@@ -11,7 +11,8 @@ export const TurnstileCaptcha: React.FC<TurnstileCaptchaProps> = ({
   onVerify,
   theme = 'light'
 }) => {
-  const siteKey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || '0x4AAAAAABdKbG9XF0ofwQCl';
+  // Use the site key from your Cloudflare settings image
+  const siteKey = '0x4AAAAAABdKbG9XF0ofwQCl';
   const ref = useRef<HTMLDivElement>(null);
   const turnstile = useTurnstile();
   
@@ -20,7 +21,10 @@ export const TurnstileCaptcha: React.FC<TurnstileCaptchaProps> = ({
       turnstile.render(ref.current, {
         sitekey: siteKey,
         theme: theme,
-        callback: onVerify,
+        callback: (token: string) => {
+          console.log("Turnstile token generated:", token.substring(0, 10) + "...");
+          onVerify(token);
+        },
         'refresh-expired': 'auto'
       });
     }

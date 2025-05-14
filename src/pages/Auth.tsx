@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,12 +11,19 @@ import { LoginForm } from "@/components/auth/LoginForm";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, signInWithGoogle } = useAuth();
+  const { signIn, signUp, signInWithGoogle, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
+
+  // Redireciona para /app se já estiver autenticado
+  useEffect(() => {
+    if (user) {
+      navigate("/app");
+    }
+  }, [user, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +40,7 @@ const AuthPage = () => {
         return;
       }
       
+      console.log("Attempting login with captcha token:", captchaToken.substring(0, 10) + "...");
       const { error } = await signIn(email, password, captchaToken);
       
       if (error) {
@@ -75,6 +83,7 @@ const AuthPage = () => {
         return;
       }
       
+      console.log("Attempting registration with captcha token:", captchaToken.substring(0, 10) + "...");
       const { error } = await signUp(email, password, captchaToken);
       
       if (error) {
@@ -122,6 +131,11 @@ const AuthPage = () => {
     }
   };
 
+  const handleCaptchaVerify = (token: string) => {
+    console.log("Captcha verified:", token.substring(0, 10) + "...");
+    setCaptchaToken(token);
+  };
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -157,7 +171,7 @@ const AuthPage = () => {
                 handleGoogleSignIn={handleGoogleSignIn}
                 isLoading={isLoading}
                 captchaToken={captchaToken}
-                setCaptchaToken={setCaptchaToken}
+                setCaptchaToken={handleCaptchaVerify}
               />
             </TabsContent>
             
@@ -173,7 +187,7 @@ const AuthPage = () => {
                 handleGoogleSignIn={handleGoogleSignIn}
                 isLoading={isLoading}
                 captchaToken={captchaToken}
-                setCaptchaToken={setCaptchaToken}
+                setCaptchaToken={handleCaptchaVerify}
               />
             </TabsContent>
           </Tabs>

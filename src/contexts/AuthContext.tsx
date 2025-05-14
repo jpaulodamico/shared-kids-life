@@ -51,35 +51,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signIn = async (email: string, password: string, captchaToken?: string) => {
-    const options: any = {};
-    
-    if (captchaToken) {
-      options.options = { captchaToken };
+    console.log("Signing in with captcha token:", captchaToken ? "provided" : "not provided");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+        options: captchaToken ? { captchaToken } : undefined
+      });
+      
+      return { error };
+    } catch (error) {
+      console.error("Error during sign in:", error);
+      return { error };
     }
-    
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-      ...options
-    });
-    
-    return { error };
   };
 
   const signUp = async (email: string, password: string, captchaToken?: string) => {
-    const options: any = {};
-    
-    if (captchaToken) {
-      options.options = { captchaToken };
+    console.log("Signing up with captcha token:", captchaToken ? "provided" : "not provided");
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: captchaToken ? { captchaToken } : undefined
+      });
+      
+      return { data, error };
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      return { data: null, error };
     }
-    
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      ...options
-    });
-    
-    return { data, error };
   };
 
   const signOut = async () => {
