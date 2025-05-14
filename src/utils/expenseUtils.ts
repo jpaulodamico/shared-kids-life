@@ -17,7 +17,7 @@ export interface ExpenseSummary {
   balanceDue: {
     parentId: string;
     amount: number;
-    direction: 'receive' | 'pay';
+    direction: "receive" | "pay"; // Fixed the type here to use literal type union
   };
 }
 
@@ -69,7 +69,7 @@ export function calculateExpenseSummary(
   const balanceDue = {
     parentId: payingParent.id,
     amount: Math.abs(payingAmount),
-    direction: payingAmount > 0 ? 'pay' : 'receive'
+    direction: payingAmount > 0 ? 'pay' as const : 'receive' as const // Fixed type with 'as const'
   };
 
   return {
