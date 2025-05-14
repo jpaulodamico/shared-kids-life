@@ -46,7 +46,7 @@ const getBadgeVariant = (type: string) => {
     case "health": return "destructive";
     case "education": return "default";
     case "activity": return "secondary";
-    case "social": return "accent-green";
+    case "social": return "outline";
     default: return "outline";
   }
 };
