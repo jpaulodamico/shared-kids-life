@@ -10,10 +10,12 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthFooter } from "@/components/auth/AuthFooter";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { LogIn, UserPlus } from "lucide-react";
+import { useProfileData } from "@/hooks/use-profile-data";
 
 const AuthPage = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { profileData, loading: loadingProfile } = useProfileData();
   const [activeTab, setActiveTab] = useState("login");
   const {
     email,
@@ -28,21 +30,22 @@ const AuthPage = () => {
     handleGoogleSignIn
   } = useAuthHandlers();
 
-  // Redirect to /app if already authenticated, only if the welcome screen was already shown
+  // Redirect to /app if already authenticated, based on profile completion
   useEffect(() => {
-    if (user) {
+    if (user && !loadingProfile) {
       const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+      const isProfileComplete = Boolean(profileData?.first_name && profileData?.last_name);
       
-      if (welcomeShown) {
+      if (isProfileComplete || welcomeShown) {
         navigate("/app");
       } else {
         navigate("/welcome");
       }
     }
-  }, [user, navigate]);
+  }, [user, loadingProfile, profileData, navigate]);
 
   // If loading, show spinner
-  if (loading) {
+  if (loading || loadingProfile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

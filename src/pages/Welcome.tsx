@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Calendar, MessageSquare, DollarSign, FileText, Users, User, UserPlus } from "lucide-react";
@@ -7,10 +6,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useProfileComplete } from "@/hooks/use-profile-complete";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isProfileComplete } = useProfileComplete();
   const [activeTab, setActiveTab] = useState("features");
   
   // Se o usuário não estiver autenticado, redireciona para a página de login
@@ -19,6 +20,15 @@ const WelcomePage = () => {
       navigate("/auth");
     }
   }, [user, navigate]);
+  
+  // Se o perfil já está completo, redireciona para o dashboard
+  useEffect(() => {
+    if (isProfileComplete) {
+      // Salva no localStorage que o usuário já viu a tela de boas-vindas
+      localStorage.setItem("welcomeShown", "true");
+      navigate("/app");
+    }
+  }, [isProfileComplete, navigate]);
 
   const handleContinue = () => {
     // Salva no localStorage que o usuário já viu a tela de boas-vindas
@@ -29,6 +39,18 @@ const WelcomePage = () => {
     });
     
     // Navegue para a página principal após marcar como visto
+    navigate("/app");
+  };
+  
+  const skipToApp = () => {
+    // Salva no localStorage que o usuário já viu a tela de boas-vindas
+    localStorage.setItem("welcomeShown", "true");
+    
+    toast.info("Você pode acessar as instruções novamente pelo seu perfil", {
+      description: "Recomendamos completar seu perfil para uma experiência completa."
+    });
+    
+    // Navegue para a página principal
     navigate("/app");
   };
 
@@ -44,6 +66,14 @@ const WelcomePage = () => {
             {firstName && `Olá ${firstName}, `}
             estamos felizes por você estar aqui! Vamos ajudá-lo a configurar tudo.
           </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-4"
+            onClick={skipToApp}
+          >
+            Ir diretamente para o Dashboard
+          </Button>
         </div>
         
         <Tabs defaultValue="features" value={activeTab} onValueChange={setActiveTab} className="w-full">

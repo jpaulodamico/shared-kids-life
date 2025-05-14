@@ -9,11 +9,13 @@ import { testSupabaseConnection } from "@/lib/supabase";
 import { useUserRole } from "@/hooks/use-user-role";
 import { Shield } from "lucide-react";
 import { toast } from "sonner";
+import { useProfileComplete } from "@/hooks/use-profile-complete";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { user, loading } = useAuth();
   const { isPrimary, loading: loadingRole } = useUserRole();
+  const { isProfileComplete, loading: loadingProfile } = useProfileComplete();
   const navigate = useNavigate();
   const [connectionStatus, setConnectionStatus] = useState<{
     checking: boolean;
@@ -26,8 +28,10 @@ export function AppLayout() {
   
   const [roleNotified, setRoleNotified] = useState(false);
 
-  // Verificar se é o primeiro acesso do usuário
-  const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+  // Verificar se o usuário deve ver a tela de boas-vindas
+  const shouldShowWelcome = 
+    !isProfileComplete && 
+    !localStorage.getItem("welcomeShown"); // Mantemos essa verificação por compatibilidade
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -54,12 +58,12 @@ export function AppLayout() {
     }
   }, [loadingRole, isPrimary, roleNotified, user]);
   
-  // Redireciona para a página de boas-vindas se for o primeiro login
+  // Redirecionar para a página de boas-vindas se for necessário
   useEffect(() => {
-    if (!loading && user && !welcomeShown) {
+    if (!loading && !loadingProfile && user && shouldShowWelcome) {
       navigate("/welcome");
     }
-  }, [loading, user, welcomeShown, navigate]);
+  }, [loading, loadingProfile, user, shouldShowWelcome, navigate]);
   
   // Redireciona para a página de autenticação se não houver usuário logado
   if (!loading && !user) {
@@ -67,7 +71,7 @@ export function AppLayout() {
   }
   
   // Exibe um indicador de carregamento
-  if (loading || connectionStatus.checking) {
+  if (loading || connectionStatus.checking || loadingProfile) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
