@@ -6,8 +6,9 @@ let supabaseUrl: string;
 let supabaseAnonKey: string;
 
 try {
-  supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const projectId = 'ycmfluvtqrwuaxjhzhxj';
+  supabaseUrl = `https://${projectId}.supabase.co`;
+  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Variáveis de ambiente do Supabase não encontradas');
@@ -17,8 +18,8 @@ try {
   console.warn('⚠️ Usando valores de desenvolvimento para o Supabase. Conecte-se ao Supabase para produção.');
   
   // Valores temporários para permitir o desenvolvimento sem erro de tela em branco
-  supabaseUrl = 'https://temporary-development-url.supabase.co';
-  supabaseAnonKey = 'temporary-development-key';
+  supabaseUrl = 'https://ycmfluvtqrwuaxjhzhxj.supabase.co';
+  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -27,7 +28,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const testSupabaseConnection = async () => {
   try {
     const { data, error } = await supabase.from('test').select('*').limit(1);
-    if (error) {
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 significa que a tabela não existe, o que é esperado para uma tabela de teste
       return { connected: false, error: error.message };
     }
     return { connected: true };
