@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { AppTitle } from "@/components/ui/app-title";
 
 export const CTASection = () => {
   return (

@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { AppTitle } from "@/components/ui/app-title";
 
 export const HeroSection = () => {
   return (
@@ -16,9 +17,9 @@ export const HeroSection = () => {
                 alt="CoParent Logo" 
                 className="h-20 w-auto mr-4"
               />
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-tight">
+              <AppTitle size="xl">
                 CoParent
-              </h1>
+              </AppTitle>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               Simplifique a <span className="text-primary">coparentalidade</span> e foque no que mais importa

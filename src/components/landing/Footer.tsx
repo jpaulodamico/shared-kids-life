@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { AppTitle } from "@/components/ui/app-title";
 
 export const Footer = () => {
   return (
@@ -14,7 +15,7 @@ export const Footer = () => {
                 alt="CoParent Logo" 
                 className="h-10 w-auto mr-2"
               />
-              <h3 className="text-xl font-bold text-primary">CoParent</h3>
+              <AppTitle size="md">CoParent</AppTitle>
             </div>
             <p className="text-gray-600">
               Facilitando a gestão compartilhada da vida das crianças desde 2023.
@@ -52,7 +53,7 @@ export const Footer = () => {
         </div>
         
         <div className="border-t border-gray-200 mt-12 pt-8 text-center text-gray-600">
-          <p>© 2025 CoParent. Todos os direitos reservados.</p>
+          <p>© 2025 <AppTitle size="sm" className="inline">CoParent</AppTitle>. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
