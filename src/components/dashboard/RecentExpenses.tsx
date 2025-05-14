@@ -6,14 +6,15 @@ import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 
 // Sample data
-const expenses = [
+const allExpenses = [
   {
     id: 1,
     category: "Educação",
     total: 850,
     shared: 425,
     percentage: 50,
-    color: "bg-family-500"
+    color: "bg-family-500",
+    childId: "sofia"
   },
   {
     id: 2,
@@ -21,7 +22,8 @@ const expenses = [
     total: 320,
     shared: 160,
     percentage: 50,
-    color: "bg-destructive"
+    color: "bg-destructive",
+    childId: "lucas"
   },
   {
     id: 3,
@@ -29,7 +31,8 @@ const expenses = [
     total: 450,
     shared: 225,
     percentage: 50,
-    color: "bg-accent-green-500"
+    color: "bg-accent-green-500",
+    childId: "sofia"
   },
   {
     id: 4,
@@ -37,12 +40,22 @@ const expenses = [
     total: 380,
     shared: 190,
     percentage: 50,
-    color: "bg-warm-500"
+    color: "bg-warm-500",
+    childId: "all"
   }
 ];
 
-export function RecentExpenses() {
+interface RecentExpensesProps {
+  selectedChildId?: string;
+}
+
+export function RecentExpenses({ selectedChildId = "all" }: RecentExpensesProps) {
   const navigate = useNavigate();
+  
+  // Filtra as despesas com base na criança selecionada
+  const expenses = selectedChildId === "all"
+    ? allExpenses
+    : allExpenses.filter(expense => expense.childId === selectedChildId || expense.childId === "all");
   
   const totalExpenses = expenses.reduce((acc, expense) => acc + expense.total, 0);
   const totalShared = expenses.reduce((acc, expense) => acc + expense.shared, 0);

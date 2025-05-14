@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Sample data
 const children = [
   {
-    id: 1,
+    id: "sofia",
     name: "Sofia Santos",
     age: 7,
     school: "Escola Miraflores",
@@ -17,7 +17,7 @@ const children = [
     initials: "SS"
   },
   {
-    id: 2,
+    id: "lucas",
     name: "Lucas Santos",
     age: 5,
     school: "Jardim Infantil Arco-Íris",
@@ -27,8 +27,17 @@ const children = [
   }
 ];
 
-export function ChildProfiles() {
+interface ChildProfilesProps {
+  selectedChildId?: string;
+}
+
+export function ChildProfiles({ selectedChildId = "all" }: ChildProfilesProps) {
   const navigate = useNavigate();
+  
+  // Filtra as crianças com base na seleção (mostra todas ou apenas a selecionada)
+  const filteredChildren = selectedChildId === "all" 
+    ? children 
+    : children.filter(child => child.id === selectedChildId);
 
   return (
     <Card>
@@ -41,7 +50,7 @@ export function ChildProfiles() {
       </CardHeader>
       <CardContent className="p-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-          {children.map((child) => (
+          {filteredChildren.map((child) => (
             <Card key={child.id} className="border-none shadow-none bg-muted/50">
               <CardContent className="p-4 flex flex-col items-center">
                 <Avatar className="w-16 h-16 mb-2">
