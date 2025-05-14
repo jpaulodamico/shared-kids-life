@@ -70,12 +70,13 @@ const menuItems = [
 
 export function AppSidebar({ defaultCollapsed = false }) {
   const isMobile = useIsMobile();
-  const { collapsed, setCollapsed } = useSidebar();
+  const sidebar = useSidebar();
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
   
   // Set initial collapsed state based on prop
   useEffect(() => {
     setCollapsed(defaultCollapsed);
-  }, [defaultCollapsed, setCollapsed]);
+  }, [defaultCollapsed]);
 
   return (
     <Sidebar 
