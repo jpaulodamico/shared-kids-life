@@ -1,7 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
-import AppLayout from "./components/layout/AppLayout";
+import { AppLayout } from "./components/layout/AppLayout";
 import IndexPage from "./pages/Index";
 import ChildrenPage from "./pages/Children";
 import MessagesPage from "./pages/Messages";
