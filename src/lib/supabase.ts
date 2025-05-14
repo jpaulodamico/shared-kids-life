@@ -27,11 +27,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // Exporta uma função para testar a conexão com o Supabase
 export const testSupabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('test').select('*').limit(1);
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116 significa que a tabela não existe, o que é esperado para uma tabela de teste
+    // Tenta verificar a conexão usando a tabela 'profiles' que já existe no banco de dados
+    const { data, error } = await supabase.from('profiles').select('id').limit(1);
+    
+    if (error) {
       return { connected: false, error: error.message };
     }
+    
     return { connected: true };
   } catch (error) {
     return { 
