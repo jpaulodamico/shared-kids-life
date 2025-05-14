@@ -19,7 +19,8 @@ export const children: Child[] = [
     lastCheckup: "10/03/2025",
     activities: ["Natação", "Ballet", "Inglês"],
     imageUrl: "",
-    initials: "SS"
+    initials: "SS",
+    gender: "female"
   },
   {
     id: 2,
@@ -37,7 +38,8 @@ export const children: Child[] = [
     lastCheckup: "15/04/2025",
     activities: ["Futebol", "Música"],
     imageUrl: "",
-    initials: "LS"
+    initials: "LS",
+    gender: "male"
   }
 ];
 

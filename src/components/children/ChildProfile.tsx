@@ -10,7 +10,7 @@ import {
   User,
   Upload,
   Baby,
-  Child as ChildIcon
+  Users
 } from "lucide-react";
 import { Child } from "@/types/children";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -48,7 +48,7 @@ export const ChildProfile = ({ child }: ChildProfileProps) => {
               <AvatarFallback className={`text-3xl ${child.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>
                 {child.gender === 'female' ? 
                   <Baby className="h-12 w-12" /> : 
-                  <ChildIcon className="h-12 w-12" />
+                  <Users className="h-12 w-12" />
                 }
               </AvatarFallback>
             )}

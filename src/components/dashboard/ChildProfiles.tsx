@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User, Baby, Child as ChildIcon } from "lucide-react";
+import { User, Baby, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Sample data
@@ -64,7 +64,7 @@ export function ChildProfiles({ selectedChildId = "all" }: ChildProfilesProps) {
                     <AvatarFallback className={`${child.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'} text-lg`}>
                       {child.gender === 'female' ? 
                         <Baby className="h-8 w-8" /> : 
-                        <ChildIcon className="h-8 w-8" />
+                        <Users className="h-8 w-8" />
                       }
                     </AvatarFallback>
                   )}
