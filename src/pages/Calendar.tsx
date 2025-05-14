@@ -132,7 +132,6 @@ const CalendarPage = () => {
     toast({
       title: "Evento adicionado",
       description: `${newEvent.title} foi adicionado ao calendário.`,
-      variant: "success",
     });
   };
 
