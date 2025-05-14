@@ -17,8 +17,8 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true, // Importante para OAuth (login via Google)
-      flowType: 'implicit' // Usar fluxo implícito para OAuth
+      detectSessionInUrl: true, // Important for OAuth (Google login)
+      flowType: 'implicit' // Use implicit flow for OAuth
     }
   }
 );

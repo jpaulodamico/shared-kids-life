@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log("Setting up auth state change listener");
     
     // Set up authentication state change listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.log("Auth state changed:", event, newSession?.user?.email);
         setSession(newSession);
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => {
       console.log("Unsubscribing from auth state changes");
-      subscription.unsubscribe();
+      data.subscription.unsubscribe();
     };
   }, []);
 
@@ -119,8 +119,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     console.log("Initiating Google sign in");
     try {
-      // Usar a URL atual como redirect
+      // Get the current URL origin for redirect
       const origin = window.location.origin;
+      
+      // Add /auth to make sure we redirect back to the auth page
       const redirectTo = `${origin}/auth`;
       
       console.log("Redirect URL:", redirectTo);

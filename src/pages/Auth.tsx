@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { AuthHeader } from "@/components/auth/AuthHeader";
@@ -46,7 +46,7 @@ const AuthPage = () => {
         console.error("Erro no login com Google:", error);
         toast.error(`Falha no login com Google: ${error.message}`);
       }
-      // Se não houver erro, a redireção para o Google será acionada automaticamente
+      // If there's no error, the redirect to Google will be triggered automatically
     } catch (err) {
       console.error("Erro inesperado:", err);
       toast.error("Ocorreu um erro ao fazer login com Google");
@@ -94,7 +94,7 @@ const AuthPage = () => {
     }
   };
 
-  // Se estiver carregando, mostra spinner
+  // If loading, show spinner
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">

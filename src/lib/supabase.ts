@@ -1,26 +1,26 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Projeto Supabase
+// Supabase Project
 const projectId = 'ycmfluvtqrwuaxjhzhxj';
 const supabaseUrl = `https://${projectId}.supabase.co`;
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
 
-// Criamos o cliente Supabase com as configurações de autenticação corretas
+// Create the Supabase client with correct auth configurations
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: localStorage, // Usamos localStorage para persistir a sessão
-    persistSession: true,  // Persistir a sessão entre recargas da página
-    autoRefreshToken: true, // Renovar o token automaticamente
-    detectSessionInUrl: true, // Detectar a sessão na URL (importante para OAuth)
-    flowType: 'implicit' // Usar fluxo implícito para OAuth
+    storage: localStorage, // Use localStorage to persist the session
+    persistSession: true,  // Persist the session between page reloads
+    autoRefreshToken: true, // Auto refresh tokens
+    detectSessionInUrl: true, // Detect the session in the URL (important for OAuth)
+    flowType: 'implicit' // Use implicit flow for OAuth
   }
 });
 
-// Exporta uma função para testar a conexão com o Supabase
+// Export a function to test the connection with Supabase
 export const testSupabaseConnection = async () => {
   try {
-    // Tenta verificar a conexão usando a tabela 'profiles' que já existe no banco de dados
+    // Try to check the connection using the 'profiles' table that already exists in the database
     const { data, error } = await supabase.from('profiles').select('id').limit(1);
     
     if (error) {
