@@ -16,20 +16,16 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={
-            <AppLayout>
-              <Routes>
-                <Route index element={<IndexPage />} />
-                <Route path="children" element={<ChildrenPage />} />
-                <Route path="messages" element={<MessagesPage />} />
-                <Route path="expenses" element={<ExpensesPage />} />
-                <Route path="documents" element={<DocumentsPage />} />
-                <Route path="calendar" element={<CalendarPage />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </AppLayout>
-          } />
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<IndexPage />} />
+            <Route path="children" element={<ChildrenPage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="expenses" element={<ExpensesPage />} />
+            <Route path="documents" element={<DocumentsPage />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </Router>
       <Toaster position="top-right" richColors />
