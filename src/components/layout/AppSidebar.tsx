@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { 
   Calendar, 
@@ -23,6 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
@@ -67,9 +68,14 @@ const menuItems = [
   },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ defaultCollapsed = false }) {
   const isMobile = useIsMobile();
-  const [collapsed, setCollapsed] = useState(isMobile);
+  const { collapsed, setCollapsed } = useSidebar();
+  
+  // Set initial collapsed state based on prop
+  useEffect(() => {
+    setCollapsed(defaultCollapsed);
+  }, [defaultCollapsed, setCollapsed]);
 
   return (
     <Sidebar 

@@ -24,9 +24,9 @@ export function AppLayout() {
   }
 
   return (
-    <SidebarProvider defaultCollapsed={isMobile}>
+    <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
+        <AppSidebar defaultCollapsed={isMobile} />
         <main className="flex-1 p-4 md:p-6 max-w-full overflow-auto">
           <Outlet />
         </main>
