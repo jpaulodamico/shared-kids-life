@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Child } from "@/types/children";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 // Hook para obter dados das crianças do Supabase
 export const useChildren = () => {
