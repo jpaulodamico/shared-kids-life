@@ -26,7 +26,9 @@ export const TurnstileCaptcha: React.FC<TurnstileCaptchaProps> = ({
     }
     
     return () => {
-      turnstile?.reset();
+      if (turnstile) {
+        turnstile.reset();
+      }
     };
   }, [turnstile, siteKey, theme, onVerify]);
 
