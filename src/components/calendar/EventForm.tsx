@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarEvent, EventType } from "@/pages/Calendar";
+import { CalendarEvent, EventType, CHILD_COLORS } from "@/pages/Calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Switch } from "@/components/ui/switch";
+import { children } from "@/data/childrenData";
 
 interface EventFormProps {
   onSubmit: (event: Omit<CalendarEvent, "id">) => void;
@@ -34,8 +35,10 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
   const [endRecurrenceDate, setEndRecurrenceDate] = useState<Date | undefined>(
     initialEvent?.endRecurrenceDate || undefined
   );
+  const [childId, setChildId] = useState<number | undefined>(initialEvent?.childId);
   
-  const [open, setOpen] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [childOpen, setChildOpen] = useState(false);
   
   const eventTypes = [
     { label: "Médico", value: "medical" },
@@ -61,7 +64,8 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
       location,
       isRecurring,
       recurrencePattern: isRecurring ? recurrencePattern : undefined,
-      endRecurrenceDate: isRecurring ? endRecurrenceDate : undefined
+      endRecurrenceDate: isRecurring ? endRecurrenceDate : undefined,
+      childId
     });
   };
   
@@ -140,15 +144,77 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
           required
         />
       </div>
-      
+
+      {/* Child selection dropdown */}
       <div>
-        <Label>Tipo de Evento</Label>
-        <Popover open={open} onOpenChange={setOpen}>
+        <Label>Criança</Label>
+        <Popover open={childOpen} onOpenChange={setChildOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               role="combobox"
-              aria-expanded={open}
+              aria-expanded={childOpen}
+              className="w-full justify-between"
+            >
+              {childId ? children.find(c => c.id === childId)?.name || "Selecione uma criança" : "Selecione uma criança"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="Buscar criança..." />
+              <CommandEmpty>Nenhuma criança encontrada.</CommandEmpty>
+              <CommandGroup>
+                {children.map((child) => (
+                  <CommandItem
+                    key={child.id}
+                    onSelect={() => {
+                      setChildId(child.id);
+                      setChildOpen(false);
+                    }}
+                    className="flex items-center"
+                  >
+                    <div className={cn(
+                      "mr-2 h-4 w-4 rounded-full",
+                      CHILD_COLORS[child.id]?.split(" ")[0] || "bg-gray-300"
+                    )}></div>
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        childId === child.id ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {child.name}
+                  </CommandItem>
+                ))}
+                <CommandItem
+                  onSelect={() => {
+                    setChildId(undefined);
+                    setChildOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      childId === undefined ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  Nenhuma criança (evento geral)
+                </CommandItem>
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+      
+      <div>
+        <Label>Tipo de Evento</Label>
+        <Popover open={typeOpen} onOpenChange={setTypeOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={typeOpen}
               className="w-full justify-between"
             >
               {eventTypes.find(et => et.value === type)?.label || "Selecione o tipo"}
@@ -165,7 +231,7 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
                     key={eventType.value}
                     onSelect={() => {
                       setType(eventType.value as EventType);
-                      setOpen(false);
+                      setTypeOpen(false);
                     }}
                   >
                     <Check

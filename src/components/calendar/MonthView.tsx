@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarEvent, EventType } from "@/pages/Calendar";
 import { CalendarIcon } from "lucide-react";
+import { children } from "@/data/childrenData";
 
 interface MonthViewProps {
   date: Date;
@@ -11,6 +12,7 @@ interface MonthViewProps {
   selectedDateEvents: CalendarEvent[];
   formatDate: (date: Date) => string;
   getBackgroundColor: (type: EventType) => string;
+  getChildColor: (childId?: number) => string;
 }
 
 export function MonthView({
@@ -19,7 +21,8 @@ export function MonthView({
   onSelectDate,
   selectedDateEvents,
   formatDate,
-  getBackgroundColor
+  getBackgroundColor,
+  getChildColor
 }: MonthViewProps) {
   
   // Generate a list of dates with events
@@ -74,22 +77,27 @@ export function MonthView({
             </div>
           ) : (
             <div className="space-y-4">
-              {selectedDateEvents.map((event) => (
-                <div key={event.id} className="flex items-start">
-                  <div className={`w-3 h-3 mt-1.5 rounded-full mr-3 ${getBackgroundColor(event.type)}`} />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium">{event.title}</h3>
-                      <span className="text-sm text-muted-foreground">
-                        {event.time} 
-                        {event.isRecurring && " (Recorrente)"}
-                      </span>
+              {selectedDateEvents.map((event) => {
+                const childName = event.childId ? children.find(c => c.id === event.childId)?.name : "";
+                
+                return (
+                  <div key={event.id} className="flex items-start">
+                    <div className={`w-3 h-3 mt-1.5 rounded-full mr-3 ${getChildColor(event.childId)}`} />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium">{event.title}</h3>
+                        <span className="text-sm text-muted-foreground">
+                          {event.time} 
+                          {event.isRecurring && " (Recorrente)"}
+                        </span>
+                      </div>
+                      <p className="text-sm">{event.description}</p>
+                      <p className="text-sm text-muted-foreground">{event.location}</p>
+                      {childName && <p className="text-xs font-medium">Criança: {childName}</p>}
                     </div>
-                    <p className="text-sm">{event.description}</p>
-                    <p className="text-sm text-muted-foreground">{event.location}</p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>

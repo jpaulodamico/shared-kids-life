@@ -6,19 +6,22 @@ import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CalendarEvent, EventType } from "@/pages/Calendar";
 import { cn } from "@/lib/utils";
+import { children } from "@/data/childrenData";
 
 interface DayViewProps {
   date: Date;
   events: CalendarEvent[];
   onSelectDate: (date: Date) => void;
   getBackgroundColor: (type: EventType) => string;
+  getChildColor: (childId?: number) => string;
 }
 
 export function DayView({
   date,
   events,
   onSelectDate,
-  getBackgroundColor
+  getBackgroundColor,
+  getChildColor
 }: DayViewProps) {
   // Filter events for the selected date
   const dayEvents = events.filter(
@@ -93,21 +96,26 @@ export function DayView({
                   {hourEvents.length === 0 ? (
                     <div className="h-6"></div> // Empty space holder
                   ) : (
-                    hourEvents.map(event => (
-                      <div key={event.id} className="flex items-start bg-card border rounded-md p-2">
-                        <div className={`w-3 h-3 mt-1 rounded-full mr-3 ${getBackgroundColor(event.type)}`} />
-                        <div className="flex-1">
-                          <div className="flex justify-between">
-                            <h3 className="font-medium">{event.title}</h3>
-                            <span className="text-sm text-muted-foreground">{event.time}</span>
+                    hourEvents.map(event => {
+                      const childName = event.childId ? children.find(c => c.id === event.childId)?.name : "";
+                      
+                      return (
+                        <div key={event.id} className="flex items-start bg-card border rounded-md p-2">
+                          <div className={`w-3 h-3 mt-1 rounded-full mr-3 ${getChildColor(event.childId)}`} />
+                          <div className="flex-1">
+                            <div className="flex justify-between">
+                              <h3 className="font-medium">{event.title}</h3>
+                              <span className="text-sm text-muted-foreground">{event.time}</span>
+                            </div>
+                            <p className="text-sm">{event.location}</p>
+                            {childName && <p className="text-xs font-medium">Criança: {childName}</p>}
+                            {event.isRecurring && (
+                              <p className="text-xs text-muted-foreground">Evento recorrente</p>
+                            )}
                           </div>
-                          <p className="text-sm">{event.location}</p>
-                          {event.isRecurring && (
-                            <p className="text-xs text-muted-foreground">Evento recorrente</p>
-                          )}
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </div>

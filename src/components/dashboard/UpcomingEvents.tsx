@@ -4,6 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { children } from "@/data/childrenData";
+import { cn } from "@/lib/utils";
+
+// Child color mapping (should match the one in Calendar.tsx)
+const CHILD_COLORS: Record<string, string> = {
+  "sofia": "bg-purple-500 text-white", // Sofia - purple
+  "lucas": "bg-blue-500 text-white",   // Lucas - blue
+};
 
 // Sample data
 const allEvents = [
@@ -77,7 +85,10 @@ export function UpcomingEvents({ selectedChildId = "all" }: UpcomingEventsProps)
           <div className="space-y-4">
             {events.map((event) => (
               <div key={event.id} className="flex items-start gap-4">
-                <Badge variant={getBadgeVariant(event.type)} className="mt-1" />
+                <div className={cn(
+                  "w-2 h-2 mt-2 rounded-full", 
+                  CHILD_COLORS[event.childId] || "bg-gray-300"
+                )} />
                 <div>
                   <h3 className="font-medium">{event.title}</h3>
                   <p className="text-sm text-muted-foreground">{event.date}</p>

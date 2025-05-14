@@ -18,6 +18,7 @@ import { DayView } from "@/components/calendar/DayView";
 import { WeekView } from "@/components/calendar/WeekView";
 import { MonthView } from "@/components/calendar/MonthView";
 import { EventForm } from "@/components/calendar/EventForm";
+import { children } from "@/data/childrenData";
 
 export type EventType = 'medical' | 'school' | 'activity' | 'family' | 'other';
 
@@ -32,7 +33,21 @@ export interface CalendarEvent {
   isRecurring?: boolean;
   recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   endRecurrenceDate?: Date;
+  childId?: number; // Add childId to associate events with children
 }
+
+// Child color mapping
+export const CHILD_COLORS: Record<number, string> = {
+  1: "bg-purple-500 text-white", // Sofia
+  2: "bg-blue-500 text-white",   // Lucas
+  // Add more children colors as needed
+};
+
+// Function to get background color based on childId
+export const getChildColor = (childId?: number): string => {
+  if (!childId) return "bg-gray-300"; // Default color for events without a child
+  return CHILD_COLORS[childId] || "bg-gray-300";
+};
 
 const CalendarPage = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -44,7 +59,8 @@ const CalendarPage = () => {
       time: "14:30",
       description: "Dra. Ana Silva",
       type: "medical",
-      location: "Clínica Central"
+      location: "Clínica Central",
+      childId: 1 // Sofia
     },
     {
       id: 2,
@@ -53,7 +69,8 @@ const CalendarPage = () => {
       time: "10:00",
       description: "Avaliação Semestral",
       type: "school",
-      location: "Escola Miraflores"
+      location: "Escola Miraflores",
+      childId: 1 // Sofia
     },
     {
       id: 3,
@@ -64,7 +81,8 @@ const CalendarPage = () => {
       type: "activity",
       location: "Academia Central",
       isRecurring: true,
-      recurrencePattern: "weekly"
+      recurrencePattern: "weekly",
+      childId: 2 // Lucas
     },
     {
       id: 4,
@@ -73,7 +91,8 @@ const CalendarPage = () => {
       time: "11:00",
       description: "Almoço em família",
       type: "family",
-      location: "Casa dos avós"
+      location: "Casa dos avós",
+      childId: 2 // Lucas
     }
   ]);
 
@@ -121,6 +140,7 @@ const CalendarPage = () => {
     });
   };
 
+  // Original type color function (kept for type-based coloring)
   const getBackgroundColor = (type: EventType) => {
     switch(type) {
       case "medical": return "bg-destructive";
@@ -250,6 +270,7 @@ const CalendarPage = () => {
             events={filteredEvents} 
             onSelectDate={setDate}
             getBackgroundColor={getBackgroundColor}
+            getChildColor={getChildColor}
           />
         </TabsContent>
         
@@ -259,6 +280,7 @@ const CalendarPage = () => {
             events={filteredEvents} 
             onSelectDate={setDate}
             getBackgroundColor={getBackgroundColor}
+            getChildColor={getChildColor}
           />
         </TabsContent>
         
@@ -270,6 +292,7 @@ const CalendarPage = () => {
             selectedDateEvents={selectedDateEvents}
             formatDate={formatDate}
             getBackgroundColor={getBackgroundColor}
+            getChildColor={getChildColor}
           />
         </TabsContent>
       </Tabs>
