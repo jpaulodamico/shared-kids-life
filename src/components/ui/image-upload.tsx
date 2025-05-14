@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Image, X, Upload } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ImageUploadProps {
   value?: string;
@@ -21,15 +22,19 @@ export function ImageUpload({
   disabled = false,
 }: ImageUploadProps) {
   const [dragActive, setDragActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      setIsLoading(true);
+      
       const reader = new FileReader();
       
       reader.onloadend = () => {
         onChange(reader.result as string);
+        setIsLoading(false);
       };
       
       reader.readAsDataURL(file);
@@ -55,10 +60,13 @@ export function ImageUpload({
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
+      setIsLoading(true);
+      
       const reader = new FileReader();
       
       reader.onloadend = () => {
         onChange(reader.result as string);
+        setIsLoading(false);
       };
       
       reader.readAsDataURL(file);
@@ -68,7 +76,7 @@ export function ImageUpload({
   return (
     <div className={cn("space-y-4", className)}>
       <div
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !disabled && inputRef.current?.click()}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -87,12 +95,16 @@ export function ImageUpload({
           className="hidden"
         />
         
-        {value ? (
+        {isLoading ? (
+          <div className="p-10">
+            <Skeleton className="h-32 w-full" />
+          </div>
+        ) : value ? (
           <div className="relative">
             <AspectRatio ratio={1} className="overflow-hidden rounded-md">
               <img
                 src={value}
-                alt="Uploaded image"
+                alt="Imagem carregada"
                 className="h-full w-full object-cover"
               />
             </AspectRatio>
@@ -103,6 +115,7 @@ export function ImageUpload({
               }}
               className="absolute top-2 right-2 rounded-full bg-foreground/80 p-1 text-white shadow-sm transition-colors hover:bg-foreground"
               disabled={disabled}
+              type="button"
             >
               <X className="h-4 w-4" />
             </button>
@@ -124,7 +137,7 @@ export function ImageUpload({
         )}
       </div>
       
-      {!value && (
+      {!value && !isLoading && (
         <div className="flex justify-center">
           <Button 
             variant="outline" 
@@ -132,6 +145,7 @@ export function ImageUpload({
             onClick={() => inputRef.current?.click()}
             disabled={disabled}
             className="text-xs"
+            type="button"
           >
             <Upload className="mr-2 h-4 w-4" />
             Escolher imagem

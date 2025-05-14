@@ -1,11 +1,10 @@
 
+import { PropsWithChildren } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-interface AppLayoutProps {
-  children: React.ReactNode;
-}
+interface AppLayoutProps extends PropsWithChildren {}
 
 export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();

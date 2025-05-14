@@ -15,6 +15,7 @@ import {
 import { Child } from "@/types/children";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChildProfileProps {
   child: Child;
@@ -23,12 +24,19 @@ interface ChildProfileProps {
 export const ChildProfile = ({ child }: ChildProfileProps) => {
   const [profileImage, setProfileImage] = useState<string>(child.imageUrl || "");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   const handleImageChange = (imageDataUrl: string) => {
-    setProfileImage(imageDataUrl);
-    // Em um caso real, aqui enviaríamos a imagem para o servidor
-    toast.success("Foto de perfil atualizada");
-    setIsDialogOpen(false);
+    setIsImageLoading(true);
+    
+    // Simular o processamento da imagem
+    setTimeout(() => {
+      setProfileImage(imageDataUrl);
+      setIsImageLoading(false);
+      // Em um caso real, aqui enviaríamos a imagem para o servidor
+      toast.success("Foto de perfil atualizada");
+      setIsDialogOpen(false);
+    }, 500);
   };
 
   const handleImageRemove = () => {
@@ -42,7 +50,11 @@ export const ChildProfile = ({ child }: ChildProfileProps) => {
       <CardHeader className="text-center pb-2 relative">
         <div className="relative mx-auto mb-2">
           <Avatar className="w-24 h-24">
-            {profileImage ? (
+            {isImageLoading ? (
+              <AvatarFallback>
+                <Skeleton className="h-full w-full rounded-full" />
+              </AvatarFallback>
+            ) : profileImage ? (
               <AvatarImage src={profileImage} alt={child.name} />
             ) : (
               <AvatarFallback className={`text-3xl ${child.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>

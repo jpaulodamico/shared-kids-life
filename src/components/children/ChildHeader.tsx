@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,6 +12,14 @@ interface ChildHeaderProps {
 
 export const ChildHeader = ({ title, description }: ChildHeaderProps) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  
+  const handleOpenChange = useCallback((open: boolean) => {
+    setIsFormOpen(open);
+  }, []);
+
+  const handleSuccess = useCallback(() => {
+    setIsFormOpen(false);
+  }, []);
   
   return (
     <>
@@ -28,12 +36,12 @@ export const ChildHeader = ({ title, description }: ChildHeaderProps) => {
         </Button>
       </div>
       
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <Dialog open={isFormOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Adicionar Nova Criança</DialogTitle>
           </DialogHeader>
-          <AddChildForm onSuccess={() => setIsFormOpen(false)} />
+          <AddChildForm onSuccess={handleSuccess} />
         </DialogContent>
       </Dialog>
     </>
