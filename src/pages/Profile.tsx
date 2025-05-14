@@ -4,12 +4,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileCard } from "@/components/profile/ProfileCard";
 import { SettingsForm } from "@/components/profile/SettingsForm";
-import { User, Settings, Users, UserPlus, Link } from "lucide-react";
+import { User, Settings, Users, Link } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useChildren } from "@/hooks/use-supabase-data";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EditProfileForm } from "@/components/profile/EditProfileForm";
+import { InviteForm } from "@/components/profile/InviteForm";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -22,10 +25,13 @@ const ProfilePage = () => {
     phone: "",
     address: "",
     role: "parent",
-    initials: ""
+    initials: "",
+    first_name: "",
+    last_name: ""
   });
   const [linkedUsers, setLinkedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
   
   // Buscar dados do perfil do usuário
   useEffect(() => {
@@ -49,7 +55,9 @@ const ProfilePage = () => {
             phone: data.phone || "",
             address: data.address || "",
             role: "parent",
-            initials: getInitials(fullName || user.email?.split('@')[0] || "")
+            initials: getInitials(fullName || user.email?.split('@')[0] || ""),
+            first_name: data.first_name || "",
+            last_name: data.last_name || ""
           });
         }
       } catch (error) {
@@ -59,7 +67,38 @@ const ProfilePage = () => {
       }
     };
     
+    // Buscar usuários vinculados
+    const fetchLinkedUsers = async () => {
+      if (!user) return;
+      
+      try {
+        // Buscar convites enviados
+        const { data, error } = await supabase
+          .from('invites')
+          .select('*')
+          .eq('inviter_id', user.id);
+          
+        if (error) throw error;
+        
+        if (data) {
+          // Formatar dados dos usuários vinculados
+          const formatted = data.map(invite => ({
+            id: invite.id,
+            email: invite.email,
+            name: invite.email.split('@')[0],
+            initials: getInitials(invite.email.split('@')[0]),
+            status: invite.status
+          }));
+          
+          setLinkedUsers(formatted);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar usuários vinculados:", error);
+      }
+    };
+    
     fetchProfileData();
+    fetchLinkedUsers();
   }, [user]);
   
   const getInitials = (name) => {
@@ -70,28 +109,40 @@ const ProfilePage = () => {
       .toUpperCase();
   };
 
-  const handleCopyInviteLink = () => {
-    // Na implementação real, isso geraria um link de convite baseado no usuário atual
-    const inviteLink = `${window.location.origin}/invite?code=${Math.random().toString(36).substring(2, 10)}`;
-    
-    navigator.clipboard.writeText(inviteLink)
-      .then(() => {
-        toast.success("Link de convite copiado!", {
-          description: "Compartilhe este link com outros responsáveis."
-        });
-      })
-      .catch(() => {
-        toast.error("Erro ao copiar o link");
-      });
-  };
-
-  // Configurações padrão
-  const defaultSettings = {
-    emailNotifications: true,
-    pushNotifications: true,
-    calendarSync: false,
-    expenseReminders: true,
-    documentSharing: true
+  const handleProfileUpdate = () => {
+    setShowEditModal(false);
+    // Recarregar os dados do perfil
+    if (user) {
+      const fetchProfileData = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+            
+          if (error) throw error;
+          
+          if (data) {
+            const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ');
+            setProfileData({
+              name: fullName || user.email?.split('@')[0] || "",
+              email: data.email || user.email || "",
+              phone: data.phone || "",
+              address: data.address || "",
+              role: "parent",
+              initials: getInitials(fullName || user.email?.split('@')[0] || ""),
+              first_name: data.first_name || "",
+              last_name: data.last_name || ""
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao buscar perfil:", error);
+        }
+      };
+      
+      fetchProfileData();
+    }
   };
 
   return (
@@ -185,7 +236,13 @@ const ProfilePage = () => {
         </TabsContent>
         
         <TabsContent value="settings" className="mt-6">
-          <SettingsForm defaultValues={defaultSettings} />
+          <SettingsForm defaultValues={{
+            emailNotifications: true,
+            pushNotifications: true,
+            calendarSync: false,
+            expenseReminders: true,
+            documentSharing: true
+          }} />
         </TabsContent>
         
         <TabsContent value="linked" className="mt-6">
@@ -197,9 +254,9 @@ const ProfilePage = () => {
                   Outros responsáveis com acesso às informações das crianças
                 </CardDescription>
               </div>
-              <Button onClick={handleCopyInviteLink} variant="outline" size="sm">
+              <Button onClick={() => setShowInviteDialog(true)} variant="outline" size="sm">
                 <Link className="h-4 w-4 mr-2" />
-                Gerar Link de Convite
+                Convidar Responsável
               </Button>
             </CardHeader>
             <CardContent>
@@ -230,7 +287,7 @@ const ProfilePage = () => {
                 </div>
               ) : (
                 <div className="py-8 text-center">
-                  <UserPlus className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+                  <Users className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
                   <p className="text-muted-foreground mb-4">
                     Nenhum outro responsável vinculado.
                   </p>
@@ -239,8 +296,8 @@ const ProfilePage = () => {
                     das crianças. Cada responsável terá seu próprio acesso para visualizar
                     e atualizar dados.
                   </p>
-                  <Button onClick={handleCopyInviteLink}>
-                    <UserPlus className="h-4 w-4 mr-2" />
+                  <Button onClick={() => setShowInviteDialog(true)}>
+                    <Users className="h-4 w-4 mr-2" />
                     Convidar Responsável
                   </Button>
                 </div>
@@ -249,6 +306,34 @@ const ProfilePage = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Modal de edição de perfil */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Editar Perfil</DialogTitle>
+          </DialogHeader>
+          <EditProfileForm 
+            defaultValues={{
+              first_name: profileData.first_name,
+              last_name: profileData.last_name,
+              phone: profileData.phone,
+              address: profileData.address
+            }}
+            onSuccess={handleProfileUpdate}
+          />
+        </DialogContent>
+      </Dialog>
+      
+      {/* Modal de convite de responsável */}
+      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Convidar Responsável</DialogTitle>
+          </DialogHeader>
+          <InviteForm />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

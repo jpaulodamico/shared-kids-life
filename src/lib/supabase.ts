@@ -35,3 +35,15 @@ export const testSupabaseConnection = async () => {
     };
   }
 };
+
+// Função para criar a tabela de convites (executar apenas uma vez via console se necessário)
+export const setupInvitesTable = async () => {
+  const { error } = await supabase.rpc('create_invites_table');
+  
+  if (error) {
+    console.error('Erro ao criar tabela de convites:', error);
+    return false;
+  }
+  
+  return true;
+};
