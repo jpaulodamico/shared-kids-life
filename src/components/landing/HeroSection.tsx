@@ -13,7 +13,7 @@ export const HeroSection = () => {
           <div className="md:w-1/2 space-y-6">
             <div className="flex items-center mb-6">
               <img 
-                src="/lovable-uploads/d45e8800-b655-4bbb-b6f1-a16187642158.png" 
+                src="/lovable-uploads/fb531f28-1e20-42cf-a02f-979780af1d34.png" 
                 alt="CoParent Logo" 
                 className="h-20 w-auto mr-4"
               />

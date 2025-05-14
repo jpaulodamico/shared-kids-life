@@ -103,6 +103,11 @@ export function AppSidebar({ defaultCollapsed = false }) {
       <SidebarHeader className="flex items-center justify-between h-16 px-4">
         {!collapsed && (
           <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/fb531f28-1e20-42cf-a02f-979780af1d34.png" 
+              alt="CoParent Logo" 
+              className="h-8 w-auto mr-2"
+            />
             <span className="text-2xl font-bold text-white">CoParent</span>
           </div>
         )}

@@ -10,7 +10,7 @@ export const CTASection = () => {
       <div className="container mx-auto text-center">
         <div className="flex justify-center mb-6">
           <img 
-            src="/lovable-uploads/d45e8800-b655-4bbb-b6f1-a16187642158.png" 
+            src="/lovable-uploads/fb531f28-1e20-42cf-a02f-979780af1d34.png" 
             alt="CoParent Logo" 
             className="h-14 w-auto"
           />
