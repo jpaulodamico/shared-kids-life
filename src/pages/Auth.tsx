@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -256,6 +256,13 @@ const AuthPage = () => {
             </TabsContent>
           </Tabs>
         </Card>
+
+        <div className="mt-6 text-center text-xs text-muted-foreground">
+          Ao criar uma conta ou fazer login, você concorda com nossa{" "}
+          <Link to="/privacy-policy" className="text-primary hover:underline">
+            Política de Privacidade
+          </Link>
+        </div>
       </div>
     </div>
   );

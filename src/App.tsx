@@ -12,6 +12,7 @@ import CalendarPage from "./pages/Calendar";
 import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/" element={<AppLayout />}>
               <Route index element={<IndexPage />} />
               <Route path="children" element={<ChildrenPage />} />
