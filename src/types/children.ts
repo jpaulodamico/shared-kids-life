@@ -16,6 +16,7 @@ export interface Child {
   activities: string[];
   imageUrl: string;
   initials: string;
+  gender: 'male' | 'female';
 }
 
 export interface ScheduleDay {

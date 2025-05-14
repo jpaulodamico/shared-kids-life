@@ -1,8 +1,9 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { User, Baby, Child as ChildIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Sample data
@@ -14,7 +15,8 @@ const children = [
     school: "Escola Miraflores",
     grade: "2º ano",
     imageUrl: "",
-    initials: "SS"
+    initials: "SS",
+    gender: "female" as "female"
   },
   {
     id: "lucas",
@@ -23,7 +25,8 @@ const children = [
     school: "Jardim Infantil Arco-Íris",
     grade: "Pré-escolar",
     imageUrl: "",
-    initials: "LS"
+    initials: "LS",
+    gender: "male" as "male"
   }
 ];
 
@@ -33,6 +36,7 @@ interface ChildProfilesProps {
 
 export function ChildProfiles({ selectedChildId = "all" }: ChildProfilesProps) {
   const navigate = useNavigate();
+  const [profileImages, setProfileImages] = useState<Record<string, string>>({});
   
   // Filtra as crianças com base na seleção (mostra todas ou apenas a selecionada)
   const filteredChildren = selectedChildId === "all" 
@@ -54,9 +58,16 @@ export function ChildProfiles({ selectedChildId = "all" }: ChildProfilesProps) {
             <Card key={child.id} className="border-none shadow-none bg-muted/50">
               <CardContent className="p-4 flex flex-col items-center">
                 <Avatar className="w-16 h-16 mb-2">
-                  <AvatarFallback className="bg-family-100 text-family-700 text-lg">
-                    {child.initials}
-                  </AvatarFallback>
+                  {profileImages[child.id] ? (
+                    <AvatarImage src={profileImages[child.id]} alt={child.name} />
+                  ) : (
+                    <AvatarFallback className={`${child.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'} text-lg`}>
+                      {child.gender === 'female' ? 
+                        <Baby className="h-8 w-8" /> : 
+                        <ChildIcon className="h-8 w-8" />
+                      }
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <h3 className="font-semibold text-center">{child.name}</h3>
                 <p className="text-sm text-muted-foreground">{child.age} anos</p>

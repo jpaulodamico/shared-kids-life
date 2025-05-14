@@ -4,6 +4,12 @@ import { ChildHeader } from "@/components/children/ChildHeader";
 import { ChildContent } from "@/components/children/ChildContent";
 import { children, sofiaSchedule, lucasSchedule } from "@/data/childrenData";
 
+// Adicionar gênero às crianças
+const childrenWithGender = children.map(child => ({
+  ...child,
+  gender: child.name.toLowerCase().includes('sofia') ? 'female' : 'male'
+}));
+
 const ChildrenPage = () => {
   return (
     <div className="space-y-6">
@@ -14,14 +20,14 @@ const ChildrenPage = () => {
 
       <Tabs defaultValue="sofia">
         <TabsList className="mb-6">
-          {children.map((child) => (
+          {childrenWithGender.map((child) => (
             <TabsTrigger key={child.id} value={child.name.toLowerCase().split(' ')[0]}>
               {child.name}
             </TabsTrigger>
           ))}
         </TabsList>
         
-        {children.map((child) => {
+        {childrenWithGender.map((child) => {
           const isFirst = child.id === 1;
           const schedule = isFirst ? sofiaSchedule : lucasSchedule;
           

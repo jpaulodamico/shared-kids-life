@@ -1,26 +1,82 @@
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { 
   Heart, 
   GraduationCap,
-  User
+  User,
+  Upload,
+  Baby,
+  Child as ChildIcon
 } from "lucide-react";
 import { Child } from "@/types/children";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 interface ChildProfileProps {
   child: Child;
 }
 
 export const ChildProfile = ({ child }: ChildProfileProps) => {
+  const [profileImage, setProfileImage] = useState<string>(child.imageUrl || "");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleImageChange = (imageDataUrl: string) => {
+    setProfileImage(imageDataUrl);
+    // Em um caso real, aqui enviaríamos a imagem para o servidor
+    toast.success("Foto de perfil atualizada");
+    setIsDialogOpen(false);
+  };
+
+  const handleImageRemove = () => {
+    setProfileImage("");
+    // Em um caso real, aqui removeríamos a imagem do servidor
+    toast.success("Foto de perfil removida");
+  };
+
   return (
     <Card className="md:col-span-1">
-      <CardHeader className="text-center pb-2">
-        <Avatar className="w-24 h-24 mx-auto mb-2">
-          <AvatarFallback className="bg-family-100 text-family-700 text-3xl">
-            {child.initials}
-          </AvatarFallback>
-        </Avatar>
+      <CardHeader className="text-center pb-2 relative">
+        <div className="relative mx-auto mb-2">
+          <Avatar className="w-24 h-24">
+            {profileImage ? (
+              <AvatarImage src={profileImage} alt={child.name} />
+            ) : (
+              <AvatarFallback className={`text-3xl ${child.gender === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}`}>
+                {child.gender === 'female' ? 
+                  <Baby className="h-12 w-12" /> : 
+                  <ChildIcon className="h-12 w-12" />
+                }
+              </AvatarFallback>
+            )}
+          </Avatar>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                size="icon" 
+                variant="outline"
+                className="absolute bottom-0 right-0 rounded-full h-8 w-8 p-0"
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Atualizar foto de perfil</DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <ImageUpload
+                  value={profileImage}
+                  onChange={handleImageChange}
+                  onRemove={handleImageRemove}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         <CardTitle className="text-xl">{child.name}</CardTitle>
         <p className="text-muted-foreground">{child.age} anos</p>
       </CardHeader>
