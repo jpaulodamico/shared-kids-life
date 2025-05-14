@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, Shield, AlertCircle, UserRound } from "lucide-react";
+import { Phone, Mail, Shield, AlertCircle, UserRound, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGuardians } from "@/hooks/use-guardians";
 import { useUserRole } from "@/hooks/use-user-role";
@@ -90,6 +90,12 @@ export default function GuardiansPage() {
                   <Mail className="h-4 w-4 mr-2" />
                   {guardian.email}
                 </div>
+                {guardian.address && (
+                  <div className="flex items-center text-sm text-muted-foreground md:col-span-2">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {guardian.address}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

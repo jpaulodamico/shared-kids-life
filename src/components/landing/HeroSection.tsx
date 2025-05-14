@@ -43,8 +43,8 @@ export const HeroSection = () => {
           <div className="md:w-1/2">
             <div className="relative">
               <img
-                src="/lovable-uploads/b41d8956-1193-466a-b9b6-45248c715078.png"
-                alt="CoParent aplicativo em smartphones"
+                src="/lovable-uploads/6e8739c6-21c3-460c-9dd9-758d2299401a.png"
+                alt="Calendário de coparentalidade"
                 className="w-full h-auto rounded-2xl shadow-xl"
               />
             </div>

@@ -1,6 +1,6 @@
 
 import { Calendar, DollarSign, FileText, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StatCard } from "@/components/ui/stat-card";
 import { UpcomingEvents } from "@/components/dashboard/UpcomingEvents";
 import { RecentMessages } from "@/components/dashboard/RecentMessages";
@@ -10,20 +10,51 @@ import { ChildSelector } from "@/components/dashboard/ChildSelector";
 import { useChildren } from "@/hooks/use-supabase-data";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/use-user-role";
+import { toast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [selectedChildId, setSelectedChildId] = useState("all");
   const navigate = useNavigate();
   const { children, loading, hasData } = useChildren();
+  const { user } = useAuth();
+  const { isPrimary, loading: roleLoading } = useUserRole();
+  
+  useEffect(() => {
+    // Show a notification to invited users when they first load the dashboard
+    if (!roleLoading && !isPrimary && user) {
+      toast("Você está acessando como responsável convidado. Algumas funcionalidades podem estar limitadas.");
+    }
+  }, [roleLoading, isPrimary, user]);
+  
+  // Se está carregando, mostra um loading state
+  if (loading || roleLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-2/3 mb-8"></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Array(4).fill(0).map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   // Se não há crianças cadastradas, mostra uma mensagem orientando o usuário
-  if (!loading && !hasData) {
+  if (!hasData) {
     return (
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold mb-2">Bem-vindo ao CoParent</h1>
           <p className="text-muted-foreground">
-            Parece que você ainda não configurou nenhuma criança. Vamos começar!
+            {isPrimary 
+              ? "Parece que você ainda não configurou nenhuma criança. Vamos começar!"
+              : "Você foi convidado como responsável, mas não há crianças vinculadas a você ainda."}
           </p>
         </div>
         
@@ -44,44 +75,65 @@ const Dashboard = () => {
               </Button>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-                2
-              </div>
-              <h3 className="font-medium mb-2">Adicione crianças</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Cadastre os perfis das crianças com informações importantes
-              </p>
-              <Button onClick={() => navigate("/app/children")} variant="outline" className="mt-auto">
-                Adicionar Crianças
-              </Button>
-            </div>
+            {isPrimary && (
+              <>
+                <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+                    2
+                  </div>
+                  <h3 className="font-medium mb-2">Adicione crianças</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Cadastre os perfis das crianças com informações importantes
+                  </p>
+                  <Button onClick={() => navigate("/app/children")} variant="outline" className="mt-auto">
+                    Adicionar Crianças
+                  </Button>
+                </div>
+                
+                <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+                    3
+                  </div>
+                  <h3 className="font-medium mb-2">Convide responsáveis</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Convide outros pais ou responsáveis para compartilhar o gerenciamento
+                  </p>
+                  <Button onClick={() => navigate("/app/profile")} variant="outline" className="mt-auto">
+                    Convidar Pessoas
+                  </Button>
+                </div>
+              </>
+            )}
             
-            <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-                3
+            {!isPrimary && (
+              <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm md:col-span-2">
+                <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+                  2
+                </div>
+                <h3 className="font-medium mb-2">Aguarde convite para crianças</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  O responsável principal precisa vincular você a uma criança para que você tenha acesso completo
+                </p>
+                <Button onClick={() => navigate("/app/guardians")} variant="outline" className="mt-auto">
+                  Ver Responsáveis
+                </Button>
               </div>
-              <h3 className="font-medium mb-2">Convide responsáveis</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Convide outros pais ou responsáveis para compartilhar o gerenciamento
-              </p>
-              <Button onClick={() => navigate("/app/profile")} variant="outline" className="mt-auto">
-                Convidar Pessoas
-              </Button>
-            </div>
+            )}
           </div>
           
-          <div className="pt-4">
-            <Button onClick={() => navigate("/welcome")} className="mr-4">
-              Ver tutorial novamente
-            </Button>
-          </div>
+          {isPrimary && (
+            <div className="pt-4">
+              <Button onClick={() => navigate("/welcome")} className="mr-4">
+                Ver tutorial novamente
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // Dados básicos para o dashboard quando não há dados reais
+  // Dados básicos para o dashboard - sem dados de teste
   const emptyChildData = {
     id: "all",
     name: "Todas as crianças",
@@ -134,29 +186,29 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           title="Próximos Eventos" 
-          value={selectedChild.events.toString()} 
+          value="0" 
           description="Esta semana" 
           icon={<Calendar />}
           className="bg-gradient-to-br from-family-50 to-family-100 border-family-200"
         />
         <StatCard 
           title="Mensagens" 
-          value={selectedChild.messages.toString()} 
-          description={`${selectedChild.unreadMessages} não lidas`} 
+          value="0" 
+          description="0 não lidas" 
           icon={<MessageSquare />}
           className="bg-gradient-to-br from-accent-green-50 to-accent-green-100 border-accent-green-200"
         />
         <StatCard 
           title="Despesas" 
-          value={`R$ ${selectedChild.expenses.toLocaleString('pt-BR')},00`} 
+          value="R$ 0,00" 
           description="Este mês" 
           icon={<DollarSign />}
           className="bg-gradient-to-br from-warm-50 to-warm-100 border-warm-200"
         />
         <StatCard 
           title="Documentos" 
-          value={selectedChild.documents.toString()} 
-          description={`${selectedChild.recentDocuments} adicionados recentemente`} 
+          value="0" 
+          description="0 adicionados recentemente" 
           icon={<FileText />}
           className="bg-gradient-to-br from-muted to-muted/70 border-muted/90"
         />

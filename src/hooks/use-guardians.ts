@@ -10,6 +10,7 @@ export type Guardian = {
   first_name: string | null;
   last_name: string | null;
   phone: string | null;
+  address: string | null;  // Added address field
   avatar_url: string | null;
   isPrimary: boolean;
   initials: string;
@@ -96,6 +97,7 @@ export function useGuardians() {
             first_name: profile.first_name,
             last_name: profile.last_name,
             phone: profile.phone,
+            address: profile.address,  // Added address field
             avatar_url: profile.avatar_url,
             isPrimary,
             initials
