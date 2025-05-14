@@ -1,4 +1,3 @@
-
 import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -19,6 +18,7 @@ import { WeekView } from "@/components/calendar/WeekView";
 import { MonthView } from "@/components/calendar/MonthView";
 import { EventForm } from "@/components/calendar/EventForm";
 import { children } from "@/data/childrenData";
+import { toast } from "@/components/ui/use-toast";
 
 export type EventType = 'medical' | 'school' | 'activity' | 'family' | 'other';
 
@@ -33,7 +33,7 @@ export interface CalendarEvent {
   isRecurring?: boolean;
   recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   endRecurrenceDate?: Date;
-  childId?: number; // Add childId to associate events with children
+  childId?: number;
 }
 
 // Child color mapping
@@ -45,7 +45,7 @@ export const CHILD_COLORS: Record<number, string> = {
 
 // Function to get background color based on childId
 export const getChildColor = (childId?: number): string => {
-  if (!childId) return "bg-gray-300"; // Default color for events without a child
+  if (childId === undefined) return "bg-gray-300"; // Default color for events without a child
   return CHILD_COLORS[childId] || "bg-gray-300";
 };
 
@@ -128,6 +128,12 @@ const CalendarPage = () => {
     };
     setEvents([...events, newEvent]);
     setShowDialog(false);
+    
+    toast({
+      title: "Evento adicionado",
+      description: `${newEvent.title} foi adicionado ao calendário.`,
+      variant: "success",
+    });
   };
 
   const toggleFilter = (type: EventType) => {

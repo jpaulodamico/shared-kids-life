@@ -156,7 +156,7 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
               aria-expanded={childOpen}
               className="w-full justify-between"
             >
-              {childId ? children.find(c => c.id === childId)?.name || "Selecione uma criança" : "Selecione uma criança"}
+              {childId !== undefined ? children.find(c => c.id === childId)?.name || "Selecione uma criança" : "Selecione uma criança"}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
