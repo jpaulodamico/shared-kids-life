@@ -12,7 +12,7 @@ import { LogIn, UserPlus } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading, signIn, signUp, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +40,7 @@ const AuthPage = () => {
     try {
       setIsLoading(true);
       console.log("Attempting Google sign in from button");
-      const { error } = await useAuth().signInWithGoogle();
+      const { error } = await signInWithGoogle();
       
       if (error) {
         console.error("Erro no login com Google:", error);
@@ -65,7 +65,7 @@ const AuthPage = () => {
         return;
       }
       
-      const { error } = await useAuth().signIn(email, password);
+      const { error } = await signIn(email, password);
       
       if (error) {
         console.error("Login error:", error);
@@ -102,7 +102,7 @@ const AuthPage = () => {
         return;
       }
       
-      const { error } = await useAuth().signUp(email, password);
+      const { error } = await signUp(email, password);
       
       if (error) {
         console.error("Registration error:", error);
