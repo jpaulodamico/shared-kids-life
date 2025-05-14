@@ -46,22 +46,22 @@ export const FeaturesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
-            icon={Calendar} 
+            icon={<Calendar />} 
             title="Calendário Compartilhado" 
             description="Gerencie o tempo com os filhos, compromissos escolares e atividades extracurriculares."
           />
           <FeatureCard 
-            icon={MessageSquare} 
+            icon={<MessageSquare />} 
             title="Mensagens Organizadas" 
             description="Comunique-se de forma eficiente sobre assuntos relacionados aos filhos."
           />
           <FeatureCard 
-            icon={Receipt} 
+            icon={<Receipt />} 
             title="Controle de Despesas" 
             description="Registre, compartilhe e divida facilmente os gastos relacionados aos filhos."
           />
           <FeatureCard 
-            icon={FileText} 
+            icon={<FileText />} 
             title="Documentos Importantes" 
             description="Mantenha registros médicos, escolares e outros documentos em um só lugar."
           />
