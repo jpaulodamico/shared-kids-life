@@ -7,8 +7,8 @@ type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any, data: any }>;
+  signIn: (email: string, password: string, captchaToken?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, captchaToken?: string) => Promise<{ error: any, data: any }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: any }>;
 };
@@ -50,13 +50,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const signIn = async (email: string, password: string, captchaToken?: string) => {
+    const options = captchaToken ? {
+      captchaToken
+    } : undefined;
+    
+    const { error } = await supabase.auth.signInWithPassword({ 
+      email, 
+      password 
+    }, options);
+    
     return { error };
   };
 
-  const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+  const signUp = async (email: string, password: string, captchaToken?: string) => {
+    const options = captchaToken ? {
+      captchaToken
+    } : undefined;
+    
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password 
+    }, options);
+    
     return { data, error };
   };
 

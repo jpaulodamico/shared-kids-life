@@ -16,13 +16,20 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const { error } = await signIn(email, password);
+      if (!captchaToken) {
+        toast.error("Por favor, complete a verificação do captcha");
+        setIsLoading(false);
+        return;
+      }
+      
+      const { error } = await signIn(email, password, captchaToken);
       
       if (error) {
         toast.error("Falha no login", {
@@ -45,7 +52,13 @@ const AuthPage = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await signUp(email, password);
+      if (!captchaToken) {
+        toast.error("Por favor, complete a verificação do captcha");
+        setIsLoading(false);
+        return;
+      }
+      
+      const { error } = await signUp(email, password, captchaToken);
       
       if (error) {
         toast.error("Falha no registro", {
@@ -113,6 +126,8 @@ const AuthPage = () => {
                 handleSignUp={handleSignUp}
                 handleGoogleSignIn={handleGoogleSignIn}
                 isLoading={isLoading}
+                captchaToken={captchaToken}
+                setCaptchaToken={setCaptchaToken}
               />
             </TabsContent>
             
@@ -127,6 +142,8 @@ const AuthPage = () => {
                 handleSignIn={handleSignIn}
                 handleGoogleSignIn={handleGoogleSignIn}
                 isLoading={isLoading}
+                captchaToken={captchaToken}
+                setCaptchaToken={setCaptchaToken}
               />
             </TabsContent>
           </Tabs>

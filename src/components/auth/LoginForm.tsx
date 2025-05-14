@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { GoogleButton } from "./GoogleButton";
 import { PasswordInput } from "./PasswordInput";
+import { TurnstileCaptcha } from "./TurnstileCaptcha";
 
 interface LoginFormProps {
   email: string;
@@ -16,6 +17,8 @@ interface LoginFormProps {
   handleSignIn: (e: React.FormEvent) => Promise<void>;
   handleGoogleSignIn: () => Promise<void>;
   isLoading: boolean;
+  captchaToken: string;
+  setCaptchaToken: (token: string) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -27,7 +30,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   toggleShowPassword,
   handleSignIn,
   handleGoogleSignIn,
-  isLoading
+  isLoading,
+  captchaToken,
+  setCaptchaToken
 }) => {
   return (
     <form onSubmit={handleSignIn}>
@@ -58,10 +63,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             toggleShowPassword={toggleShowPassword}
           />
         </div>
+
+        <TurnstileCaptcha onVerify={setCaptchaToken} />
       </CardContent>
       
       <CardFooter className="flex flex-col space-y-4">
-        <Button className="w-full" type="submit" disabled={isLoading}>
+        <Button className="w-full" type="submit" disabled={isLoading || !captchaToken}>
           {isLoading ? "Entrando..." : "Entrar"}
         </Button>
         
