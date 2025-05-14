@@ -46,7 +46,10 @@ export function InviteForm() {
   };
 
   const onSubmit = async (values: FormValues) => {
-    if (!user) return;
+    if (!user) {
+      toast.error("Você precisa estar logado para convidar familiares");
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -85,6 +88,11 @@ export function InviteForm() {
   };
 
   const handleCopyLink = () => {
+    if (!inviteLink) {
+      toast.error("Nenhum link para copiar");
+      return;
+    }
+    
     navigator.clipboard.writeText(inviteLink)
       .then(() => {
         toast.success("Link copiado para a área de transferência");
@@ -92,6 +100,17 @@ export function InviteForm() {
       .catch(() => {
         toast.error("Erro ao copiar o link");
       });
+  };
+
+  const shareViaWhatsApp = () => {
+    if (!inviteLink) {
+      toast.error("Nenhum link para compartilhar");
+      return;
+    }
+    
+    const whatsappText = encodeURIComponent(`Olá! Convido você a participar do CoParent. Use este link para se juntar: ${inviteLink}`);
+    const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -169,9 +188,9 @@ export function InviteForm() {
             <p className="mb-2">Compartilhe este link com o familiar para que ele possa se juntar à aplicação.</p>
             <div className="flex items-center gap-2">
               <Button
-                variant="link"
-                className="p-0 h-auto flex items-center gap-1 text-sm"
-                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Olá! Convido você a participar do CoParent. Use este link para se juntar: ${inviteLink}`)}`, '_blank')}
+                variant="secondary"
+                className="flex items-center gap-1 text-sm"
+                onClick={shareViaWhatsApp}
               >
                 <ExternalLink className="h-4 w-4" />
                 Compartilhar via WhatsApp
