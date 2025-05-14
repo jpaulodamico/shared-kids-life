@@ -11,7 +11,7 @@ import {
   BookOpen,
   Shield, 
   Users, 
-  HandShake,
+  Handshake,
   Star
 } from "lucide-react";
 
