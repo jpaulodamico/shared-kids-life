@@ -14,7 +14,7 @@ export const HeroSection = () => {
               <img 
                 src="/lovable-uploads/d45e8800-b655-4bbb-b6f1-a16187642158.png" 
                 alt="CoParent Logo" 
-                className="h-16 w-auto mr-3"
+                className="h-20 w-auto mr-4"
               />
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-tight">
                 CoParent
