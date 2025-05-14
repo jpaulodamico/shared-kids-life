@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -24,7 +24,11 @@ const AuthPage = () => {
     
     try {
       if (!captchaToken) {
-        toast.error("Por favor, complete a verificação do captcha");
+        toast({
+          title: "Erro de verificação",
+          description: "Por favor, complete a verificação do captcha",
+          variant: "destructive"
+        });
         setIsLoading(false);
         return;
       }
@@ -32,16 +36,25 @@ const AuthPage = () => {
       const { error } = await signIn(email, password, captchaToken);
       
       if (error) {
-        toast.error("Falha no login", {
-          description: error.message
+        console.error("Erro de login:", error);
+        toast({
+          title: "Falha no login",
+          description: error.message,
+          variant: "destructive"
         });
       } else {
-        toast.success("Login bem-sucedido!");
-        navigate("/");
+        toast({
+          title: "Login bem-sucedido!",
+          variant: "success"
+        });
+        navigate("/app");
       }
     } catch (err) {
-      toast.error("Ocorreu um erro ao fazer login");
-      console.error(err);
+      console.error("Erro inesperado:", err);
+      toast({
+        title: "Ocorreu um erro ao fazer login",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +66,11 @@ const AuthPage = () => {
     
     try {
       if (!captchaToken) {
-        toast.error("Por favor, complete a verificação do captcha");
+        toast({
+          title: "Erro de verificação",
+          description: "Por favor, complete a verificação do captcha",
+          variant: "destructive"
+        });
         setIsLoading(false);
         return;
       }
@@ -61,17 +78,25 @@ const AuthPage = () => {
       const { error } = await signUp(email, password, captchaToken);
       
       if (error) {
-        toast.error("Falha no registro", {
-          description: error.message
+        console.error("Erro de registro:", error);
+        toast({
+          title: "Falha no registro",
+          description: error.message,
+          variant: "destructive"
         });
       } else {
-        toast.success("Registro bem-sucedido!", {
-          description: "Verifique seu e-mail para confirmar o cadastro."
+        toast({
+          title: "Registro bem-sucedido!",
+          description: "Verifique seu e-mail para confirmar o cadastro.",
+          variant: "success"
         });
       }
     } catch (err) {
-      toast.error("Ocorreu um erro ao fazer registro");
-      console.error(err);
+      console.error("Erro inesperado:", err);
+      toast({
+        title: "Ocorreu um erro ao fazer registro",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -82,13 +107,18 @@ const AuthPage = () => {
       const { error } = await signInWithGoogle();
       
       if (error) {
-        toast.error("Falha no login com Google", {
-          description: error.message
+        toast({
+          title: "Falha no login com Google",
+          description: error.message,
+          variant: "destructive"
         });
       }
     } catch (err) {
-      toast.error("Ocorreu um erro ao fazer login com Google");
-      console.error(err);
+      console.error("Erro inesperado:", err);
+      toast({
+        title: "Ocorreu um erro ao fazer login com Google",
+        variant: "destructive"
+      });
     }
   };
 
