@@ -44,10 +44,10 @@ const ChildrenPage = () => {
         description="Gerenciamento de informações importantes sobre as crianças"
       />
 
-      <Tabs defaultValue={children[0]?.id || ""}>
+      <Tabs defaultValue={String(children[0]?.id) || ""}>
         <TabsList className="mb-6">
           {children.map((child) => (
-            <TabsTrigger key={child.id} value={child.id}>
+            <TabsTrigger key={child.id} value={String(child.id)}>
               {child.name}
             </TabsTrigger>
           ))}
@@ -64,7 +64,7 @@ const ChildrenPage = () => {
           ];
           
           return (
-            <TabsContent key={child.id} value={child.id} className="m-0">
+            <TabsContent key={child.id} value={String(child.id)} className="m-0">
               <ChildContent child={child} schedule={schedule} />
             </TabsContent>
           );
