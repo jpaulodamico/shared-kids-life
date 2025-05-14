@@ -2,18 +2,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { AuthHeader } from "@/components/auth/AuthHeader";
-import { GoogleButton } from "@/components/auth/GoogleButton";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { LogIn, UserPlus } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signInWithGoogle, user } = useAuth();
+  const { user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,12 +40,13 @@ const AuthPage = () => {
     try {
       setIsLoading(true);
       console.log("Attempting Google sign in from button");
-      const { error } = await signInWithGoogle();
+      const { error } = await useAuth().signInWithGoogle();
       
       if (error) {
         console.error("Erro no login com Google:", error);
         toast.error(`Falha no login com Google: ${error.message}`);
       }
+      // Se não houver erro, a redireção para o Google será acionada automaticamente
     } catch (err) {
       console.error("Erro inesperado:", err);
       toast.error("Ocorreu um erro ao fazer login com Google");
@@ -93,6 +93,15 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
+
+  // Se estiver carregando, mostra spinner
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/50 p-4">

@@ -23,12 +23,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     console.log("Setting up auth state change listener");
+    
     // Set up authentication state change listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.log("Auth state changed:", event, newSession?.user?.email);
         setSession(newSession);
         setUser(newSession?.user || null);
+        
+        // Mensagem para o usuário quando ele é autenticado com sucesso
+        if (event === 'SIGNED_IN' && newSession?.user) {
+          toast.success("Login realizado com sucesso", {
+            description: `Bem-vindo, ${newSession.user.email}`
+          });
+        }
+        
+        // Mensagem quando o usuário faz logout
+        if (event === 'SIGNED_OUT') {
+          toast.info("Você saiu da sua conta", {
+            description: "Volte logo!"
+          });
+        }
+        
         setLoading(false);
       }
     );
@@ -104,13 +120,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log("Initiating Google sign in");
     try {
       // Usar a URL atual como redirect
-      const redirectTo = `${window.location.origin}/auth`;
+      const origin = window.location.origin;
+      const redirectTo = `${origin}/auth`;
+      
       console.log("Redirect URL:", redirectTo);
       
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectTo
+          redirectTo: redirectTo,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       });
       

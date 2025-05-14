@@ -44,6 +44,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="seu@email.com"
             required
+            disabled={isLoading}
+            autoComplete="email"
           />
         </div>
         
@@ -57,13 +59,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             onChange={(e) => setPassword(e.target.value)}
             showPassword={showPassword}
             toggleShowPassword={toggleShowPassword}
+            disabled={isLoading}
           />
         </div>
       </CardContent>
       
       <CardFooter className="flex flex-col space-y-4">
         <Button className="w-full" type="submit" disabled={isLoading}>
-          {isLoading ? "Entrando..." : (
+          {isLoading ? (
+            <>
+              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+              Entrando...
+            </>
+          ) : (
             <>
               <LogIn className="mr-2 h-4 w-4" />
               Entrar

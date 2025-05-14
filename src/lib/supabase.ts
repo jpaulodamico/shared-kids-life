@@ -1,32 +1,19 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Tenta acessar as variáveis de ambiente do Supabase
-let supabaseUrl: string;
-let supabaseAnonKey: string;
+// Projeto Supabase
+const projectId = 'ycmfluvtqrwuaxjhzhxj';
+const supabaseUrl = `https://${projectId}.supabase.co`;
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
 
-try {
-  const projectId = 'ycmfluvtqrwuaxjhzhxj';
-  supabaseUrl = `https://${projectId}.supabase.co`;
-  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Variáveis de ambiente do Supabase não encontradas');
-  }
-} catch (error) {
-  // Valor temporário para desenvolvimento
-  console.warn('⚠️ Usando valores de desenvolvimento para o Supabase. Conecte-se ao Supabase para produção.');
-  
-  // Valores temporários para permitir o desenvolvimento sem erro de tela em branco
-  supabaseUrl = 'https://ycmfluvtqrwuaxjhzhxj.supabase.co';
-  supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA';
-}
-
+// Criamos o cliente Supabase com as configurações de autenticação corretas
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+    storage: localStorage, // Usamos localStorage para persistir a sessão
+    persistSession: true,  // Persistir a sessão entre recargas da página
+    autoRefreshToken: true, // Renovar o token automaticamente
+    detectSessionInUrl: true, // Detectar a sessão na URL (importante para OAuth)
+    flowType: 'implicit' // Usar fluxo implícito para OAuth
   }
 });
 

@@ -13,7 +13,7 @@ export const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick, isLoading, 
     <Button
       type="button"
       variant="outline"
-      className="w-full flex items-center justify-center gap-2 cursor-pointer"
+      className="w-full flex items-center justify-center gap-2"
       onClick={onClick}
       disabled={isLoading}
     >

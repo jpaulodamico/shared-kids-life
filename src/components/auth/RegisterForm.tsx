@@ -44,6 +44,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="seu@email.com"
             required
+            disabled={isLoading}
+            autoComplete="email"
           />
         </div>
         
@@ -58,6 +60,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             showPassword={showPassword}
             toggleShowPassword={toggleShowPassword}
             minLength={6}
+            disabled={isLoading}
           />
           <p className="text-xs text-muted-foreground">
             A senha deve ter pelo menos 6 caracteres
@@ -67,7 +70,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       
       <CardFooter className="flex flex-col space-y-4">
         <Button className="w-full" type="submit" disabled={isLoading}>
-          {isLoading ? "Registrando..." : (
+          {isLoading ? (
+            <>
+              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+              Registrando...
+            </>
+          ) : (
             <>
               <UserPlus className="mr-2 h-4 w-4" />
               Criar Conta
