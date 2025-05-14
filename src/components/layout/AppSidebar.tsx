@@ -10,7 +10,8 @@ import {
   Home,
   Users,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 
 import {
@@ -24,47 +25,50 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
+  SidebarFooter
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "../ui/button";
 
 // Menu items for navigation
 const menuItems = [
   {
     title: "Dashboard",
     icon: Home,
-    path: "/",
+    path: "/app",
   },
   {
     title: "Calendário",
     icon: Calendar,
-    path: "/calendar",
+    path: "/app/calendar",
   },
   {
     title: "Mensagens",
     icon: MessageSquare,
-    path: "/messages",
+    path: "/app/messages",
   },
   {
     title: "Despesas",
     icon: DollarSign,
-    path: "/expenses",
+    path: "/app/expenses",
   },
   {
     title: "Documentos",
     icon: FileText,
-    path: "/documents",
+    path: "/app/documents",
   },
   {
     title: "Crianças",
     icon: Users,
-    path: "/children",
+    path: "/app/children",
   },
   {
     title: "Perfil",
     icon: User,
-    path: "/profile",
+    path: "/app/profile",
   },
 ];
 
@@ -72,16 +76,21 @@ export function AppSidebar({ defaultCollapsed = false }) {
   const isMobile = useIsMobile();
   const sidebar = useSidebar();
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const { signOut } = useAuth();
   
   // Set initial collapsed state based on prop
   useEffect(() => {
     setCollapsed(defaultCollapsed);
   }, [defaultCollapsed]);
 
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   return (
     <Sidebar 
       className={cn(
-        "transition-all duration-300",
+        "transition-all duration-300 flex flex-col",
         collapsed && !isMobile ? "w-[80px]" : "w-[280px]"
       )}
     >
@@ -98,7 +107,7 @@ export function AppSidebar({ defaultCollapsed = false }) {
           {collapsed ? <Menu size={20} /> : <X size={20} />}
         </button>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex-1">
         <SidebarGroup>
           <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
             Menu
@@ -129,6 +138,18 @@ export function AppSidebar({ defaultCollapsed = false }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      {/* Adicionar o footer com botão de logout */}
+      <SidebarFooter className="mt-auto p-4 border-t border-sidebar-accent/30">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-white"
+          onClick={handleLogout}
+        >
+          <LogOut size={20} />
+          {!collapsed && <span className="ml-2">Sair</span>}
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
