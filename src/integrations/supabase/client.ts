@@ -25,7 +25,7 @@ export const supabase = createClient<Database>(
     },
     realtime: {
       // Configurações para melhorar a experiência em tempo real
-      reconnectAttempts: 5,
+      reconnectAfterMs: (tries) => Math.min(1000 * (tries + 1), 10000),
       timeout: 60000 // 60 segundos
     }
   }
