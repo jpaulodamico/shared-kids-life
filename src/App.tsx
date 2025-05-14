@@ -10,6 +10,7 @@ import ExpensesPage from "./pages/Expenses";
 import DocumentsPage from "./pages/Documents";
 import CalendarPage from "./pages/Calendar";
 import ProfilePage from "./pages/Profile";
+import GuardiansPage from "./pages/Guardians";
 import WelcomePage from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
@@ -37,6 +38,7 @@ function App() {
               <Route path="documents" element={<DocumentsPage />} />
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="guardians" element={<GuardiansPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             

@@ -8,7 +8,7 @@ import { ProfileTab } from "@/components/profile/ProfileTab";
 import { LinkedUsersTab } from "@/components/profile/LinkedUsersTab";
 import { ProfileDialogs } from "@/components/profile/ProfileDialogs";
 import { useProfileData } from "@/hooks/use-profile-data";
-import { useLinkedUsers } from "@/hooks/use-linked-users";
+import { useUserRole } from "@/hooks/use-user-role";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -16,7 +16,7 @@ const ProfilePage = () => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const { user } = useAuth();
   const { profileData, refreshProfileData } = useProfileData();
-  const { linkedUsers } = useLinkedUsers();
+  const { isPrimary } = useUserRole();
 
   const handleProfileUpdate = () => {
     setShowEditModal(false);
@@ -68,7 +68,6 @@ const ProfilePage = () => {
         
         <TabsContent value="linked" className="mt-6">
           <LinkedUsersTab 
-            linkedUsers={linkedUsers}
             onInvite={() => setShowInviteDialog(true)}
           />
         </TabsContent>
@@ -86,6 +85,7 @@ const ProfilePage = () => {
           address: profileData.address
         }}
         onProfileUpdate={handleProfileUpdate}
+        isPrimary={isPrimary}
       />
     </div>
   );

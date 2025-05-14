@@ -1,20 +1,41 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Link } from "lucide-react";
+import { Users, Link, Shield } from "lucide-react";
+import { useGuardians } from "@/hooks/use-guardians";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useUserRole } from "@/hooks/use-user-role";
 
 interface LinkedUsersTabProps {
-  linkedUsers: Array<{
-    id: string;
-    email: string;
-    name: string;
-    initials: string;
-    status: string;
-  }>;
   onInvite: () => void;
 }
 
-export function LinkedUsersTab({ linkedUsers, onInvite }: LinkedUsersTabProps) {
+export function LinkedUsersTab({ onInvite }: LinkedUsersTabProps) {
+  const { guardians, loading: loadingGuardians } = useGuardians();
+  const { isPrimary, loading: loadingRole } = useUserRole();
+  
+  const loading = loadingGuardians || loadingRole;
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  // Filter out the current user from the guardians list
+  const linkedUsers = guardians.filter(g => !g.isPrimary || guardians.length === 1);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -24,10 +45,12 @@ export function LinkedUsersTab({ linkedUsers, onInvite }: LinkedUsersTabProps) {
             Outros responsáveis com acesso às informações das crianças
           </CardDescription>
         </div>
-        <Button onClick={onInvite} variant="outline" size="sm">
-          <Link className="h-4 w-4 mr-2" />
-          Convidar Responsável
-        </Button>
+        {isPrimary && (
+          <Button onClick={onInvite} variant="outline" size="sm">
+            <Link className="h-4 w-4 mr-2" />
+            Convidar Responsável
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         {linkedUsers.length > 0 ? (
@@ -39,17 +62,20 @@ export function LinkedUsersTab({ linkedUsers, onInvite }: LinkedUsersTabProps) {
                     {user.initials}
                   </div>
                   <div>
-                    <h3 className="font-medium">{user.name}</h3>
+                    <h3 className="font-medium">
+                      {user.first_name ? `${user.first_name} ${user.last_name || ''}` : user.email}
+                    </h3>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs ${
-                    user.status === 'active' 
-                      ? 'bg-accent-green-100 text-accent-green-700' 
-                      : 'bg-warm-100 text-warm-700'
+                    user.isPrimary 
+                      ? 'bg-family-100 text-family-700' 
+                      : 'bg-muted text-muted-foreground'
                   }`}>
-                    {user.status === 'active' ? 'Ativo' : 'Pendente'}
+                    <Shield className="h-3 w-3 mr-1" />
+                    {user.isPrimary ? 'Responsável Principal' : 'Responsável Convidado'}
                   </span>
                 </div>
               </div>
@@ -66,10 +92,12 @@ export function LinkedUsersTab({ linkedUsers, onInvite }: LinkedUsersTabProps) {
               das crianças. Cada responsável terá seu próprio acesso para visualizar
               e atualizar dados.
             </p>
-            <Button onClick={onInvite}>
-              <Users className="h-4 w-4 mr-2" />
-              Convidar Responsável
-            </Button>
+            {isPrimary && (
+              <Button onClick={onInvite}>
+                <Users className="h-4 w-4 mr-2" />
+                Convidar Responsável
+              </Button>
+            )}
           </div>
         )}
       </CardContent>

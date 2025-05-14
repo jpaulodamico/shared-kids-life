@@ -1,7 +1,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { EditProfileForm } from "@/components/profile/EditProfileForm";
-import { InviteForm } from "@/components/profile/InviteForm";
+import { EditProfileForm } from "./EditProfileForm";
+import { InviteForm } from "./InviteForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface ProfileDialogsProps {
   showEditModal: boolean;
@@ -15,38 +17,46 @@ interface ProfileDialogsProps {
     address: string;
   };
   onProfileUpdate: () => void;
+  isPrimary?: boolean;
 }
 
-export function ProfileDialogs({ 
-  showEditModal, 
-  showInviteDialog, 
-  setShowEditModal, 
-  setShowInviteDialog, 
-  defaultValues, 
-  onProfileUpdate 
+export function ProfileDialogs({
+  showEditModal,
+  showInviteDialog,
+  setShowEditModal,
+  setShowInviteDialog,
+  defaultValues,
+  onProfileUpdate,
+  isPrimary
 }: ProfileDialogsProps) {
   return (
     <>
-      {/* Modal de edição de perfil */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Perfil</DialogTitle>
           </DialogHeader>
           <EditProfileForm 
-            defaultValues={defaultValues}
+            defaultValues={defaultValues} 
             onSuccess={onProfileUpdate}
           />
         </DialogContent>
       </Dialog>
-      
-      {/* Modal de convite de responsável */}
+
       <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Convidar Responsável</DialogTitle>
           </DialogHeader>
-          <InviteForm onClose={() => setShowInviteDialog(false)} />
+          {isPrimary === false && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Apenas o responsável principal pode enviar convites para outros responsáveis.
+              </AlertDescription>
+            </Alert>
+          )}
+          {isPrimary !== false && <InviteForm onClose={() => setShowInviteDialog(false)} />}
         </DialogContent>
       </Dialog>
     </>

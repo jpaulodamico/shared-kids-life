@@ -11,7 +11,8 @@ import {
   Users,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Shield
 } from "lucide-react";
 
 import {
@@ -64,6 +65,11 @@ const menuItems = [
     title: "Crianças",
     icon: Users,
     path: "/app/children",
+  },
+  {
+    title: "Responsáveis",
+    icon: Shield,
+    path: "/app/guardians",
   },
   {
     title: "Perfil",

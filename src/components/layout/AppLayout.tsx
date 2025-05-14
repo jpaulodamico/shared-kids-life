@@ -6,10 +6,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { testSupabaseConnection } from "@/lib/supabase";
+import { useUserRole } from "@/hooks/use-user-role";
+import { Shield } from "lucide-react";
+import { toast } from "sonner";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { user, loading } = useAuth();
+  const { isPrimary, loading: loadingRole } = useUserRole();
   const navigate = useNavigate();
   const [connectionStatus, setConnectionStatus] = useState<{
     checking: boolean;
@@ -19,6 +23,8 @@ export function AppLayout() {
     checking: true,
     connected: false,
   });
+  
+  const [roleNotified, setRoleNotified] = useState(false);
 
   // Verificar se é o primeiro acesso do usuário
   const welcomeShown = localStorage.getItem("welcomeShown") === "true";
@@ -35,6 +41,18 @@ export function AppLayout() {
 
     checkConnection();
   }, []);
+  
+  // Show a toast notification when role is determined
+  useEffect(() => {
+    if (!loadingRole && isPrimary === false && !roleNotified && user) {
+      toast("Acesso de Responsável Convidado", {
+        description: "Você está acessando como um responsável convidado. Algumas funcionalidades são limitadas.",
+        icon: <Shield className="h-4 w-4 text-family-700" />,
+        duration: 6000,
+      });
+      setRoleNotified(true);
+    }
+  }, [loadingRole, isPrimary, roleNotified, user]);
   
   // Redireciona para a página de boas-vindas se for o primeiro login
   useEffect(() => {

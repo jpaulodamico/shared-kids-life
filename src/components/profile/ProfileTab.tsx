@@ -2,6 +2,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileCard } from "@/components/profile/ProfileCard";
 import { useChildren } from "@/hooks/use-supabase-data";
+import { useUserRole } from "@/hooks/use-user-role";
+import { Badge } from "@/components/ui/badge";
+import { Shield } from "lucide-react";
 
 interface ProfileTabProps {
   profileData: {
@@ -20,6 +23,7 @@ interface ProfileTabProps {
 
 export function ProfileTab({ profileData, onEdit, user }: ProfileTabProps) {
   const { children } = useChildren();
+  const { isPrimary, loading: roleLoading } = useUserRole();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -31,11 +35,24 @@ export function ProfileTab({ profileData, onEdit, user }: ProfileTabProps) {
       </div>
       <div className="md:col-span-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Informações Adicionais</CardTitle>
-            <CardDescription>
-              Dados complementares do seu perfil
-            </CardDescription>
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle>Informações Adicionais</CardTitle>
+                <CardDescription>
+                  Dados complementares do seu perfil
+                </CardDescription>
+              </div>
+              {!roleLoading && (
+                <Badge className={`${isPrimary 
+                  ? "bg-family-100 text-family-700 hover:bg-family-200" 
+                  : "bg-muted text-muted-foreground"}`}
+                >
+                  <Shield className="h-3 w-3 mr-1" />
+                  {isPrimary ? "Responsável Principal" : "Responsável Convidado"}
+                </Badge>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
@@ -60,7 +77,7 @@ export function ProfileTab({ profileData, onEdit, user }: ProfileTabProps) {
             
             <div>
               <h3 className="font-medium mb-2">Relação</h3>
-              <p className="text-sm">Responsável Principal</p>
+              <p className="text-sm">{isPrimary ? "Responsável Principal" : "Responsável Convidado"}</p>
             </div>
             
             <div>
