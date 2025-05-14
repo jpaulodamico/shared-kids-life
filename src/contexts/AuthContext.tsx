@@ -51,27 +51,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signIn = async (email: string, password: string, captchaToken?: string) => {
-    const options = captchaToken ? {
-      captchaToken
-    } : undefined;
-    
-    const { error } = await supabase.auth.signInWithPassword({ 
-      email, 
-      password 
-    }, options);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: {
+        captchaToken
+      }
+    });
     
     return { error };
   };
 
   const signUp = async (email: string, password: string, captchaToken?: string) => {
-    const options = captchaToken ? {
-      captchaToken
-    } : undefined;
-    
-    const { data, error } = await supabase.auth.signUp({ 
-      email, 
-      password 
-    }, options);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        captchaToken
+      }
+    });
     
     return { data, error };
   };

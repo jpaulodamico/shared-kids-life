@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Turnstile } from 'react-turnstile';
+import { useTurnstile } from 'react-turnstile';
 
 interface TurnstileCaptchaProps {
   onVerify: (token: string) => void;
@@ -11,14 +11,20 @@ export const TurnstileCaptcha: React.FC<TurnstileCaptchaProps> = ({
   onVerify,
   theme = 'light'
 }) => {
+  const siteKey = import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || '0x4AAAAAABdKbG9XF0ofwQCl';
+  
+  const turnstile = useTurnstile({
+    siteKey: siteKey,
+    options: {
+      theme: theme,
+      refreshExpired: 'auto',
+    },
+    callback: (token: string) => {
+      onVerify(token);
+    },
+  });
+
   return (
-    <div className="w-full flex justify-center my-2">
-      <Turnstile
-        sitekey={import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || ''}
-        onVerify={onVerify}
-        theme={theme}
-        refreshExpired="auto"
-      />
-    </div>
+    <div className="w-full flex justify-center my-2" ref={turnstile.ref} />
   );
 };
