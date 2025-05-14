@@ -30,13 +30,13 @@ export const HeroSection = () => {
             </div>
           </div>
           <div className="md:w-1/2">
-            <AspectRatio ratio={16 / 10} className="overflow-hidden rounded-2xl shadow-xl bg-white">
+            <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1536640712-4d4c36ff0e41?auto=format&fit=crop&q=80"
-                alt="Coparentalidade feliz"
-                className="object-cover w-full h-full"
+                src="/lovable-uploads/b41d8956-1193-466a-b9b6-45248c715078.png"
+                alt="CoParent aplicativo em smartphones"
+                className="w-full h-auto rounded-2xl shadow-xl"
               />
-            </AspectRatio>
+            </div>
           </div>
         </div>
       </div>
