@@ -9,6 +9,8 @@ import { Child } from "@/types/children";
 import { formSchema, FormValues } from "./form/childFormTypes";
 import { BasicInfoFields } from "./form/BasicInfoFields";
 import { HealthInfoFields } from "./form/HealthInfoFields";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AddChildFormProps {
   onSuccess: () => void;
@@ -16,6 +18,7 @@ interface AddChildFormProps {
 
 export function AddChildForm({ onSuccess }: AddChildFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,30 +41,71 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
   });
 
   const onSubmit = async (data: FormValues) => {
+    if (!user) {
+      toast.error("Você precisa estar logado para adicionar uma criança");
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
-      // Simulating API call with a timeout
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Converte strings separadas por vírgula em arrays
+      const allergiesArray = data.allergies ? data.allergies.split(',').map(item => item.trim()) : [];
+      const medicationsArray = data.medications ? data.medications.split(',').map(item => item.trim()) : [];
+      const activitiesArray = data.activities ? data.activities.split(',').map(item => item.trim()) : [];
+      const initials = data.name.split(' ').map(part => part[0]).join('');
       
-      // Convert comma-separated strings to arrays
-      const newChild: Partial<Child> = {
-        ...data,
-        allergies: data.allergies ? data.allergies.split(',').map(item => item.trim()) : [],
-        medications: data.medications ? data.medications.split(',').map(item => item.trim()) : [],
-        activities: data.activities ? data.activities.split(',').map(item => item.trim()) : [],
-        imageUrl: "",
-        initials: data.name.split(' ').map(part => part[0]).join(''),
-      };
+      // Insere a criança na tabela children
+      const { data: childData, error: childError } = await supabase
+        .from('children')
+        .insert({
+          name: data.name,
+          age: data.age,
+          birthday: data.birthday,
+          school: data.school,
+          grade: data.grade,
+          teacher: data.teacher,
+          blood_type: data.bloodType,
+          allergies: allergiesArray,
+          medications: medicationsArray,
+          height: data.height,
+          weight: data.weight,
+          last_checkup: data.lastCheckup,
+          activities: activitiesArray,
+          gender: data.gender,
+          image_url: "",
+          initials: initials
+        })
+        .select('id')
+        .single();
       
-      // Show success message
+      if (childError) {
+        throw childError;
+      }
+      
+      // Associa a criança ao usuário na tabela user_children
+      const { error: relationError } = await supabase
+        .from('user_children')
+        .insert({
+          user_id: user.id,
+          child_id: childData.id,
+          relation: 'responsável' // Pode ser configurável no futuro
+        });
+      
+      if (relationError) {
+        throw relationError;
+      }
+      
+      // Mostra mensagem de sucesso
       toast.success("Criança adicionada com sucesso!");
       
-      // Close the dialog
+      // Fecha o diálogo
       onSuccess();
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao adicionar criança");
+      toast.error("Erro ao adicionar criança", { 
+        description: "Verifique os dados e tente novamente." 
+      });
     } finally {
       setIsSubmitting(false);
     }
