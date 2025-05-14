@@ -2,9 +2,7 @@
 import { CalendarClock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { children } from "@/data/childrenData";
 import { cn } from "@/lib/utils";
 
 // Child color mapping (should match the one in Calendar.tsx)
@@ -13,41 +11,8 @@ const CHILD_COLORS: Record<string, string> = {
   "lucas": "bg-blue-500 text-white",   // Lucas - blue
 };
 
-// Sample data
-const allEvents = [
-  {
-    id: 1,
-    title: "Consulta Médica",
-    date: "Amanhã às 14:00",
-    location: "Clínica Pediátrica",
-    type: "health",
-    childId: "sofia"
-  },
-  {
-    id: 2,
-    title: "Reunião Escolar",
-    date: "Segunda-feira às 10:00",
-    location: "Escola Miraflores",
-    type: "education",
-    childId: "sofia"
-  },
-  {
-    id: 3,
-    title: "Aula de Natação",
-    date: "Quarta-feira às 16:30",
-    location: "Academia Splash",
-    type: "activity",
-    childId: "lucas"
-  },
-  {
-    id: 4,
-    title: "Festa de Aniversário",
-    date: "Sábado às 15:00",
-    location: "Buffet Infantil Alegria",
-    type: "social",
-    childId: "lucas"
-  }
-];
+// Sem dados de teste - array vazio
+const allEvents = [];
 
 const getBadgeVariant = (type: string) => {
   switch (type) {
@@ -98,15 +63,21 @@ export function UpcomingEvents({ selectedChildId = "all" }: UpcomingEventsProps)
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Não há eventos agendados.</p>
+          <div className="py-8 text-center">
+            <CalendarClock className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-muted-foreground">Nenhum evento agendado.</p>
+            <p className="text-sm text-muted-foreground/70">
+              Adicione eventos no calendário para visualizá-los aqui.
+            </p>
+          </div>
         )}
         <div className="mt-4 pt-4 border-t">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => navigate("/calendar")}
+            onClick={() => navigate("/app/calendar")}
           >
-            Ver calendário completo
+            Ir para Calendário
           </Button>
         </div>
       </CardContent>

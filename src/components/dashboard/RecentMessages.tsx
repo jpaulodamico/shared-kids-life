@@ -6,39 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Sample data
-const allMessages = [
-  {
-    id: 1,
-    sender: "Maria Silva",
-    message: "Confirme se Sofia tomou o medicamento para a alergia hoje de manhã.",
-    time: "Hoje, 10:23",
-    unread: true,
-    avatar: "",
-    initials: "MS",
-    childId: "sofia"
-  },
-  {
-    id: 2,
-    sender: "João Santos",
-    message: "Comprei materiais escolares novos para o Lucas. Estão com você?",
-    time: "Ontem, 18:45",
-    unread: true,
-    avatar: "",
-    initials: "JS",
-    childId: "lucas"
-  },
-  {
-    id: 3,
-    sender: "Coordenadora Escola",
-    message: "Reunião de pais remarcada para a próxima semana.",
-    time: "Segunda-feira",
-    unread: false,
-    avatar: "",
-    initials: "CE",
-    childId: "all"
-  }
-];
+// Sem dados de teste - array vazio
+const allMessages = [];
 
 interface RecentMessagesProps {
   selectedChildId?: string;
@@ -83,15 +52,21 @@ export function RecentMessages({ selectedChildId = "all" }: RecentMessagesProps)
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Não há mensagens recentes.</p>
+          <div className="py-8 text-center">
+            <MessageSquare className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-muted-foreground">Nenhuma mensagem recente.</p>
+            <p className="text-sm text-muted-foreground/70">
+              Aqui será exibido o histórico de comunicação com outros responsáveis.
+            </p>
+          </div>
         )}
         <div className="mt-4 pt-4 border-t">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => navigate("/messages")}
+            onClick={() => navigate("/app/messages")}
           >
-            Ver todas as mensagens
+            Ir para Mensagens
           </Button>
         </div>
       </CardContent>

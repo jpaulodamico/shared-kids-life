@@ -1,56 +1,64 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { Child } from "@/types/children";
+import { useAuth } from "@/contexts/AuthContext";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
-import { Child } from '@/types/children';
-import { toast } from 'sonner';
-
-export function useChildren() {
+// Hook para obter dados das crianças do Supabase
+export const useChildren = () => {
   const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hasData, setHasData] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!user) return;
-    
-    async function fetchChildren() {
+    const fetchChildren = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         
-        // Busca as crianças associadas ao usuário através da tabela user_children
-        const { data: userChildren, error: relationError } = await supabase
+        // Busca as crianças do usuário na tabela user_children
+        const { data: userChildrenData, error: userChildrenError } = await supabase
           .from('user_children')
           .select('child_id')
           .eq('user_id', user.id);
-        
-        if (relationError) {
-          throw relationError;
+          
+        if (userChildrenError) {
+          throw userChildrenError;
         }
         
-        if (!userChildren || userChildren.length === 0) {
+        // Se não há crianças associadas ao usuário
+        if (!userChildrenData || userChildrenData.length === 0) {
           setChildren([]);
+          setHasData(false);
           setLoading(false);
           return;
         }
         
-        const childIds = userChildren.map(relation => relation.child_id);
+        // Extrai os IDs das crianças
+        const childIds = userChildrenData.map(uc => uc.child_id);
         
-        // Busca os detalhes das crianças
-        const { data, error } = await supabase
+        // Busca os dados completos das crianças
+        const { data: childrenData, error: childrenError } = await supabase
           .from('children')
           .select('*')
           .in('id', childIds);
           
-        if (error) {
-          throw error;
+        if (childrenError) {
+          throw childrenError;
         }
         
         // Mapeia os dados para o formato esperado pela aplicação
-        const formattedChildren = data.map(child => ({
+        const formattedChildren = childrenData.map(child => ({
           id: child.id,
           name: child.name,
           age: child.age,
           birthday: child.birthday,
+          gender: child.gender,
           school: child.school,
           grade: child.grade,
           teacher: child.teacher,
@@ -62,25 +70,29 @@ export function useChildren() {
           lastCheckup: child.last_checkup,
           activities: child.activities || [],
           imageUrl: child.image_url,
-          initials: child.initials,
-          gender: child.gender as 'male' | 'female',
+          initials: child.initials || child.name.split(' ').map(part => part[0]).join('')
         }));
         
         setChildren(formattedChildren);
-      } catch (error) {
-        console.error('Erro ao buscar crianças:', error);
-        toast.error('Não foi possível carregar os dados das crianças');
+        setHasData(formattedChildren.length > 0);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching children:', err);
+        setError('Erro ao buscar dados das crianças');
+        setChildren([]);
+        setHasData(false);
       } finally {
         setLoading(false);
       }
-    }
-    
+    };
+
     fetchChildren();
   }, [user]);
-  
-  return { children, loading };
-}
 
+  return { children, loading, error, hasData };
+};
+
+// Hook para obter dados de uma criança específica
 export function useChildById(childId: string | null) {
   const [child, setChild] = useState<Child | null>(null);
   const [loading, setLoading] = useState(true);

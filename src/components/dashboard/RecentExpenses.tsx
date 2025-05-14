@@ -5,45 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 
-// Sample data
-const allExpenses = [
-  {
-    id: 1,
-    category: "Educação",
-    total: 850,
-    shared: 425,
-    percentage: 50,
-    color: "bg-family-500",
-    childId: "sofia"
-  },
-  {
-    id: 2,
-    category: "Saúde",
-    total: 320,
-    shared: 160,
-    percentage: 50,
-    color: "bg-destructive",
-    childId: "lucas"
-  },
-  {
-    id: 3,
-    category: "Atividades Extracurriculares",
-    total: 450,
-    shared: 225,
-    percentage: 50,
-    color: "bg-accent-green-500",
-    childId: "sofia"
-  },
-  {
-    id: 4,
-    category: "Alimentação",
-    total: 380,
-    shared: 190,
-    percentage: 50,
-    color: "bg-warm-500",
-    childId: "all"
-  }
-];
+// Sem dados de teste - array vazio
+const allExpenses = [];
 
 interface RecentExpensesProps {
   selectedChildId?: string;
@@ -70,22 +33,32 @@ export function RecentExpenses({ selectedChildId = "all" }: RecentExpensesProps)
         <DollarSign className="w-4 h-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {expenses.map((expense) => (
-            <div key={expense.id} className="space-y-1">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium">{expense.category}</h3>
-                <span className="text-sm font-medium">R$ {expense.total.toFixed(2)}</span>
+        {expenses.length > 0 ? (
+          <div className="space-y-4">
+            {expenses.map((expense) => (
+              <div key={expense.id} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">{expense.category}</h3>
+                  <span className="text-sm font-medium">R$ {expense.total.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Progress value={expense.percentage} className={expense.color} />
+                  <span className="text-xs text-muted-foreground">
+                    {expense.percentage}% compartilhado
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Progress value={expense.percentage} className={expense.color} />
-                <span className="text-xs text-muted-foreground">
-                  {expense.percentage}% compartilhado
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-8 text-center">
+            <DollarSign className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+            <p className="text-muted-foreground">Nenhuma despesa registrada.</p>
+            <p className="text-sm text-muted-foreground/70">
+              Registre despesas relacionadas às crianças para visualizá-las aqui.
+            </p>
+          </div>
+        )}
         <div className="mt-4 pt-4 border-t flex justify-between items-center">
           <div>
             <p className="text-sm font-medium">Total compartilhado</p>
@@ -94,7 +67,7 @@ export function RecentExpenses({ selectedChildId = "all" }: RecentExpensesProps)
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => navigate("/expenses")}
+            onClick={() => navigate("/app/expenses")}
           >
             Ver detalhes
           </Button>
