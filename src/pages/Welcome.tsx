@@ -14,10 +14,12 @@ const WelcomePage = () => {
     toast.success("Bem-vindo ao CoParent!", {
       description: "Agora você pode começar a usar todas as funcionalidades do aplicativo."
     });
-    navigate("/");
     
     // Salva no localStorage que o usuário já viu a tela de boas-vindas
     localStorage.setItem("welcomeShown", "true");
+    
+    // Navegue para a página principal após marcar como visto
+    navigate("/app");
   };
 
   return (

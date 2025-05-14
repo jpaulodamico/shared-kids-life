@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -21,7 +21,14 @@ const AuthPage = () => {
   // Redirect to /app if already authenticated
   useEffect(() => {
     if (user) {
-      navigate("/app");
+      // Verificar se é o primeiro acesso (welcome não foi mostrado)
+      const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+      
+      if (!welcomeShown) {
+        navigate("/welcome");
+      } else {
+        navigate("/app");
+      }
     }
   }, [user, navigate]);
 
@@ -30,41 +37,29 @@ const AuthPage = () => {
     setIsLoading(true);
     
     try {
-      // While the buttons should be disabled without a captcha token,
-      // this is an extra safety check
+      console.log("Login attempt with token:", captchaToken ? "provided" : "not provided");
+      
       if (!captchaToken) {
-        toast({
-          title: "Erro de verificação",
-          description: "Por favor, complete a verificação do captcha",
-          variant: "destructive"
-        });
+        toast.error("Por favor, complete a verificação do captcha");
         setIsLoading(false);
         return;
       }
       
-      console.log("Attempting login with captcha token:", captchaToken.substring(0, 10) + "...");
       const { error } = await signIn(email, password, captchaToken);
       
       if (error) {
         console.error("Erro de login:", error);
-        toast({
-          title: "Falha no login",
-          description: error.message,
-          variant: "destructive"
-        });
+        toast.error(`Falha no login: ${error.message}`);
       } else {
-        toast({
-          title: "Login bem-sucedido!",
-          variant: "success"
-        });
-        navigate("/app");
+        toast.success("Login bem-sucedido!");
+        
+        // Verificar se o welcome já foi mostrado antes de redirecionar
+        const welcomeShown = localStorage.getItem("welcomeShown") === "true";
+        navigate(welcomeShown ? "/app" : "/welcome");
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
-      toast({
-        title: "Ocorreu um erro ao fazer login",
-        variant: "destructive"
-      });
+      toast.error("Ocorreu um erro ao fazer login");
     } finally {
       setIsLoading(false);
     }
@@ -75,39 +70,25 @@ const AuthPage = () => {
     setIsLoading(true);
     
     try {
+      console.log("Registration attempt with token:", captchaToken ? "provided" : "not provided");
+      
       if (!captchaToken) {
-        toast({
-          title: "Erro de verificação",
-          description: "Por favor, complete a verificação do captcha",
-          variant: "destructive"
-        });
+        toast.error("Por favor, complete a verificação do captcha");
         setIsLoading(false);
         return;
       }
       
-      console.log("Attempting registration with captcha token:", captchaToken.substring(0, 10) + "...");
       const { error } = await signUp(email, password, captchaToken);
       
       if (error) {
         console.error("Erro de registro:", error);
-        toast({
-          title: "Falha no registro",
-          description: error.message,
-          variant: "destructive"
-        });
+        toast.error(`Falha no registro: ${error.message}`);
       } else {
-        toast({
-          title: "Registro bem-sucedido!",
-          description: "Verifique seu e-mail para confirmar o cadastro.",
-          variant: "success"
-        });
+        toast.success("Registro bem-sucedido! Verifique seu e-mail para confirmar o cadastro.");
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
-      toast({
-        title: "Ocorreu um erro ao fazer registro",
-        variant: "destructive"
-      });
+      toast.error("Ocorreu um erro ao fazer registro");
     } finally {
       setIsLoading(false);
     }
@@ -118,23 +99,16 @@ const AuthPage = () => {
       const { error } = await signInWithGoogle();
       
       if (error) {
-        toast({
-          title: "Falha no login com Google",
-          description: error.message,
-          variant: "destructive"
-        });
+        toast.error(`Falha no login com Google: ${error.message}`);
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
-      toast({
-        title: "Ocorreu um erro ao fazer login com Google",
-        variant: "destructive"
-      });
+      toast.error("Ocorreu um erro ao fazer login com Google");
     }
   };
 
   const handleCaptchaVerify = (token: string) => {
-    console.log("Captcha verified:", token.substring(0, 10) + "...");
+    console.log("Captcha verificado:", token.substring(0, 10) + "...");
     setCaptchaToken(token);
   };
 

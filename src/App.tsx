@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AppLayout } from "./components/layout/AppLayout";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -39,6 +39,9 @@ function App() {
               <Route path="profile" element={<ProfilePage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
+            
+            {/* Redirecionar para a landing page caso a URL não seja reconhecida */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
       </AuthProvider>
