@@ -2,26 +2,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { toast } from "sonner";
 import { AuthHeader } from "@/components/auth/AuthHeader";
-import { RegisterForm } from "@/components/auth/RegisterForm";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { GoogleButton } from "@/components/auth/GoogleButton";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, signInWithGoogle, user } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const { signInWithGoogle, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
 
   // Redirect to /app if already authenticated
   useEffect(() => {
     if (user) {
-      // Verificar se é o primeiro acesso (welcome não foi mostrado)
+      // Check if this is the first access (welcome not shown)
       const welcomeShown = localStorage.getItem("welcomeShown") === "true";
       
       if (!welcomeShown) {
@@ -32,88 +26,21 @@ const AuthPage = () => {
     }
   }, [user, navigate]);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      console.log("Login attempt with token:", captchaToken ? "provided" : "not provided");
-      
-      if (!captchaToken) {
-        toast.error("Por favor, complete a verificação do captcha");
-        setIsLoading(false);
-        return;
-      }
-      
-      const { error } = await signIn(email, password, captchaToken);
-      
-      if (error) {
-        console.error("Erro de login:", error);
-        toast.error(`Falha no login: ${error.message}`);
-      } else {
-        toast.success("Login bem-sucedido!");
-        
-        // Verificar se o welcome já foi mostrado antes de redirecionar
-        const welcomeShown = localStorage.getItem("welcomeShown") === "true";
-        navigate(welcomeShown ? "/app" : "/welcome");
-      }
-    } catch (err) {
-      console.error("Erro inesperado:", err);
-      toast.error("Ocorreu um erro ao fazer login");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      console.log("Registration attempt with token:", captchaToken ? "provided" : "not provided");
-      
-      if (!captchaToken) {
-        toast.error("Por favor, complete a verificação do captcha");
-        setIsLoading(false);
-        return;
-      }
-      
-      const { error } = await signUp(email, password, captchaToken);
-      
-      if (error) {
-        console.error("Erro de registro:", error);
-        toast.error(`Falha no registro: ${error.message}`);
-      } else {
-        toast.success("Registro bem-sucedido! Verifique seu e-mail para confirmar o cadastro.");
-      }
-    } catch (err) {
-      console.error("Erro inesperado:", err);
-      toast.error("Ocorreu um erro ao fazer registro");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleGoogleSignIn = async () => {
     try {
+      setIsLoading(true);
       const { error } = await signInWithGoogle();
       
       if (error) {
+        console.error("Erro no login com Google:", error);
         toast.error(`Falha no login com Google: ${error.message}`);
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
       toast.error("Ocorreu um erro ao fazer login com Google");
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleCaptchaVerify = (token: string) => {
-    console.log("Captcha verificado:", token.substring(0, 10) + "...");
-    setCaptchaToken(token);
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
@@ -122,51 +49,24 @@ const AuthPage = () => {
         <AuthHeader />
         
         <Card className="w-full">
-          <CardHeader>
+          <CardHeader className="text-center">
             <CardTitle>Bem-vindo(a) ao CoParent</CardTitle>
             <CardDescription>
-              Crie sua conta ou faça login para começar
+              Entre ou crie sua conta para começar
             </CardDescription>
           </CardHeader>
           
-          <Tabs defaultValue="register" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="register">Registrar</TabsTrigger>
-              <TabsTrigger value="login">Login</TabsTrigger>
-            </TabsList>
+          <CardContent className="flex flex-col items-center py-6">
+            <p className="text-center text-muted-foreground mb-6">
+              Use sua conta Google para acessar o CoParent de forma rápida e segura
+            </p>
             
-            <TabsContent value="register">
-              <RegisterForm 
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                showPassword={showPassword}
-                toggleShowPassword={toggleShowPassword}
-                handleSignUp={handleSignUp}
-                handleGoogleSignIn={handleGoogleSignIn}
-                isLoading={isLoading}
-                captchaToken={captchaToken}
-                setCaptchaToken={handleCaptchaVerify}
-              />
-            </TabsContent>
-            
-            <TabsContent value="login">
-              <LoginForm 
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                showPassword={showPassword}
-                toggleShowPassword={toggleShowPassword}
-                handleSignIn={handleSignIn}
-                handleGoogleSignIn={handleGoogleSignIn}
-                isLoading={isLoading}
-                captchaToken={captchaToken}
-                setCaptchaToken={handleCaptchaVerify}
-              />
-            </TabsContent>
-          </Tabs>
+            <GoogleButton 
+              onClick={handleGoogleSignIn}
+              isLoading={isLoading}
+              label="Continuar com o Google"
+            />
+          </CardContent>
         </Card>
 
         <div className="mt-6 text-center text-xs text-muted-foreground">

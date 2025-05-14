@@ -22,13 +22,16 @@ const WelcomePage = () => {
     navigate("/app");
   };
 
+  // Get user's first name from email
+  const firstName = user?.email ? user.email.split('@')[0] : '';
+
   return (
     <div className="min-h-screen flex flex-col items-center p-4 md:p-8 bg-muted/30">
       <div className="max-w-4xl w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Bem-vindo ao CoParent!</h1>
           <p className="text-muted-foreground text-lg">
-            {user?.email && `Olá ${user.email.split('@')[0]}, `}
+            {firstName && `Olá ${firstName}, `}
             estamos felizes por você estar aqui. Vamos conhecer a plataforma!
           </p>
         </div>

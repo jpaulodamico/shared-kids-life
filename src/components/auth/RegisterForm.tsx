@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { GoogleButton } from "./GoogleButton";
 import { PasswordInput } from "./PasswordInput";
-import { TurnstileCaptcha } from "./TurnstileCaptcha";
 
 interface RegisterFormProps {
   email: string;
@@ -17,8 +16,6 @@ interface RegisterFormProps {
   handleSignUp: (e: React.FormEvent) => Promise<void>;
   handleGoogleSignIn: () => Promise<void>;
   isLoading: boolean;
-  captchaToken: string;
-  setCaptchaToken: (token: string) => void;
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({
@@ -30,9 +27,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   toggleShowPassword,
   handleSignUp,
   handleGoogleSignIn,
-  isLoading,
-  captchaToken,
-  setCaptchaToken
+  isLoading
 }) => {
   return (
     <form onSubmit={handleSignUp}>
@@ -67,12 +62,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             A senha deve ter pelo menos 6 caracteres
           </p>
         </div>
-
-        <TurnstileCaptcha onVerify={setCaptchaToken} />
       </CardContent>
       
       <CardFooter className="flex flex-col space-y-4">
-        <Button className="w-full" type="submit" disabled={isLoading || !captchaToken}>
+        <Button className="w-full" type="submit" disabled={isLoading}>
           {isLoading ? "Registrando..." : "Criar Conta"}
         </Button>
         

@@ -2,7 +2,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_CLOUDFLARE_TURNSTILE_SITE_KEY: string;
+  // Environment variables can be added here when needed
 }
 
 interface ImportMeta {
