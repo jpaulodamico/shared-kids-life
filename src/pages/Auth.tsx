@@ -18,6 +18,8 @@ const AuthPage = () => {
   const location = useLocation();
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
+  
+  // Make sure we properly pick up the activeTab from location state
   const [activeTab, setActiveTab] = useState(
     location.state?.activeTab || "login"
   );
