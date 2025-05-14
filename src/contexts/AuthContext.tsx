@@ -24,50 +24,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log("Setting up auth state change listener");
     
-    // Set up authentication state change listener FIRST
-    const { data } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
-        console.log("Auth state changed:", event, newSession?.user?.email);
-        setSession(newSession);
-        setUser(newSession?.user || null);
-        
-        // Mensagem para o usuário quando ele é autenticado com sucesso
-        if (event === 'SIGNED_IN' && newSession?.user) {
-          toast.success("Login realizado com sucesso", {
-            description: `Bem-vindo, ${newSession.user.email}`
-          });
-        }
-        
-        // Mensagem quando o usuário faz logout
-        if (event === 'SIGNED_OUT') {
-          toast.info("Você saiu da sua conta", {
-            description: "Volte logo!"
-          });
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // THEN check the current session
-    const getSession = async () => {
-      console.log("Getting current session");
-      const { data: { session }, error } = await supabase.auth.getSession();
+    // First set up the listener to catch any auth state changes
+    const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
+      console.log("Auth state changed:", event, newSession?.user?.email);
       
-      if (error) {
-        console.error('Erro ao carregar sessão:', error);
-        toast.error('Erro ao carregar sessão', {
-          description: error.message
+      setSession(newSession);
+      setUser(newSession?.user || null);
+      
+      // Show success message on successful sign in
+      if (event === 'SIGNED_IN' && newSession?.user) {
+        toast.success("Login realizado com sucesso", {
+          description: `Bem-vindo, ${newSession.user.email}`
         });
       }
       
-      console.log("Current session:", session?.user?.email);
-      setSession(session);
-      setUser(session?.user || null);
+      // Show message on sign out
+      if (event === 'SIGNED_OUT') {
+        toast.info("Você saiu da sua conta", {
+          description: "Volte logo!"
+        });
+      }
+      
       setLoading(false);
+    });
+
+    // Then check for an existing session
+    const getInitialSession = async () => {
+      try {
+        console.log("Getting current session");
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Erro ao carregar sessão:', error);
+          toast.error('Erro ao carregar sessão', {
+            description: error.message
+          });
+        }
+        
+        console.log("Current session:", session?.user?.email);
+        setSession(session);
+        setUser(session?.user || null);
+      } catch (e) {
+        console.error("Error checking session:", e);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    getSession();
+    getInitialSession();
 
     return () => {
       console.log("Unsubscribing from auth state changes");
@@ -82,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password
       });
       
+      if (error) console.error("Sign in error:", error);
       return { error };
     } catch (error) {
       console.error("Error during sign in:", error);
@@ -96,6 +101,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password
       });
       
+      if (error) console.error("Sign up error:", error);
+      else if (data.user) {
+        toast.success("Conta criada com sucesso!", {
+          description: "Verifique seu email para confirmar sua conta."
+        });
+      }
       return { data, error };
     } catch (error) {
       console.error("Error during sign up:", error);
@@ -106,7 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     try {
       console.log("Signing out");
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       console.log("Signed out successfully");
     } catch (error) {
       console.error("Error during sign out:", error);
@@ -130,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectTo,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
