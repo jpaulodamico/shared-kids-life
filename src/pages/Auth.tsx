@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Google } from "lucide-react";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +61,21 @@ const AuthPage = () => {
       console.error(err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        toast.error("Falha no login com Google", {
+          description: error.message
+        });
+      }
+    } catch (err) {
+      toast.error("Ocorreu um erro ao fazer login com Google");
+      console.error(err);
     }
   };
 
@@ -137,7 +152,7 @@ const AuthPage = () => {
                   </div>
                 </CardContent>
                 
-                <CardFooter>
+                <CardFooter className="flex flex-col space-y-4">
                   <Button className="w-full" type="submit" disabled={isLoading}>
                     {isLoading ? "Registrando..." : "Criar Conta"}
                   </Button>
@@ -186,9 +201,25 @@ const AuthPage = () => {
                   </div>
                 </CardContent>
                 
-                <CardFooter>
+                <CardFooter className="flex flex-col space-y-4">
                   <Button className="w-full" type="submit" disabled={isLoading}>
                     {isLoading ? "Entrando..." : "Entrar"}
+                  </Button>
+                  
+                  <div className="relative w-full flex items-center justify-center my-2">
+                    <hr className="w-full border-t border-gray-300" />
+                    <span className="absolute bg-white px-2 text-xs text-gray-500">ou</span>
+                  </div>
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                  >
+                    <Google size={18} />
+                    Fazer login com o Google
                   </Button>
                 </CardFooter>
               </form>
