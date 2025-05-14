@@ -14,6 +14,7 @@ import WelcomePage from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
@@ -21,10 +22,14 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            {/* Páginas públicas */}
+            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/welcome" element={<WelcomePage />} />
-            <Route path="/" element={<AppLayout />}>
+            
+            {/* Páginas protegidas (requerem autenticação) */}
+            <Route path="/app" element={<AppLayout />}>
               <Route index element={<IndexPage />} />
               <Route path="children" element={<ChildrenPage />} />
               <Route path="messages" element={<MessagesPage />} />
