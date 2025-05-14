@@ -10,6 +10,7 @@ import ExpensesPage from "./pages/Expenses";
 import DocumentsPage from "./pages/Documents";
 import CalendarPage from "./pages/Calendar";
 import ProfilePage from "./pages/Profile";
+import WelcomePage from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/welcome" element={<WelcomePage />} />
             <Route path="/" element={<AppLayout />}>
               <Route index element={<IndexPage />} />
               <Route path="children" element={<ChildrenPage />} />

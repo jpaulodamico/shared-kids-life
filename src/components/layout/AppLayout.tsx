@@ -1,5 +1,5 @@
 
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -10,6 +10,7 @@ import { testSupabaseConnection } from "@/lib/supabase";
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [connectionStatus, setConnectionStatus] = useState<{
     checking: boolean;
     connected: boolean;
@@ -18,6 +19,9 @@ export function AppLayout() {
     checking: true,
     connected: false,
   });
+
+  // Verificar se é o primeiro acesso do usuário
+  const welcomeShown = localStorage.getItem("welcomeShown") === "true";
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -31,6 +35,13 @@ export function AppLayout() {
 
     checkConnection();
   }, []);
+  
+  // Redireciona para a página de boas-vindas se for o primeiro login
+  useEffect(() => {
+    if (!loading && user && !welcomeShown) {
+      navigate("/welcome");
+    }
+  }, [loading, user, welcomeShown, navigate]);
   
   // Redireciona para a página de autenticação se não houver usuário logado
   if (!loading && !user) {
