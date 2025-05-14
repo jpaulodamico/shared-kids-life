@@ -11,7 +11,7 @@ import { AuthFooter } from "@/components/auth/AuthFooter";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { LogIn, UserPlus } from "lucide-react";
 import { useProfileData } from "@/hooks/use-profile-data";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -19,10 +19,20 @@ const AuthPage = () => {
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
   
+  console.log("Auth page loaded. Location state:", location.state);
+  
   // Make sure we properly pick up the activeTab from location state
   const [activeTab, setActiveTab] = useState(
     location.state?.activeTab || "login"
   );
+  
+  useEffect(() => {
+    // Update activeTab when location.state changes
+    if (location.state?.activeTab) {
+      console.log("Setting active tab to:", location.state.activeTab);
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
   
   const {
     email,

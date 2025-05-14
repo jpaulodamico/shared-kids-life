@@ -9,10 +9,12 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
+    console.log("Get started button clicked, navigating to /auth");
     navigate("/auth", { state: { activeTab: "register" } });
   };
   
   const handleLearnMore = () => {
+    console.log("Learn more button clicked, navigating to /auth");
     navigate("/auth", { state: { activeTab: "login" } });
   };
 

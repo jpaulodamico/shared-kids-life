@@ -8,6 +8,7 @@ export const CTASection = () => {
   const navigate = useNavigate();
 
   const handleCreateAccount = () => {
+    console.log("Create account button clicked, navigating to /auth");
     navigate("/auth", { state: { activeTab: "register" } });
   };
 

@@ -7,10 +7,12 @@ export const Header = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
+    console.log("Login button clicked, navigating to /auth");
     navigate("/auth", { state: { activeTab: "login" } });
   };
 
   const handleSignupClick = () => {
+    console.log("Signup button clicked, navigating to /auth");
     navigate("/auth", { state: { activeTab: "register" } });
   };
 
