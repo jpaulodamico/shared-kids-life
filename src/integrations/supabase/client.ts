@@ -6,9 +6,6 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://ycmfluvtqrwuaxjhzhxj.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbWZsdXZ0cXJ3dWF4amh6aHhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcxODk1MTMsImV4cCI6MjA2Mjc2NTUxM30.6ZhAMFQQHylpwCkpyR_Bk5HTFUTNwCZSCzLQrWaEHAA";
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
-
 export const supabase = createClient<Database>(
   SUPABASE_URL, 
   SUPABASE_PUBLISHABLE_KEY,
@@ -17,8 +14,19 @@ export const supabase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true, // Important for OAuth (Google login)
-      flowType: 'implicit' // Use implicit flow for OAuth
+      detectSessionInUrl: true, // Importante para OAuth (login do Google)
+      flowType: 'implicit' // Usar fluxo implícito para OAuth
+    },
+    global: {
+      // Melhorias de desempenho para produção
+      fetch: (...args) => fetch(...args),
+      headers: {
+        'X-App-Version': '1.0.0'
+      }
+    },
+    realtime: {
+      // Configurações para melhorar a experiência em tempo real
+      eventsPerSecond: 10
     }
   }
 );

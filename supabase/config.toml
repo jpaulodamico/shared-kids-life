@@ -1,1 +1,17 @@
+
+# This is the Supabase configuration file for the project
+# It defines the connection to the Supabase instance
+
+# Supabase Project ID
 project_id = "ycmfluvtqrwuaxjhzhxj"
+
+# Versão do Supabase CLI
+version = 1
+
+# Configurações de desenvolvimento local
+[development]
+auto_refresh = true
+
+# Configurações de produção
+[production]
+auto_refresh = false
