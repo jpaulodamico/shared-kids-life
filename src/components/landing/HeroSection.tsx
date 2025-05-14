@@ -10,9 +10,19 @@ export const HeroSection = () => {
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
           <div className="md:w-1/2 space-y-6">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <div className="flex items-center mb-6">
+              <img 
+                src="/lovable-uploads/d45e8800-b655-4bbb-b6f1-a16187642158.png" 
+                alt="CoParent Logo" 
+                className="h-16 w-auto mr-3"
+              />
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary leading-tight">
+                CoParent
+              </h1>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               Simplifique a <span className="text-primary">coparentalidade</span> e foque no que mais importa
-            </h1>
+            </h2>
             <p className="text-xl text-gray-600">
               Gerencie em conjunto a vida dos seus filhos com tranquilidade, transparência e organização, mesmo à distância.
             </p>

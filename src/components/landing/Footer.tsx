@@ -9,10 +9,12 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold mr-2">
-                C<span className="text-accent">P</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-800">CoParent</h3>
+              <img 
+                src="/lovable-uploads/d45e8800-b655-4bbb-b6f1-a16187642158.png" 
+                alt="CoParent Logo" 
+                className="h-10 w-auto mr-2"
+              />
+              <h3 className="text-xl font-bold text-primary">CoParent</h3>
             </div>
             <p className="text-gray-600">
               Facilitando a gestão compartilhada da vida das crianças desde 2023.
