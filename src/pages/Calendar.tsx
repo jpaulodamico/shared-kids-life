@@ -129,10 +129,7 @@ const CalendarPage = () => {
     setEvents([...events, newEvent]);
     setShowDialog(false);
     
-    toast({
-      title: "Evento adicionado",
-      description: `${newEvent.title} foi adicionado ao calendário.`,
-    });
+    toast(`${newEvent.title} foi adicionado ao calendário.`);
   };
 
   const toggleFilter = (type: EventType) => {
