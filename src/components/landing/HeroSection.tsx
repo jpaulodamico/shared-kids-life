@@ -1,21 +1,18 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { AppTitle } from "@/components/ui/app-title";
 
 export const HeroSection = () => {
-  const navigate = useNavigate();
-
   const handleGetStarted = () => {
     console.log("Get started button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "register" } });
+    window.location.href = "/auth?tab=register";
   };
   
   const handleLearnMore = () => {
     console.log("Learn more button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "login" } });
+    window.location.href = "/auth?tab=login";
   };
 
   return (

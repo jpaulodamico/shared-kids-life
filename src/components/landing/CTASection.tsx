@@ -1,15 +1,12 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AppTitle } from "@/components/ui/app-title";
 
 export const CTASection = () => {
-  const navigate = useNavigate();
-
   const handleCreateAccount = () => {
     console.log("Create account button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "register" } });
+    window.location.href = "/auth?tab=register";
   };
 
   return (

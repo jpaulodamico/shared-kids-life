@@ -8,13 +8,13 @@ export const Header = () => {
 
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
-    // Navigate to auth page with login tab active
-    navigate("/auth", { state: { activeTab: "login" } });
+    // Force a full navigation to the auth page with replace
+    window.location.href = "/auth?tab=login";
   };
 
   const handleSignupClick = () => {
     console.log("Signup button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "register" } });
+    window.location.href = "/auth?tab=register";
   };
 
   return (

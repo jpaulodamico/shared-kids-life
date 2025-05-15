@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,25 +16,29 @@ import { toast } from "sonner";
 const AuthPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
   
   console.log("Auth page loaded. Location state:", location.state);
+  console.log("Search params:", Object.fromEntries([...searchParams]));
   
-  // Get the active tab from location state or default to "login"
-  const initialTab = location.state?.activeTab || "login";
+  // Get the active tab from URL parameter, location state, or default to "login"
+  const tabFromURL = searchParams.get('tab');
+  const initialTab = tabFromURL || location.state?.activeTab || "login";
   console.log("Initial tab set to:", initialTab);
   
-  // Make sure we properly pick up the activeTab from location state
+  // Make sure we properly pick up the activeTab
   const [activeTab, setActiveTab] = useState(initialTab);
   
   useEffect(() => {
-    // Update activeTab when location.state changes
-    if (location.state?.activeTab) {
-      console.log("Setting active tab to:", location.state.activeTab);
-      setActiveTab(location.state.activeTab);
+    // Update activeTab when location or URL parameters change
+    const newTab = searchParams.get('tab') || location.state?.activeTab;
+    if (newTab) {
+      console.log("Setting active tab to:", newTab);
+      setActiveTab(newTab);
     }
-  }, [location.state]);
+  }, [location.state, searchParams]);
   
   const {
     email,
