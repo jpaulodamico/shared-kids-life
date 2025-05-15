@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -8,83 +7,13 @@ import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
 import { calculateExpenseSummary } from "@/utils/expenseUtils";
 import { ExpenseTabs } from "@/components/expenses/ExpenseTabs";
 
-// Sample data
-const expenses = [
-  {
-    id: 1,
-    category: "Educação",
-    description: "Mensalidade escola",
-    date: "02/05/2025",
-    amount: 850,
-    paidBy: "Lúcia Moreira",
-    splitPercentage: 50,
-    status: "approved",
-    childId: "1"
-  },
-  {
-    id: 2,
-    category: "Saúde",
-    description: "Consulta Pediatra",
-    date: "05/05/2025",
-    amount: 320,
-    paidBy: "Você",
-    splitPercentage: 50,
-    status: "pending",
-    childId: "1"
-  },
-  {
-    id: 3,
-    category: "Atividades",
-    description: "Aulas de natação",
-    date: "10/05/2025",
-    amount: 450,
-    paidBy: "Lúcia Moreira",
-    splitPercentage: 50,
-    status: "approved",
-    childId: "2"
-  },
-  {
-    id: 4,
-    category: "Alimentação",
-    description: "Compras do mês",
-    date: "12/05/2025",
-    amount: 380,
-    paidBy: "Você",
-    splitPercentage: 50,
-    status: "approved",
-    childId: "all"
-  }
-];
+// Empty expense data
+const expenses = [];
 
-// Categories summary
-const categories = [
-  { 
-    name: "Educação", 
-    total: 850, 
-    percentage: 42.5,
-    color: "bg-family-500" 
-  },
-  { 
-    name: "Saúde", 
-    total: 320, 
-    percentage: 16,
-    color: "bg-destructive" 
-  },
-  { 
-    name: "Atividades", 
-    total: 450, 
-    percentage: 22.5,
-    color: "bg-accent-green-500" 
-  },
-  { 
-    name: "Alimentação", 
-    total: 380, 
-    percentage: 19,
-    color: "bg-warm-500" 
-  }
-];
+// Empty categories 
+const categories = [];
 
-// Sample children and parents data
+// Sample children and parents data (keeping these as they're used for dropdown options)
 const children = [
   { id: "1", name: "Sofia Santos" },
   { id: "2", name: "Lucas Santos" }

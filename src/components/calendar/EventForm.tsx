@@ -68,6 +68,18 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
       childId
     });
   };
+
+  // Handler for child selection that prevents default behavior
+  const handleChildSelect = (id: number) => {
+    setChildId(id);
+    setChildOpen(false);
+  };
+
+  // Handler for when no child is selected
+  const handleNoChildSelect = () => {
+    setChildId(undefined);
+    setChildOpen(false);
+  };
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -145,12 +157,13 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
         />
       </div>
 
-      {/* Child selection dropdown */}
+      {/* Child selection dropdown - Modified to prevent form submission */}
       <div>
         <Label>Criança</Label>
         <Popover open={childOpen} onOpenChange={setChildOpen}>
           <PopoverTrigger asChild>
             <Button
+              type="button" // Explicitly set type to button to prevent form submission
               variant="outline"
               role="combobox"
               aria-expanded={childOpen}
@@ -168,9 +181,9 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
                 {children.map((child) => (
                   <CommandItem
                     key={child.id}
-                    onSelect={() => {
-                      setChildId(child.id);
-                      setChildOpen(false);
+                    onSelect={(currentValue) => {
+                      // Prevent default to avoid form submission
+                      handleChildSelect(child.id);
                     }}
                     className="flex items-center"
                   >
@@ -189,8 +202,8 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
                 ))}
                 <CommandItem
                   onSelect={() => {
-                    setChildId(undefined);
-                    setChildOpen(false);
+                    // Prevent default to avoid form submission
+                    handleNoChildSelect();
                   }}
                 >
                   <Check
@@ -207,11 +220,13 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
         </Popover>
       </div>
       
+      {/* Type selection dropdown - Modified to prevent form submission */}
       <div>
         <Label>Tipo de Evento</Label>
         <Popover open={typeOpen} onOpenChange={setTypeOpen}>
           <PopoverTrigger asChild>
             <Button
+              type="button" // Explicitly set type to button to prevent form submission
               variant="outline"
               role="combobox"
               aria-expanded={typeOpen}
@@ -280,6 +295,7 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
             <Popover>
               <PopoverTrigger asChild>
                 <Button
+                  type="button" // Prevent form submission
                   id="end-date"
                   variant={"outline"}
                   className={cn(
