@@ -7,12 +7,24 @@ import { AppTitle } from "@/components/ui/app-title";
 export const HeroSection = () => {
   const handleGetStarted = () => {
     console.log("Get started button clicked, navigating to /auth");
-    window.location.href = "/auth?tab=register";
+    try {
+      window.location.href = "/auth?tab=register";
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback
+      window.open("/auth?tab=register", "_self");
+    }
   };
   
   const handleLearnMore = () => {
     console.log("Learn more button clicked, navigating to /auth");
-    window.location.href = "/auth?tab=login";
+    try {
+      window.location.href = "/auth?tab=login";
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback
+      window.open("/auth?tab=login", "_self");
+    }
   };
 
   return (

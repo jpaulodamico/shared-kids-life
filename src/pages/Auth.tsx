@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,27 +15,22 @@ import { toast } from "sonner";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
   
-  console.log("Auth page loaded. Location state:", location.state);
-  console.log("Search params:", Object.fromEntries([...searchParams]));
-  
-  // Get the active tab from URL parameter or default to "login"
+  // Get the tab from URL parameter or default to "login"
   const tabParam = searchParams.get('tab');
-  const initialTab = tabParam === "register" ? "register" : "login";
-  console.log("Initial tab set to:", initialTab);
+  const [activeTab, setActiveTab] = useState<string>(tabParam === "register" ? "register" : "login");
   
-  // State for the active tab
-  const [activeTab, setActiveTab] = useState(initialTab);
+  console.log("Auth page loaded. URL tab param:", tabParam);
+  console.log("Initial active tab set to:", activeTab);
   
+  // Update activeTab when search parameters change
   useEffect(() => {
-    // Update activeTab when URL parameters change
     const newTab = searchParams.get('tab');
     if (newTab === "register" || newTab === "login") {
-      console.log("Setting active tab to:", newTab);
+      console.log("Updating active tab to:", newTab);
       setActiveTab(newTab);
     }
   }, [searchParams]);
@@ -81,13 +76,15 @@ const AuthPage = () => {
     );
   }
 
+  console.log("Rendering Auth page with activeTab:", activeTab);
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/50 p-4">
       <div className="w-full max-w-md">
         <AuthHeader />
         
         <Card className="w-full">
-          <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="login" className="flex items-center gap-1">
                 <LogIn className="h-4 w-4" />

@@ -1,18 +1,28 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
-    // Use direct navigation to ensure full page load
-    window.location.href = "/auth?tab=login";
+    try {
+      window.location.href = "/auth?tab=login";
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback
+      window.open("/auth?tab=login", "_self");
+    }
   };
 
   const handleSignupClick = () => {
     console.log("Signup button clicked, navigating to /auth");
-    window.location.href = "/auth?tab=register";
+    try {
+      window.location.href = "/auth?tab=register";
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback
+      window.open("/auth?tab=register", "_self");
+    }
   };
 
   return (

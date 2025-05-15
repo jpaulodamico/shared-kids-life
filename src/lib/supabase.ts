@@ -20,30 +20,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Export a function to test the connection with Supabase
 export const testSupabaseConnection = async () => {
   try {
-    // Try to check the connection using the 'profiles' table that already exists in the database
+    // Try to check the connection using any public table
     const { data, error } = await supabase.from('profiles').select('id').limit(1);
     
     if (error) {
+      console.error("Supabase connection error:", error);
       return { connected: false, error: error.message };
     }
     
+    console.log("Supabase connection successful");
     return { connected: true };
   } catch (error) {
+    console.error("Supabase connection exception:", error);
     return { 
       connected: false, 
       error: 'Não foi possível conectar ao Supabase. Verifique se seu projeto está conectado corretamente.'
     };
   }
-};
-
-// Função para criar a tabela de convites (executar apenas uma vez via console se necessário)
-export const setupInvitesTable = async () => {
-  const { error } = await supabase.rpc('create_invites_table');
-  
-  if (error) {
-    console.error('Erro ao criar tabela de convites:', error);
-    return false;
-  }
-  
-  return true;
 };

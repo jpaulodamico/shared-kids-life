@@ -6,7 +6,13 @@ import { AppTitle } from "@/components/ui/app-title";
 export const CTASection = () => {
   const handleCreateAccount = () => {
     console.log("Create account button clicked, navigating to /auth");
-    window.location.href = "/auth?tab=register";
+    try {
+      window.location.href = "/auth?tab=register";
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback
+      window.open("/auth?tab=register", "_self");
+    }
   };
 
   return (

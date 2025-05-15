@@ -24,7 +24,7 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Public pages */}
+            {/* Public pages - order matters, place specific routes before catch-all */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
