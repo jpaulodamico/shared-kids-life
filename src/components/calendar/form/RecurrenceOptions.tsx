@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,13 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 interface RecurrenceOptionsProps {
   isRecurring: boolean;
@@ -44,17 +50,20 @@ export function RecurrenceOptions({
         <>
           <div>
             <Label htmlFor="recurrence-pattern">Padrão de recorrência</Label>
-            <select
-              id="recurrence-pattern"
+            <Select
               value={recurrencePattern}
-              onChange={(e) => onRecurrencePatternChange(e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly')}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              onValueChange={(value) => onRecurrencePatternChange(value as 'daily' | 'weekly' | 'monthly' | 'yearly')}
             >
-              <option value="daily">Diário</option>
-              <option value="weekly">Semanal</option>
-              <option value="monthly">Mensal</option>
-              <option value="yearly">Anual</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione o padrão de recorrência" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">Diário</SelectItem>
+                <SelectItem value="weekly">Semanal</SelectItem>
+                <SelectItem value="monthly">Mensal</SelectItem>
+                <SelectItem value="yearly">Anual</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div>
