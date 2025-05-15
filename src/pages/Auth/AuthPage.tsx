@@ -14,14 +14,18 @@ const AuthPage = () => {
   
   // Get tab from URL parameter or default to "login"
   const tabParam = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState(tabParam === "register" ? "register" : "login");
+  const [activeTab, setActiveTab] = useState(
+    tabParam === "register" || tabParam === "reset" 
+      ? tabParam 
+      : "login"
+  );
   
   console.log("Auth page loaded. Active tab:", activeTab);
   
   // Update activeTab when search parameters change
   useEffect(() => {
     const newTab = searchParams.get("tab");
-    if (newTab === "register" || newTab === "login") {
+    if (newTab === "register" || newTab === "login" || newTab === "reset") {
       console.log("Updating active tab to:", newTab);
       setActiveTab(newTab);
     }

@@ -17,6 +17,7 @@ interface LoginFormProps {
   handleSignIn: (e: React.FormEvent) => Promise<void>;
   handleGoogleSignIn: () => Promise<void>;
   isLoading: boolean;
+  onForgotPassword: () => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -28,7 +29,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   toggleShowPassword,
   handleSignIn,
   handleGoogleSignIn,
-  isLoading
+  isLoading,
+  onForgotPassword
 }) => {
   return (
     <form onSubmit={handleSignIn}>
@@ -50,9 +52,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </div>
         
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium">
-            Senha
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="text-sm font-medium">
+              Senha
+            </label>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-xs" 
+              type="button"
+              onClick={onForgotPassword}
+            >
+              Esqueceu a senha?
+            </Button>
+          </div>
           <PasswordInput
             id="password"
             value={password}
