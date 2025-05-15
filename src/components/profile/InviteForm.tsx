@@ -10,7 +10,7 @@ interface InviteFormProps {
 
 export function InviteForm({ onClose }: InviteFormProps) {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
-  const { form, onSubmit, isSubmitting } = useInviteForm({
+  const { form, onSubmit, isSubmitting, inviteCount, inviteLimit, canInviteMore } = useInviteForm({
     onSuccess: (link: string) => {
       setInviteLink(link);
     }
@@ -24,6 +24,8 @@ export function InviteForm({ onClose }: InviteFormProps) {
           onSubmit={onSubmit}
           isSubmitting={isSubmitting}
           onCancel={onClose}
+          inviteCount={inviteCount}
+          inviteLimit={inviteLimit}
         />
       ) : (
         <InviteLinkDisplay 

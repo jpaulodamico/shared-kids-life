@@ -8,11 +8,13 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useProfileComplete } from "@/hooks/use-profile-complete";
+import { useUserRole } from "@/hooks/use-user-role";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { isProfileComplete } = useProfileComplete();
+  const { isPrimary, loading: loadingRole } = useUserRole();
   const [activeTab, setActiveTab] = useState("features");
   
   // Redirect unauthenticated users to login page
@@ -236,7 +238,8 @@ const WelcomePage = () => {
                     <div>
                       <h3 className="font-medium text-lg">Convide outros responsáveis</h3>
                       <p className="text-muted-foreground">
-                        Convide outros responsáveis (outro pai/mãe, avós, babás, etc.) para compartilhar o acesso às informações das crianças.
+                        Convide outros responsáveis (outro pai/mãe, avós, babás, etc.) para compartilhar o acesso às informações das crianças. 
+                        {isPrimary && <span className="font-medium"> Você pode convidar até 5 responsáveis.</span>}
                       </p>
                       <Button 
                         variant="outline" 

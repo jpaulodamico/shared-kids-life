@@ -64,9 +64,15 @@ export function AppLayout() {
   useEffect(() => {
     if (shouldShowWelcome) {
       console.log("User should see welcome page, redirecting...");
+      console.log({
+        isNewUser,
+        isProfileComplete,
+        welcomeShown: localStorage.getItem("welcomeShown"),
+        isPrimary
+      });
       navigate("/welcome");
     }
-  }, [loading, loadingProfile, user, navigate, isNewUser, isProfileComplete, shouldShowWelcome]);
+  }, [shouldShowWelcome, navigate]);
   
   // Redirect to auth page if no user
   if (!loading && !user) {
@@ -74,7 +80,7 @@ export function AppLayout() {
   }
   
   // Show loading indicator
-  if (loading || connectionStatus.checking || loadingProfile) {
+  if (loading || connectionStatus.checking || loadingProfile || loadingRole) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

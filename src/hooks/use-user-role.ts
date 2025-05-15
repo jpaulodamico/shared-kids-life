@@ -27,6 +27,7 @@ export function useUserRole() {
           toast.error('Erro ao verificar papel do usuário');
           setIsPrimary(false);
         } else {
+          console.log('User role check result:', data);
           setIsPrimary(data);
         }
       } catch (error) {

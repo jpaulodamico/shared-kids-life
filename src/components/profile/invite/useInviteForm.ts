@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/lib/supabase";
@@ -13,6 +13,8 @@ interface UseInviteFormProps {
 
 export function useInviteForm({ onSuccess }: UseInviteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inviteCount, setInviteCount] = useState(0);
+  const [inviteLimit] = useState(5);
   const { user } = useAuth();
 
   const form = useForm<InviteFormValues>({
@@ -22,6 +24,28 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
       relation: "parent"
     }
   });
+
+  // Load the current count of invites
+  useEffect(() => {
+    if (user) {
+      const getInviteCount = async () => {
+        try {
+          const { data, error, count } = await supabase
+            .from('invites')
+            .select('*', { count: 'exact' })
+            .eq('inviter_id', user.id);
+            
+          if (error) throw error;
+          
+          setInviteCount(count || 0);
+        } catch (error) {
+          console.error("Error checking invite count:", error);
+        }
+      };
+      
+      getInviteCount();
+    }
+  }, [user]);
 
   const generateInviteCode = () => {
     return Math.random().toString(36).substring(2, 10);
@@ -35,9 +59,34 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
       return;
     }
 
+    // Check if invite limit has been reached
+    if (inviteCount >= inviteLimit) {
+      toast.error("Limite de convites atingido", {
+        description: `Você só pode convidar até ${inviteLimit} responsáveis.`
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Check if this email is already invited
+      const { data: existingInvite, error: checkError } = await supabase
+        .from('invites')
+        .select('id')
+        .eq('email', values.email)
+        .eq('inviter_id', user.id);
+        
+      if (checkError) throw checkError;
+      
+      if (existingInvite && existingInvite.length > 0) {
+        toast.error("Este email já foi convidado", {
+          description: "Não é possível enviar outro convite para o mesmo email."
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Gera um código de convite único
       const inviteCode = generateInviteCode();
 
@@ -53,6 +102,9 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
         });
 
       if (error) throw error;
+
+      // Update local count
+      setInviteCount(prev => prev + 1);
 
       // Gera o link de convite
       const inviteLink = `${window.location.origin}/app/invite/${inviteCode}`;
@@ -76,6 +128,9 @@ export function useInviteForm({ onSuccess }: UseInviteFormProps) {
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
-    isSubmitting
+    isSubmitting,
+    inviteCount,
+    inviteLimit,
+    canInviteMore: inviteCount < inviteLimit
   };
 }

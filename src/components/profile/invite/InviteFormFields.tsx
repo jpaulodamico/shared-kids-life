@@ -1,79 +1,103 @@
 
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { InviteFormValues } from "./InviteSchema";
-import { Button } from "@/components/ui/button";
-import { BaseSyntheticEvent } from "react";
+import { useInviteForm } from "./useInviteForm";
 
 interface InviteFormFieldsProps {
   form: UseFormReturn<InviteFormValues>;
-  onSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
+  onSubmit: () => void;
   isSubmitting: boolean;
   onCancel?: () => void;
+  inviteCount?: number;
+  inviteLimit?: number;
 }
 
-export function InviteFormFields({ form, onSubmit, isSubmitting, onCancel }: InviteFormFieldsProps) {
+export function InviteFormFields({ 
+  form, 
+  onSubmit, 
+  isSubmitting, 
+  onCancel,
+  inviteCount = 0, 
+  inviteLimit = 5 
+}: InviteFormFieldsProps) {
+  const canInviteMore = inviteCount < inviteLimit;
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <FormField
-        control={form.control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email do familiar</FormLabel>
-            <FormControl>
-              <Input placeholder="email@exemplo.com" {...field} />
-            </FormControl>
-            <FormDescription>
-              O email da pessoa que você deseja convidar
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
+    <Form {...form}>
+      <form onSubmit={onSubmit} className="space-y-6">
+        {inviteCount > 0 && (
+          <div className="text-sm text-muted-foreground">
+            {canInviteMore ? (
+              <p>Você já convidou {inviteCount} de {inviteLimit} responsáveis.</p>
+            ) : (
+              <p className="text-red-500">Você atingiu o limite de {inviteLimit} convites.</p>
+            )}
+          </div>
         )}
-      />
-      
-      <FormField
-        control={form.control}
-        name="relation"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Relação com a criança</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-            >
+        
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email do responsável</FormLabel>
               <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma relação" />
-                </SelectTrigger>
+                <Input 
+                  placeholder="exemplo@email.com" 
+                  {...field} 
+                  disabled={isSubmitting || !canInviteMore}
+                />
               </FormControl>
-              <SelectContent>
-                <SelectItem value="parent">Pai/Mãe</SelectItem>
-                <SelectItem value="grandparent">Avô/Avó</SelectItem>
-                <SelectItem value="guardian">Responsável legal</SelectItem>
-                <SelectItem value="other">Outro</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormDescription>
-              Como este familiar se relaciona com a criança
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      
-      <div className="flex justify-end gap-2 pt-2">
-        {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancelar
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="relation"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Relação com a criança</FormLabel>
+              <Select 
+                disabled={isSubmitting || !canInviteMore}
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a relação" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="parent">Pai/Mãe</SelectItem>
+                  <SelectItem value="grandparent">Avô/Avó</SelectItem>
+                  <SelectItem value="relative">Outro Familiar</SelectItem>
+                  <SelectItem value="caretaker">Cuidador</SelectItem>
+                  <SelectItem value="teacher">Professor</SelectItem>
+                  <SelectItem value="doctor">Médico</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end gap-2">
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancelar
+            </Button>
+          )}
+          <Button type="submit" disabled={isSubmitting || !canInviteMore}>
+            {isSubmitting ? "Enviando..." : "Criar Convite"}
           </Button>
-        )}
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Enviando..." : "Enviar convite"}
-        </Button>
-      </div>
-    </form>
+        </div>
+      </form>
+    </Form>
   );
 }
