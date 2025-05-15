@@ -14,6 +14,27 @@ interface GettingStartedContentProps {
 export function GettingStartedContent({ isPrimary, onBack, onContinue }: GettingStartedContentProps) {
   const navigate = useNavigate();
   
+  // Define navigation handlers for each button
+  const handleProfileClick = () => {
+    console.log("Navigating to profile page");
+    navigate("/app/profile");
+  };
+
+  const handleChildrenClick = () => {
+    console.log("Navigating to children page");
+    navigate("/app/children");
+  };
+
+  const handleInviteClick = () => {
+    console.log("Navigating to profile page for invitations");
+    navigate("/app/profile");
+  };
+
+  const handleCalendarClick = () => {
+    console.log("Navigating to calendar page");
+    navigate("/app/calendar");
+  };
+  
   return (
     <Card>
       <CardHeader>
@@ -37,7 +58,7 @@ export function GettingStartedContent({ isPrimary, onBack, onContinue }: Getting
                 variant="outline" 
                 size="sm" 
                 className="mt-2"
-                onClick={() => navigate("/app/profile")}
+                onClick={handleProfileClick}
               >
                 <User className="h-4 w-4 mr-2" />
                 Ir para Perfil
@@ -58,7 +79,7 @@ export function GettingStartedContent({ isPrimary, onBack, onContinue }: Getting
                 variant="outline" 
                 size="sm" 
                 className="mt-2"
-                onClick={() => navigate("/app/children")}
+                onClick={handleChildrenClick}
               >
                 <Users className="h-4 w-4 mr-2" />
                 Adicionar Crianças
@@ -80,7 +101,7 @@ export function GettingStartedContent({ isPrimary, onBack, onContinue }: Getting
                 variant="outline" 
                 size="sm" 
                 className="mt-2"
-                onClick={() => navigate("/app/profile")}
+                onClick={handleInviteClick}
               >
                 <UserPlus className="h-4 w-4 mr-2" />
                 Convidar Responsáveis
@@ -101,7 +122,7 @@ export function GettingStartedContent({ isPrimary, onBack, onContinue }: Getting
                 variant="outline" 
                 size="sm" 
                 className="mt-2"
-                onClick={() => navigate("/app/calendar")}
+                onClick={handleCalendarClick}
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Ir para Calendário

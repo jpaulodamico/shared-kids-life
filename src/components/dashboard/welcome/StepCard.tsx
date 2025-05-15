@@ -20,6 +20,11 @@ export function StepCard({
 }: StepCardProps) {
   const navigate = useNavigate();
   
+  const handleNavigation = () => {
+    console.log(`Navigating to: ${navigateTo}`);
+    navigate(navigateTo);
+  };
+  
   return (
     <div className="flex flex-col items-center p-4 bg-background rounded-lg shadow-sm">
       <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
@@ -29,7 +34,7 @@ export function StepCard({
       <p className="text-sm text-muted-foreground mb-4">
         {description}
       </p>
-      <Button onClick={() => navigate(navigateTo)} variant="outline" className="mt-auto">
+      <Button onClick={handleNavigation} variant="outline" className="mt-auto">
         {buttonText}
       </Button>
     </div>
