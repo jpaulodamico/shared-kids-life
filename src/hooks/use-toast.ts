@@ -47,12 +47,4 @@ export const useToast = () => {
   };
 };
 
-export const toast = ({ title, description, variant }: ToastProps) => {
-  if (variant === "destructive") {
-    sonnerToast.error(title, { description });
-  } else if (variant === "success") {
-    sonnerToast.success(title, { description });
-  } else {
-    sonnerToast.info(title, { description });
-  }
-};
+export const toast = sonnerToast;

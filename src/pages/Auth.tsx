@@ -11,7 +11,7 @@ import { AuthFooter } from "@/components/auth/AuthFooter";
 import { useAuthHandlers } from "@/hooks/useAuthHandlers";
 import { LogIn, UserPlus } from "lucide-react";
 import { useProfileData } from "@/hooks/use-profile-data";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const AuthPage = () => {
   const navigate = useNavigate();
