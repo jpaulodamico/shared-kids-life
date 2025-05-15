@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface EditProfileFormProps {
+export interface EditProfileFormProps {
   defaultValues: {
     first_name: string;
     last_name: string;

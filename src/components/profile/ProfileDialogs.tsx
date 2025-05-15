@@ -2,13 +2,15 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { InviteForm } from "@/components/profile/InviteForm";
 import { EditProfileForm } from "@/components/profile/EditProfileForm";
+import { useProfileData } from "@/hooks/use-profile-data";
 
 interface ProfileDialogsProps {
   showEditProfile: boolean;
   onCloseEditProfile: () => void;
   showInviteUser: boolean;
   onCloseInviteUser: () => void;
-  onInviteSuccess: () => void; // Nova prop para atualizar a lista
+  onInviteSuccess: () => void;
+  onProfileUpdated: () => void;
 }
 
 export function ProfileDialogs({
@@ -16,13 +18,26 @@ export function ProfileDialogs({
   onCloseEditProfile,
   showInviteUser,
   onCloseInviteUser,
-  onInviteSuccess
+  onInviteSuccess,
+  onProfileUpdated
 }: ProfileDialogsProps) {
+  const { profileData } = useProfileData();
+  
+  const defaultValues = {
+    first_name: profileData.first_name,
+    last_name: profileData.last_name,
+    phone: profileData.phone || '',
+    address: profileData.address || '',
+  };
+
   return (
     <>
       <Dialog open={showEditProfile} onOpenChange={onCloseEditProfile}>
         <DialogContent className="sm:max-w-[475px]">
-          <EditProfileForm onClose={onCloseEditProfile} />
+          <EditProfileForm 
+            defaultValues={defaultValues}
+            onSuccess={onProfileUpdated}
+          />
         </DialogContent>
       </Dialog>
 

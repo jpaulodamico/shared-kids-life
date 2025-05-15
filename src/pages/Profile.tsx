@@ -6,11 +6,15 @@ import { SettingsForm } from "@/components/profile/SettingsForm";
 import { ProfileDialogs } from "@/components/profile/ProfileDialogs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLinkedUsers } from "@/hooks/use-linked-users";
+import { useProfileData } from "@/hooks/use-profile-data";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfilePage() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showInviteUser, setShowInviteUser] = useState(false);
-  const { refreshLinkedUsers } = useLinkedUsers();
+  const { linkedUsers, refreshLinkedUsers } = useLinkedUsers();
+  const { profileData, refreshProfileData } = useProfileData();
+  const { user } = useAuth();
   
   const handleOpenEditProfile = () => setShowEditProfile(true);
   const handleCloseEditProfile = () => setShowEditProfile(false);
@@ -21,6 +25,21 @@ export default function ProfilePage() {
   const handleInviteSuccess = () => {
     // Atualizar a lista de convites quando um novo convite for enviado
     refreshLinkedUsers();
+  };
+  
+  const handleProfileUpdated = () => {
+    // Refresh profile data when profile is updated
+    refreshProfileData();
+    handleCloseEditProfile();
+  };
+  
+  // Default values for settings form
+  const settingsDefaultValues = {
+    emailNotifications: true,
+    pushNotifications: true,
+    calendarSync: false,
+    expenseReminders: true,
+    documentSharing: false,
   };
   
   return (
@@ -40,7 +59,11 @@ export default function ProfilePage() {
         </TabsList>
         
         <TabsContent value="profile" className="space-y-4">
-          <ProfileTab onEdit={handleOpenEditProfile} />
+          <ProfileTab 
+            profileData={profileData} 
+            onEdit={handleOpenEditProfile} 
+            user={user} 
+          />
         </TabsContent>
         
         <TabsContent value="users">
@@ -48,7 +71,7 @@ export default function ProfilePage() {
         </TabsContent>
         
         <TabsContent value="settings">
-          <SettingsForm />
+          <SettingsForm defaultValues={settingsDefaultValues} />
         </TabsContent>
       </Tabs>
       
@@ -58,6 +81,7 @@ export default function ProfilePage() {
         showInviteUser={showInviteUser}
         onCloseInviteUser={handleCloseInviteUser}
         onInviteSuccess={handleInviteSuccess}
+        onProfileUpdated={handleProfileUpdated}
       />
     </div>
   );
