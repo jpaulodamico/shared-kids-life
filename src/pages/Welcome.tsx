@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Calendar, MessageSquare, DollarSign, FileText, Users, User, UserPlus } from "lucide-react";
+import { Calendar, MessageSquare, DollarSign, FileText, Users, User, UserPlus, LogOut } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -10,7 +11,7 @@ import { useProfileComplete } from "@/hooks/use-profile-complete";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { isProfileComplete } = useProfileComplete();
   const [activeTab, setActiveTab] = useState("features");
   
@@ -54,13 +55,29 @@ const WelcomePage = () => {
     navigate("/app");
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   // Get user's first name from email
   const firstName = user?.email ? user.email.split('@')[0] : '';
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 md:p-8 bg-muted/30">
       <div className="max-w-4xl w-full space-y-8">
-        <div className="text-center">
+        <div className="text-center relative">
+          <div className="absolute top-0 right-0">
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="flex items-center gap-1"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sair</span>
+            </Button>
+          </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Bem-vindo ao CoParent!</h1>
           <p className="text-muted-foreground text-lg">
             {firstName && `Olá ${firstName}, `}
