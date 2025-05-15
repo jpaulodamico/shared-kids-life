@@ -8,7 +8,10 @@ export function UserHeader() {
   const { user, signOut } = useAuth();
   const { profileData, loading } = useProfileData();
   
-  const displayName = profileData?.full_name || user?.email || "Usuário";
+  // Construct the display name from first_name and last_name, or fall back to email
+  const displayName = profileData?.first_name 
+    ? `${profileData.first_name} ${profileData.last_name || ''}`
+    : user?.email || "Usuário";
   
   const handleLogout = async () => {
     await signOut();
