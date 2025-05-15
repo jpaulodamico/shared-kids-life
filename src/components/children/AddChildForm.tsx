@@ -55,46 +55,29 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       const activitiesArray = data.activities ? data.activities.split(',').map(item => item.trim()) : [];
       const initials = data.name.split(' ').map(part => part[0]).join('');
       
-      // Insere a criança na tabela children
-      const { data: childData, error: childError } = await supabase
-        .from('children')
-        .insert({
-          name: data.name,
-          age: data.age,
-          birthday: data.birthday,
-          school: data.school,
-          grade: data.grade,
-          teacher: data.teacher,
-          blood_type: data.bloodType,
-          allergies: allergiesArray,
-          medications: medicationsArray,
-          height: data.height,
-          weight: data.weight,
-          activities: activitiesArray,
-          gender: data.gender,
-          image_url: "",
-          initials: initials
-        })
-        .select('id')
-        .single();
+      // Create a transaction to ensure both operations succeed or fail together
+      const { error: transactionError } = await supabase.rpc('add_child', {
+        p_name: data.name,
+        p_age: data.age,
+        p_birthday: data.birthday,
+        p_school: data.school,
+        p_grade: data.grade,
+        p_teacher: data.teacher,
+        p_blood_type: data.bloodType,
+        p_allergies: allergiesArray,
+        p_medications: medicationsArray,
+        p_height: data.height,
+        p_weight: data.weight,
+        p_activities: activitiesArray,
+        p_gender: data.gender,
+        p_image_url: "",
+        p_initials: initials,
+        p_relation: 'responsável'
+      });
       
-      if (childError) {
-        console.error("Erro ao adicionar criança:", childError);
-        throw childError;
-      }
-      
-      // Associa a criança ao usuário na tabela user_children
-      const { error: relationError } = await supabase
-        .from('user_children')
-        .insert({
-          user_id: user.id,
-          child_id: childData.id,
-          relation: 'responsável' // Pode ser configurável no futuro
-        });
-      
-      if (relationError) {
-        console.error("Erro ao associar criança ao usuário:", relationError);
-        throw relationError;
+      if (transactionError) {
+        console.error("Erro na transação:", transactionError);
+        throw transactionError;
       }
       
       // Mostra mensagem de sucesso
