@@ -5,9 +5,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogIn, UserPlus } from "lucide-react";
-import { useAuthHandlers } from "@/hooks/useAuthHandlers";
-import { LoginForm } from "@/components/auth/LoginForm";
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { AuthHeader } from "@/components/auth/AuthHeader";
+import { AuthFooter } from "@/components/auth/AuthFooter";
+import { AuthTabs } from "@/components/auth/AuthTabs";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -17,19 +17,6 @@ const AuthPage = () => {
   // Get tab from URL parameter or default to "login"
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(tabParam === "register" ? "register" : "login");
-  
-  const {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    showPassword,
-    toggleShowPassword,
-    isLoading,
-    handleSignIn,
-    handleSignUp,
-    handleGoogleSignIn
-  } = useAuthHandlers();
   
   console.log("Auth page loaded. Active tab:", activeTab);
   
@@ -62,62 +49,13 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/50 p-4">
       <div className="w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">CoParent</h1>
-          <p className="text-muted-foreground text-center">
-            Gerencie a co-parentalidade de forma eficiente e colaborativa.
-          </p>
-        </div>
+        <AuthHeader />
         
         <Card className="w-full">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 w-full">
-              <TabsTrigger value="login" className="flex items-center gap-1">
-                <LogIn className="h-4 w-4" />
-                Login
-              </TabsTrigger>
-              <TabsTrigger value="register" className="flex items-center gap-1">
-                <UserPlus className="h-4 w-4" />
-                Registrar
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="login">
-              <LoginForm
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                showPassword={showPassword}
-                toggleShowPassword={toggleShowPassword}
-                handleSignIn={handleSignIn}
-                handleGoogleSignIn={handleGoogleSignIn}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-            
-            <TabsContent value="register">
-              <RegisterForm
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                showPassword={showPassword}
-                toggleShowPassword={toggleShowPassword}
-                handleSignUp={handleSignUp}
-                handleGoogleSignIn={handleGoogleSignIn}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-          </Tabs>
+          <AuthTabs activeTab={activeTab} setActiveTab={setActiveTab} />
         </Card>
 
-        <div className="mt-6 text-center text-xs text-muted-foreground">
-          Ao criar uma conta ou fazer login, você concorda com nossa{" "}
-          <a href="/privacy-policy" className="text-primary hover:underline">
-            Política de Privacidade
-          </a>
-        </div>
+        <AuthFooter />
       </div>
     </div>
   );
