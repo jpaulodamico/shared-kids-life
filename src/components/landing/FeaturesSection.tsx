@@ -44,6 +44,37 @@ export const FeaturesSection = () => {
           </div>
         </div>
 
+        {/* Nova seção com a imagem de coparentalidade */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div className="flex flex-col justify-center order-2 md:order-1">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Conecte toda a família</h3>
+            <p className="text-lg text-gray-600 mb-6">
+              Com o CoParent, todos os membros da família podem se manter conectados e informados sobre o dia a dia das crianças, independentemente de onde estejam.
+            </p>
+            <ul className="space-y-2 text-gray-600">
+              <li className="flex items-center">
+                <span className="bg-primary/10 text-primary p-1 rounded-full mr-2">✓</span>
+                Compartilhe momentos importantes com ambos os pais
+              </li>
+              <li className="flex items-center">
+                <span className="bg-primary/10 text-primary p-1 rounded-full mr-2">✓</span>
+                Mantenha todos informados sobre atividades e compromissos
+              </li>
+              <li className="flex items-center">
+                <span className="bg-primary/10 text-primary p-1 rounded-full mr-2">✓</span>
+                Crie um ambiente de cooperação para o bem-estar das crianças
+              </li>
+            </ul>
+          </div>
+          <div className="flex justify-center items-center order-1 md:order-2">
+            <img 
+              src="/lovable-uploads/04850b4d-4e45-41f9-b55a-160cb700df91.png" 
+              alt="Família conectada pelo aplicativo CoParent" 
+              className="rounded-lg shadow-lg max-w-full h-auto max-h-80"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <FeatureCard 
             icon={<Calendar />} 
