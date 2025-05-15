@@ -13,7 +13,7 @@ import { useProfileComplete } from "@/hooks/use-profile-complete";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
-  const { user, loading } = useAuth();
+  const { user, loading, isNewUser } = useAuth();
   const { isPrimary, loading: loadingRole } = useUserRole();
   const { isProfileComplete, loading: loadingProfile } = useProfileComplete();
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ export function AppLayout() {
 
   // Verificar se o usuário deve ver a tela de boas-vindas
   const shouldShowWelcome = 
-    !isProfileComplete && 
-    !localStorage.getItem("welcomeShown"); // Mantemos essa verificação por compatibilidade
+    (!isProfileComplete && !localStorage.getItem("welcomeShown")) || // Caso de usuário que não completou o perfil
+    isNewUser; // Caso de usuário novo
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -61,9 +61,10 @@ export function AppLayout() {
   // Redirecionar para a página de boas-vindas se for necessário
   useEffect(() => {
     if (!loading && !loadingProfile && user && shouldShowWelcome) {
+      console.log("User should see welcome page, redirecting...");
       navigate("/welcome");
     }
-  }, [loading, loadingProfile, user, shouldShowWelcome, navigate]);
+  }, [loading, loadingProfile, user, shouldShowWelcome, navigate, isNewUser]);
   
   // Redireciona para a página de autenticação se não houver usuário logado
   if (!loading && !user) {

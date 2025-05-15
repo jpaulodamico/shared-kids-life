@@ -10,7 +10,7 @@ import { AuthTabs } from "@/components/auth/AuthTabs";
 const AuthPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, loading } = useAuth();
+  const { user, loading, isNewUser } = useAuth();
   
   // Get tab from URL parameter or default to "login"
   const tabParam = searchParams.get("tab");
@@ -30,10 +30,17 @@ const AuthPage = () => {
   // Redirect if user is already authenticated
   useEffect(() => {
     if (user && !loading) {
-      console.log("User is authenticated, redirecting to /app");
-      navigate("/app");
+      console.log("User is authenticated, checking if new user");
+      
+      if (isNewUser) {
+        console.log("Redirecting new user to welcome page");
+        navigate("/welcome");
+      } else {
+        console.log("Redirecting existing user to dashboard");
+        navigate("/app");
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isNewUser]);
 
   // If loading, show spinner
   if (loading) {

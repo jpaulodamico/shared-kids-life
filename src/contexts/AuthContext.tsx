@@ -8,6 +8,7 @@ type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  isNewUser: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any, data: any }>;
   signOut: () => Promise<void>;
@@ -20,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     console.log("Setting up auth state change listener");
@@ -31,16 +33,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(newSession);
       setUser(newSession?.user || null);
       
-      // Show success message on successful sign in
       if (event === 'SIGNED_IN' && newSession?.user) {
+        // Check if this is a new user (first sign in)
+        const signedUpAt = newSession.user.created_at;
+        const currentTime = new Date().toISOString();
+        
+        // If the account was created less than 5 minutes ago, consider it a new user
+        const isNewSignUp = Math.abs(new Date(currentTime).getTime() - new Date(signedUpAt).getTime()) < 5 * 60 * 1000;
+        setIsNewUser(isNewSignUp);
+        
         toast.success("Login realizado com sucesso", {
           description: `Bem-vindo, ${newSession.user.email}`
         });
-        
-        // Redirect to dashboard
-        if (window.location.pathname !== '/app') {
-          window.location.href = '/app';
-        }
       }
       
       // Show message on sign out
@@ -75,10 +79,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user || null);
         
-        // If user is logged in and not on app route, redirect to dashboard
-        if (session?.user && window.location.pathname !== '/app') {
-          window.location.href = '/app';
-        }
+        // For existing sessions, set isNewUser to false
+        setIsNewUser(false);
+        
+        // No automatic redirect here - let the component handle it
       } catch (e) {
         console.error("Error checking session:", e);
       } finally {
@@ -103,6 +107,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) console.error("Sign in error:", error);
+      // For sign in, this is definitely not a new user
+      setIsNewUser(false);
       return { error };
     } catch (error) {
       console.error("Error during sign in:", error);
@@ -120,6 +126,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) console.error("Sign up error:", error);
       else if (data.user) {
+        // For sign up, this is definitely a new user
+        setIsNewUser(true);
         toast.success("Conta criada com sucesso!", {
           description: "Verifique seu email para confirmar sua conta."
         });
@@ -182,6 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     user,
     loading,
+    isNewUser,
     signIn,
     signUp,
     signOut,
