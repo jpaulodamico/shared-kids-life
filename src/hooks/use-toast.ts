@@ -47,4 +47,6 @@ export const useToast = () => {
   };
 };
 
+// Export sonnerToast as toast for direct use
 export { sonnerToast as toast };
+

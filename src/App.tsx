@@ -24,13 +24,13 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            {/* Páginas públicas */}
+            {/* Public pages */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/welcome" element={<WelcomePage />} />
             
-            {/* Páginas protegidas (requerem autenticação) */}
+            {/* Protected pages (require authentication) */}
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<IndexPage />} />
               <Route path="children" element={<ChildrenPage />} />
@@ -43,7 +43,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Route>
             
-            {/* Redirecionar para a landing page caso a URL não seja reconhecida */}
+            {/* Redirect to landing page for unrecognized URLs */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <FloatingLogout />

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 export const Header = () => {
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
-    // Force a full navigation to the auth page with replace
+    // Force a full navigation to the auth page with login tab
     window.location.href = "/auth?tab=login";
   };
 

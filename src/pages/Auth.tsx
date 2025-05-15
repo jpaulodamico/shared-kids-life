@@ -23,22 +23,22 @@ const AuthPage = () => {
   console.log("Auth page loaded. Location state:", location.state);
   console.log("Search params:", Object.fromEntries([...searchParams]));
   
-  // Get the active tab from URL parameter, location state, or default to "login"
+  // Get the active tab from URL parameter or default to "login"
   const tabFromURL = searchParams.get('tab');
-  const initialTab = tabFromURL || location.state?.activeTab || "login";
+  const initialTab = tabFromURL === "register" ? "register" : "login";
   console.log("Initial tab set to:", initialTab);
   
-  // Make sure we properly pick up the activeTab
+  // State for the active tab
   const [activeTab, setActiveTab] = useState(initialTab);
   
   useEffect(() => {
-    // Update activeTab when location or URL parameters change
-    const newTab = searchParams.get('tab') || location.state?.activeTab;
-    if (newTab) {
+    // Update activeTab when URL parameters change
+    const newTab = searchParams.get('tab');
+    if (newTab === "register" || newTab === "login") {
       console.log("Setting active tab to:", newTab);
       setActiveTab(newTab);
     }
-  }, [location.state, searchParams]);
+  }, [searchParams]);
   
   const {
     email,
