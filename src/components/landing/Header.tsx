@@ -7,12 +7,12 @@ export const Header = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    console.log("Login button clicked, navigating to /auth?tab=login");
+    console.log("Login button clicked");
     navigate("/auth?tab=login");
   };
 
   const handleSignupClick = () => {
-    console.log("Signup button clicked, navigating to /auth?tab=register");
+    console.log("Signup button clicked");
     navigate("/auth?tab=register");
   };
 
