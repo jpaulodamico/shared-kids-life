@@ -47,4 +47,4 @@ export const useToast = () => {
   };
 };
 
-export const toast = sonnerToast;
+export { sonnerToast as toast };

@@ -1,11 +1,8 @@
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const Header = () => {
-  const navigate = useNavigate();
-
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
     // Force a full navigation to the auth page with replace
