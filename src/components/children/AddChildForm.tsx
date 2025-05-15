@@ -55,7 +55,7 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       const activitiesArray = data.activities ? data.activities.split(',').map(item => item.trim()) : [];
       const initials = data.name.split(' ').map(part => part[0]).join('');
       
-      // Usar a função atualizada que retorna o ID da criança
+      // Usar a função que retorna o ID da criança
       const { data: childId, error: transactionError } = await supabase.rpc('add_child', {
         p_name: data.name,
         p_age: data.age,

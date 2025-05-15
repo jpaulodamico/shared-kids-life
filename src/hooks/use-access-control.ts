@@ -13,7 +13,7 @@ export function useAccessControl() {
     if (operation === 'view') return true;
     
     // Only primary users can perform certain operations
-    if (['delete', 'invite'].includes(operation) && isPrimary === false) {
+    if (['delete', 'invite'].includes(operation) && isPrimary !== true) {
       toast.error("Permissão negada", {
         description: "Apenas o responsável principal pode realizar esta operação."
       });
