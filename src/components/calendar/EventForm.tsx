@@ -4,17 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarEvent, EventType, CHILD_COLORS } from "@/pages/Calendar";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CalendarEvent, EventType } from "@/pages/Calendar";
 import { DialogFooter } from "@/components/ui/dialog";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Switch } from "@/components/ui/switch";
-import { children } from "@/data/childrenData";
+import { ChildSelector } from "./form/ChildSelector";
+import { EventTypeSelector } from "./form/EventTypeSelector";
+import { RecurrenceOptions } from "./form/RecurrenceOptions";
+import { DateTimeSelector } from "./form/DateTimeSelector";
 
 interface EventFormProps {
   onSubmit: (event: Omit<CalendarEvent, "id">) => void;
@@ -37,17 +32,6 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
   );
   const [childId, setChildId] = useState<number | undefined>(initialEvent?.childId);
   
-  const [typeOpen, setTypeOpen] = useState(false);
-  const [childOpen, setChildOpen] = useState(false);
-  
-  const eventTypes = [
-    { label: "Médico", value: "medical" },
-    { label: "Escola", value: "school" },
-    { label: "Atividade", value: "activity" },
-    { label: "Família", value: "family" },
-    { label: "Outro", value: "other" }
-  ];
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -68,18 +52,6 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
       childId
     });
   };
-
-  // Handler for child selection that prevents default behavior
-  const handleChildSelect = (id: number) => {
-    setChildId(id);
-    setChildOpen(false);
-  };
-
-  // Handler for when no child is selected
-  const handleNoChildSelect = () => {
-    setChildId(undefined);
-    setChildOpen(false);
-  };
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,49 +65,12 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
         />
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Data</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !selectedDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? (
-                  format(selectedDate, "dd/MM/yyyy", { locale: ptBR })
-                ) : (
-                  <span>Selecionar data</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-        
-        <div>
-          <Label htmlFor="time">Horário</Label>
-          <Input
-            id="time"
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
-        </div>
-      </div>
+      <DateTimeSelector
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+        time={time}
+        onTimeChange={setTime}
+      />
       
       <div>
         <Label htmlFor="description">Descrição</Label>
@@ -157,174 +92,25 @@ export function EventForm({ onSubmit, initialEvent }: EventFormProps) {
         />
       </div>
 
-      {/* Child selection dropdown - Modified to prevent form submission */}
-      <div>
-        <Label>Criança</Label>
-        <Popover open={childOpen} onOpenChange={setChildOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              type="button" // Explicitly set type to button to prevent form submission
-              variant="outline"
-              role="combobox"
-              aria-expanded={childOpen}
-              className="w-full justify-between"
-            >
-              {childId !== undefined ? children.find(c => c.id === childId)?.name || "Selecione uma criança" : "Selecione uma criança"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
-            <Command>
-              <CommandInput placeholder="Buscar criança..." />
-              <CommandEmpty>Nenhuma criança encontrada.</CommandEmpty>
-              <CommandGroup>
-                {children.map((child) => (
-                  <CommandItem
-                    key={child.id}
-                    onSelect={(currentValue) => {
-                      // Prevent default to avoid form submission
-                      handleChildSelect(child.id);
-                    }}
-                    className="flex items-center"
-                  >
-                    <div className={cn(
-                      "mr-2 h-4 w-4 rounded-full",
-                      CHILD_COLORS[child.id]?.split(" ")[0] || "bg-gray-300"
-                    )}></div>
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        childId === child.id ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {child.name}
-                  </CommandItem>
-                ))}
-                <CommandItem
-                  onSelect={() => {
-                    // Prevent default to avoid form submission
-                    handleNoChildSelect();
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      childId === undefined ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  Nenhuma criança (evento geral)
-                </CommandItem>
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
+      <ChildSelector 
+        selectedChildId={childId} 
+        onChildSelect={setChildId} 
+      />
       
-      {/* Type selection dropdown - Modified to prevent form submission */}
-      <div>
-        <Label>Tipo de Evento</Label>
-        <Popover open={typeOpen} onOpenChange={setTypeOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              type="button" // Explicitly set type to button to prevent form submission
-              variant="outline"
-              role="combobox"
-              aria-expanded={typeOpen}
-              className="w-full justify-between"
-            >
-              {eventTypes.find(et => et.value === type)?.label || "Selecione o tipo"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
-            <Command>
-              <CommandInput placeholder="Buscar tipo..." />
-              <CommandEmpty>Nenhum tipo encontrado.</CommandEmpty>
-              <CommandGroup>
-                {eventTypes.map((eventType) => (
-                  <CommandItem
-                    key={eventType.value}
-                    onSelect={() => {
-                      setType(eventType.value as EventType);
-                      setTypeOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        type === eventType.value ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {eventType.label}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
+      <EventTypeSelector 
+        selectedType={type} 
+        onTypeSelect={setType} 
+      />
       
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="recurring"
-          checked={isRecurring}
-          onCheckedChange={setIsRecurring}
-        />
-        <Label htmlFor="recurring">Evento recorrente</Label>
-      </div>
-      
-      {isRecurring && (
-        <>
-          <div>
-            <Label htmlFor="recurrence-pattern">Padrão de recorrência</Label>
-            <select
-              id="recurrence-pattern"
-              value={recurrencePattern}
-              onChange={(e) => setRecurrencePattern(e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly')}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            >
-              <option value="daily">Diário</option>
-              <option value="weekly">Semanal</option>
-              <option value="monthly">Mensal</option>
-              <option value="yearly">Anual</option>
-            </select>
-          </div>
-          
-          <div>
-            <Label htmlFor="end-date">Data final (opcional)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button" // Prevent form submission
-                  id="end-date"
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !endRecurrenceDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endRecurrenceDate ? (
-                    format(endRecurrenceDate, "dd/MM/yyyy", { locale: ptBR })
-                  ) : (
-                    <span>Sem data final</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={endRecurrenceDate}
-                  onSelect={setEndRecurrenceDate}
-                  disabled={(date) => (selectedDate ? date <= selectedDate : false)}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </>
-      )}
+      <RecurrenceOptions
+        isRecurring={isRecurring}
+        onRecurringChange={setIsRecurring}
+        recurrencePattern={recurrencePattern}
+        onRecurrencePatternChange={setRecurrencePattern}
+        endRecurrenceDate={endRecurrenceDate}
+        onEndRecurrenceDateChange={setEndRecurrenceDate}
+        eventDate={selectedDate}
+      />
       
       <DialogFooter>
         <Button type="submit">Salvar Evento</Button>
