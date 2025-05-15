@@ -8,12 +8,13 @@ export const Header = () => {
 
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "login" } });
+    // Using replace: true to ensure we don't create back navigation to the landing page
+    navigate("/auth", { state: { activeTab: "login" }, replace: false });
   };
 
   const handleSignupClick = () => {
     console.log("Signup button clicked, navigating to /auth");
-    navigate("/auth", { state: { activeTab: "register" } });
+    navigate("/auth", { state: { activeTab: "register" }, replace: false });
   };
 
   return (

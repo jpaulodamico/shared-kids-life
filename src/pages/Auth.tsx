@@ -21,10 +21,12 @@ const AuthPage = () => {
   
   console.log("Auth page loaded. Location state:", location.state);
   
+  // Get the active tab from location state or default to "login"
+  const initialTab = location.state?.activeTab || "login";
+  console.log("Initial tab set to:", initialTab);
+  
   // Make sure we properly pick up the activeTab from location state
-  const [activeTab, setActiveTab] = useState(
-    location.state?.activeTab || "login"
-  );
+  const [activeTab, setActiveTab] = useState(initialTab);
   
   useEffect(() => {
     // Update activeTab when location.state changes
@@ -81,7 +83,7 @@ const AuthPage = () => {
         <AuthHeader />
         
         <Card className="w-full">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="login" className="flex items-center gap-1">
                 <LogIn className="h-4 w-4" />
