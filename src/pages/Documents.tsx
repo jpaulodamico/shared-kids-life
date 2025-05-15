@@ -8,65 +8,11 @@ import { DocumentUploadDialog } from "@/components/documents/DocumentUploadDialo
 import { NewFolderDialog } from "@/components/documents/NewFolderDialog";
 import { useToast } from "@/hooks/use-toast";
 
-// Sample data
-const initialDocuments = [
-  {
-    id: 1,
-    name: "Declaração Escolar.pdf",
-    category: "Escola",
-    uploadedBy: "Lúcia Moreira",
-    date: "10/05/2025",
-    size: "1.2 MB",
-    type: "pdf"
-  },
-  {
-    id: 2,
-    name: "Receita médica - Sofia.jpg",
-    category: "Saúde",
-    uploadedBy: "Você",
-    date: "08/05/2025",
-    size: "850 KB",
-    type: "image"
-  },
-  {
-    id: 3,
-    name: "Comprovante de matrícula natação.pdf",
-    category: "Atividades",
-    uploadedBy: "Lúcia Moreira",
-    date: "05/05/2025",
-    size: "450 KB",
-    type: "pdf"
-  },
-  {
-    id: 4,
-    name: "Carteira de vacinação - Lucas.pdf",
-    category: "Saúde",
-    uploadedBy: "Você",
-    date: "01/05/2025",
-    size: "1.5 MB",
-    type: "pdf"
-  },
-  {
-    id: 5,
-    name: "Calendário escolar 2025.pdf",
-    category: "Escola",
-    uploadedBy: "Lúcia Moreira",
-    date: "20/04/2025",
-    size: "2.1 MB",
-    type: "pdf"
-  }
-];
-
-// Sample folder data
-const initialFolders = [
-  { id: 1, name: "Documentos Importantes", count: 3 }
-];
-
 const DocumentsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
-  const [documents, setDocuments] = useState(initialDocuments);
-  const [folders, setFolders] = useState(initialFolders);
+  const [documents, setDocuments] = useState([]);
+  const [folders, setFolders] = useState([]);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState(false);
   const { toast } = useToast();

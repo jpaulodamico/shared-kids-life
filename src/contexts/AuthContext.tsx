@@ -36,6 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toast.success("Login realizado com sucesso", {
           description: `Bem-vindo, ${newSession.user.email}`
         });
+        
+        // Redirect to dashboard
+        if (window.location.pathname !== '/app') {
+          window.location.href = '/app';
+        }
       }
       
       // Show message on sign out
@@ -43,6 +48,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toast.info("Você saiu da sua conta", {
           description: "Volte logo!"
         });
+        
+        // Redirect to home page
+        if (window.location.pathname !== '/') {
+          window.location.href = '/';
+        }
       }
       
       setLoading(false);
@@ -64,6 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log("Current session:", session?.user?.email);
         setSession(session);
         setUser(session?.user || null);
+        
+        // If user is logged in and not on app route, redirect to dashboard
+        if (session?.user && window.location.pathname !== '/app') {
+          window.location.href = '/app';
+        }
       } catch (e) {
         console.error("Error checking session:", e);
       } finally {

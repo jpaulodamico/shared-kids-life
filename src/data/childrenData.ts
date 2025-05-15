@@ -1,11 +1,11 @@
 
 import { Child, ScheduleDay } from "@/types/children";
 
-// Sample data for children - empty arrays
+// Empty arrays for children data
 export const children: Child[] = [];
 
-// Sample schedule - empty array
+// Empty array for schedules
 export const sofiaSchedule: ScheduleDay[] = [];
 
-// Sample schedule - empty array
+// Empty array for schedules
 export const lucasSchedule: ScheduleDay[] = [];
