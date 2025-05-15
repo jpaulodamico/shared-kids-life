@@ -6,13 +6,18 @@ import { useInviteForm } from "@/components/profile/invite/useInviteForm";
 
 interface InviteFormProps {
   onClose?: () => void;
+  onSuccess?: () => void; // Nova prop para atualizar a lista de convites
 }
 
-export function InviteForm({ onClose }: InviteFormProps) {
+export function InviteForm({ onClose, onSuccess }: InviteFormProps) {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const { form, onSubmit, isSubmitting, inviteCount, inviteLimit, canInviteMore } = useInviteForm({
     onSuccess: (link: string) => {
       setInviteLink(link);
+      // Chamamos onSuccess para atualizar a lista de convites no componente pai
+      if (onSuccess) {
+        onSuccess();
+      }
     }
   });
 

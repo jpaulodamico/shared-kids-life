@@ -1,94 +1,64 @@
 
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Settings, Users } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { SettingsForm } from "@/components/profile/SettingsForm";
 import { ProfileTab } from "@/components/profile/ProfileTab";
 import { LinkedUsersTab } from "@/components/profile/LinkedUsersTab";
+import { SettingsForm } from "@/components/profile/SettingsForm";
 import { ProfileDialogs } from "@/components/profile/ProfileDialogs";
-import { useProfileData } from "@/hooks/use-profile-data";
-import { useUserRole } from "@/hooks/use-user-role";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLinkedUsers } from "@/hooks/use-linked-users";
 
-const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const { user } = useAuth();
-  const { profileData, refreshProfileData } = useProfileData();
-  const { isPrimary } = useUserRole();
-
-  const handleProfileUpdate = () => {
-    setShowEditModal(false);
-    refreshProfileData();
+export default function ProfilePage() {
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showInviteUser, setShowInviteUser] = useState(false);
+  const { refreshLinkedUsers } = useLinkedUsers();
+  
+  const handleOpenEditProfile = () => setShowEditProfile(true);
+  const handleCloseEditProfile = () => setShowEditProfile(false);
+  
+  const handleOpenInviteUser = () => setShowInviteUser(true);
+  const handleCloseInviteUser = () => setShowInviteUser(false);
+  
+  const handleInviteSuccess = () => {
+    // Atualizar a lista de convites quando um novo convite for enviado
+    refreshLinkedUsers();
   };
-
+  
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Perfil</h1>
         <p className="text-muted-foreground">
-          Gerencie suas informações pessoais e configurações
+          Gerencie seu perfil e controle os usuários vinculados
         </p>
       </div>
       
-      <Tabs defaultValue="profile" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="profile" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="profile" className="flex items-center gap-1">
-            <User className="h-4 w-4" />
-            Perfil
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-1">
-            <Settings className="h-4 w-4" />
-            Configurações
-          </TabsTrigger>
-          <TabsTrigger value="linked" className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
-            Usuários Vinculados
-          </TabsTrigger>
+          <TabsTrigger value="profile">Perfil</TabsTrigger>
+          <TabsTrigger value="users">Usuários Vinculados</TabsTrigger>
+          <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="profile" className="mt-6">
-          <ProfileTab 
-            profileData={profileData}
-            onEdit={() => setShowEditModal(true)}
-            user={user}
-          />
+        <TabsContent value="profile" className="space-y-4">
+          <ProfileTab onEdit={handleOpenEditProfile} />
         </TabsContent>
         
-        <TabsContent value="settings" className="mt-6">
-          <SettingsForm defaultValues={{
-            emailNotifications: true,
-            pushNotifications: true,
-            calendarSync: false,
-            expenseReminders: true,
-            documentSharing: true
-          }} />
+        <TabsContent value="users">
+          <LinkedUsersTab onInvite={handleOpenInviteUser} />
         </TabsContent>
         
-        <TabsContent value="linked" className="mt-6">
-          <LinkedUsersTab 
-            onInvite={() => setShowInviteDialog(true)}
-          />
+        <TabsContent value="settings">
+          <SettingsForm />
         </TabsContent>
       </Tabs>
       
-      <ProfileDialogs
-        showEditModal={showEditModal}
-        showInviteDialog={showInviteDialog}
-        setShowEditModal={setShowEditModal}
-        setShowInviteDialog={setShowInviteDialog}
-        defaultValues={{
-          first_name: profileData.first_name,
-          last_name: profileData.last_name,
-          phone: profileData.phone,
-          address: profileData.address
-        }}
-        onProfileUpdate={handleProfileUpdate}
-        isPrimary={isPrimary}
+      <ProfileDialogs 
+        showEditProfile={showEditProfile}
+        onCloseEditProfile={handleCloseEditProfile}
+        showInviteUser={showInviteUser}
+        onCloseInviteUser={handleCloseInviteUser}
+        onInviteSuccess={handleInviteSuccess}
       />
     </div>
   );
-};
-
-export default ProfilePage;
+}
