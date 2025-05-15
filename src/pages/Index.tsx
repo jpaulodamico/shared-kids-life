@@ -15,12 +15,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { isPrimary, loading: roleLoading } = useUserRole();
   
-  useEffect(() => {
-    // Show a notification to invited users when they first load the dashboard
-    if (!roleLoading && !isPrimary && user) {
-      toast("Você está acessando como responsável convidado. Algumas funcionalidades podem estar limitadas.");
-    }
-  }, [roleLoading, isPrimary, user]);
+  // Removemos a notificação que estava sendo exibida para todos os usuários
   
   // Se está carregando, mostra um loading state
   if (loading || roleLoading) {

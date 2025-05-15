@@ -28,7 +28,7 @@ export function useUserRole() {
           setIsPrimary(false);
         } else {
           console.log('User role check result:', data);
-          setIsPrimary(data);
+          setIsPrimary(!!data); // Ensure we're getting a boolean value
         }
       } catch (error) {
         console.error('Error in useUserRole:', error);

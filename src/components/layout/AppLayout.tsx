@@ -51,6 +51,7 @@ export function AppLayout() {
   
   // Show a toast notification when role is determined
   useEffect(() => {
+    // Apenas mostre o toast para usuários convidados (não primários)
     if (!loadingRole && isPrimary === false && !roleNotified && user) {
       toast("Acesso de Responsável Convidado", {
         description: "Você está acessando como um responsável convidado. Algumas funcionalidades são limitadas.",
