@@ -416,8 +416,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_child: {
+        Args: {
+          p_name: string
+          p_age: number
+          p_birthday: string
+          p_school: string
+          p_grade: string
+          p_teacher: string
+          p_blood_type: string
+          p_allergies: string[]
+          p_medications: string[]
+          p_height: string
+          p_weight: string
+          p_activities: string[]
+          p_gender: string
+          p_image_url: string
+          p_initials: string
+          p_relation: string
+        }
+        Returns: string
+      }
       is_primary_user: {
-        Args: { user_uuid: string }
+        Args: { user_uuid?: string }
         Returns: boolean
       }
     }

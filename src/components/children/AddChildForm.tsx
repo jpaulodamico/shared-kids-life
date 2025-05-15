@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Form } from "@/components/ui/form";
 import { formSchema, FormValues } from "./form/childFormTypes";
 import { BasicInfoFields } from "./form/BasicInfoFields";
@@ -55,8 +55,8 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
       const activitiesArray = data.activities ? data.activities.split(',').map(item => item.trim()) : [];
       const initials = data.name.split(' ').map(part => part[0]).join('');
       
-      // Create a transaction to ensure both operations succeed or fail together
-      const { error: transactionError } = await supabase.rpc('add_child', {
+      // Usar a função atualizada que retorna o ID da criança
+      const { data: childId, error: transactionError } = await supabase.rpc('add_child', {
         p_name: data.name,
         p_age: data.age,
         p_birthday: data.birthday,
@@ -79,6 +79,8 @@ export function AddChildForm({ onSuccess }: AddChildFormProps) {
         console.error("Erro na transação:", transactionError);
         throw transactionError;
       }
+      
+      console.log("Criança adicionada com sucesso, ID:", childId);
       
       // Mostra mensagem de sucesso
       toast.success("Sucesso", {

@@ -13,7 +13,7 @@ export function useAccessControl() {
     if (operation === 'view') return true;
     
     // Only primary users can perform certain operations
-    if (['delete', 'invite'].includes(operation) && !isPrimary) {
+    if (['delete', 'invite'].includes(operation) && isPrimary === false) {
       toast.error("Permissão negada", {
         description: "Apenas o responsável principal pode realizar esta operação."
       });
@@ -25,8 +25,8 @@ export function useAccessControl() {
 
   return {
     canEdit: true, // All users can edit child data
-    canDelete: isPrimary,
-    canInvite: isPrimary,
+    canDelete: isPrimary === true,
+    canInvite: isPrimary === true,
     canView: true,
     checkPermission,
     isPrimary,

@@ -18,9 +18,9 @@ export function useUserRole() {
       }
 
       try {
-        // Call the is_primary_user function to check if the user is a primary user
-        const { data, error } = await supabase
-          .rpc('is_primary_user', { user_uuid: user.id });
+        // Chamada modificada para usar os parâmetros padrão da função
+        // Isto garante que auth.uid() seja usado internamente
+        const { data, error } = await supabase.rpc('is_primary_user');
 
         if (error) {
           console.error('Error checking user role:', error);
@@ -28,7 +28,7 @@ export function useUserRole() {
           setIsPrimary(false);
         } else {
           console.log('User role check result:', data);
-          // Garantir que o valor seja estritamente booleano
+          // Garantir que estamos lidando com um valor booleano explícito
           setIsPrimary(data === true);
         }
       } catch (error) {
