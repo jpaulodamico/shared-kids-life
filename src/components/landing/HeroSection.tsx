@@ -3,28 +3,19 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { AppTitle } from "@/components/ui/app-title";
+import { useNavigate } from "react-router-dom";
 
 export const HeroSection = () => {
+  const navigate = useNavigate();
+  
   const handleGetStarted = () => {
-    console.log("Get started button clicked, navigating to /auth");
-    try {
-      window.location.href = "/auth?tab=register";
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback
-      window.open("/auth?tab=register", "_self");
-    }
+    console.log("Get started button clicked, navigating to /auth?tab=register");
+    navigate("/auth?tab=register");
   };
   
   const handleLearnMore = () => {
-    console.log("Learn more button clicked, navigating to /auth");
-    try {
-      window.location.href = "/auth?tab=login";
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback
-      window.open("/auth?tab=login", "_self");
-    }
+    console.log("Learn more button clicked, navigating to /auth?tab=login");
+    navigate("/auth?tab=login");
   };
 
   return (

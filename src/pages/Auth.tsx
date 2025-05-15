@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 const AuthPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { user, loading } = useAuth();
   const { profileData, loading: loadingProfile } = useProfileData();
   
@@ -23,7 +24,8 @@ const AuthPage = () => {
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState<string>(tabParam === "register" ? "register" : "login");
   
-  console.log("Auth page loaded. URL tab param:", tabParam);
+  console.log("Auth page loaded. URL:", location.pathname + location.search);
+  console.log("URL tab param:", tabParam);
   console.log("Initial active tab set to:", activeTab);
   
   // Update activeTab when search parameters change
