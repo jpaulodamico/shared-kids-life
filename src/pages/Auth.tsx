@@ -24,8 +24,8 @@ const AuthPage = () => {
   console.log("Search params:", Object.fromEntries([...searchParams]));
   
   // Get the active tab from URL parameter or default to "login"
-  const tabFromURL = searchParams.get('tab');
-  const initialTab = tabFromURL === "register" ? "register" : "login";
+  const tabParam = searchParams.get('tab');
+  const initialTab = tabParam === "register" ? "register" : "login";
   console.log("Initial tab set to:", initialTab);
   
   // State for the active tab

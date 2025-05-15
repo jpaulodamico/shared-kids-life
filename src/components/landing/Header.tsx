@@ -1,11 +1,12 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const handleLoginClick = () => {
     console.log("Login button clicked, navigating to /auth");
-    // Force a full navigation to the auth page with login tab
+    // Use direct navigation to ensure full page load
     window.location.href = "/auth?tab=login";
   };
 
