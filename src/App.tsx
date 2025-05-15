@@ -16,7 +16,6 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LandingPage from "./pages/LandingPage";
-import { FloatingLogout } from "./components/ui/floating-logout";
 
 function App() {
   return (
@@ -46,7 +45,6 @@ function App() {
             {/* Redirect to landing page for unrecognized URLs */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          <FloatingLogout />
         </Router>
       </AuthProvider>
       <Toaster position="top-right" richColors />

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Sem dados de teste - array vazio
+// Empty messages array - removing test data
 const allMessages = [];
 
 interface RecentMessagesProps {

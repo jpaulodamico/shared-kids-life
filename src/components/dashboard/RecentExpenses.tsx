@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 
-// Sem dados de teste - array vazio
+// Empty expenses array - removing test data
 const allExpenses = [];
 
 interface RecentExpensesProps {

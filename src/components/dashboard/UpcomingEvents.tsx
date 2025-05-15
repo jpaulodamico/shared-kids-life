@@ -11,7 +11,7 @@ const CHILD_COLORS: Record<string, string> = {
   "lucas": "bg-blue-500 text-white",   // Lucas - blue
 };
 
-// Sem dados de teste - array vazio
+// Empty events array - removing test data
 const allEvents = [];
 
 const getBadgeVariant = (type: string) => {

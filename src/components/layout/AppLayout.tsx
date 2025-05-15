@@ -2,6 +2,7 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import { UserHeader } from "./UserHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -109,6 +110,7 @@ export function AppLayout() {
       <div className="min-h-screen flex w-full">
         <AppSidebar defaultCollapsed={isMobile} />
         <main className="flex-1 p-4 md:p-6 max-w-full overflow-auto">
+          <UserHeader />
           <Outlet />
         </main>
       </div>
