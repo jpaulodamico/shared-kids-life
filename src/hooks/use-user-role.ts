@@ -28,7 +28,8 @@ export function useUserRole() {
           setIsPrimary(false);
         } else {
           console.log('User role check result:', data);
-          setIsPrimary(!!data); // Ensure we're getting a boolean value
+          // Garantir que o valor seja estritamente booleano
+          setIsPrimary(data === true);
         }
       } catch (error) {
         console.error('Error in useUserRole:', error);
