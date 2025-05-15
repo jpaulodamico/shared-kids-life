@@ -28,10 +28,12 @@ export function AppLayout() {
   
   const [roleNotified, setRoleNotified] = useState(false);
 
-  // Verificar se o usuário deve ver a tela de boas-vindas
+  // Check if welcome page should be shown
   const shouldShowWelcome = 
-    (!isProfileComplete && !localStorage.getItem("welcomeShown")) || // Caso de usuário que não completou o perfil
-    isNewUser; // Caso de usuário novo
+    user && !loading && (
+      isNewUser || 
+      (!isProfileComplete && !localStorage.getItem("welcomeShown"))
+    );
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -58,20 +60,20 @@ export function AppLayout() {
     }
   }, [loadingRole, isPrimary, roleNotified, user]);
   
-  // Redirecionar para a página de boas-vindas se for necessário
+  // Redirect to welcome page if needed
   useEffect(() => {
-    if (!loading && !loadingProfile && user && shouldShowWelcome) {
+    if (shouldShowWelcome) {
       console.log("User should see welcome page, redirecting...");
       navigate("/welcome");
     }
-  }, [loading, loadingProfile, user, shouldShowWelcome, navigate, isNewUser]);
+  }, [loading, loadingProfile, user, navigate, isNewUser, isProfileComplete, shouldShowWelcome]);
   
-  // Redireciona para a página de autenticação se não houver usuário logado
+  // Redirect to auth page if no user
   if (!loading && !user) {
     return <Navigate to="/auth" replace />;
   }
   
-  // Exibe um indicador de carregamento
+  // Show loading indicator
   if (loading || connectionStatus.checking || loadingProfile) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -80,7 +82,7 @@ export function AppLayout() {
     );
   }
 
-  // Se não estiver conectado ao Supabase, mas não estamos mais verificando
+  // Show error if not connected to Supabase
   if (!connectionStatus.connected && !connectionStatus.checking) {
     return (
       <div className="flex flex-col items-center justify-center h-screen p-4">

@@ -15,43 +15,41 @@ const WelcomePage = () => {
   const { isProfileComplete } = useProfileComplete();
   const [activeTab, setActiveTab] = useState("features");
   
-  // Se o usuário não estiver autenticado, redireciona para a página de login
+  // Redirect unauthenticated users to login page
   useEffect(() => {
     if (!user) {
       navigate("/auth");
     }
   }, [user, navigate]);
   
-  // Se o perfil já está completo, redireciona para o dashboard
+  // Redirect users with complete profiles to dashboard if they've seen welcome
   useEffect(() => {
-    if (isProfileComplete) {
-      // Salva no localStorage que o usuário já viu a tela de boas-vindas
-      localStorage.setItem("welcomeShown", "true");
+    if (isProfileComplete && localStorage.getItem("welcomeShown")) {
       navigate("/app");
     }
   }, [isProfileComplete, navigate]);
 
   const handleContinue = () => {
-    // Salva no localStorage que o usuário já viu a tela de boas-vindas
+    // Save that the user has seen the welcome screen
     localStorage.setItem("welcomeShown", "true");
     
     toast.success("Bem-vindo ao CoParent!", {
       description: "Agora você pode começar a usar todas as funcionalidades do aplicativo."
     });
     
-    // Navegue para a página principal após marcar como visto
+    // Navigate to the main dashboard
     navigate("/app");
   };
   
   const skipToApp = () => {
-    // Salva no localStorage que o usuário já viu a tela de boas-vindas
+    // Save that the user has seen the welcome screen
     localStorage.setItem("welcomeShown", "true");
     
     toast.info("Você pode acessar as instruções novamente pelo seu perfil", {
       description: "Recomendamos completar seu perfil para uma experiência completa."
     });
     
-    // Navegue para a página principal
+    // Navigate to the main dashboard
     navigate("/app");
   };
 
