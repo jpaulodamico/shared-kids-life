@@ -5,7 +5,7 @@ import { children } from "@/data/childrenData";
 interface EventListProps {
   events: CalendarEvent[];
   getBackgroundColor: (type: EventType) => string;
-  getChildColor: (childId?: string) => string; // Updated: Changed from number to string
+  getChildColor: (childId?: string) => string; // Atualizado: Alterado de number para string
 }
 
 export function EventList({ events, getBackgroundColor, getChildColor }: EventListProps) {
@@ -20,7 +20,7 @@ export function EventList({ events, getBackgroundColor, getChildColor }: EventLi
   return (
     <div className="space-y-4">
       {events.map((event) => {
-        const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
+        const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Corrigido comparação
         
         return (
           <div key={event.id} className="flex items-start">

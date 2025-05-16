@@ -12,7 +12,7 @@ interface MonthViewProps {
   selectedDateEvents: CalendarEvent[];
   formatDate: (date: Date) => string;
   getBackgroundColor: (type: EventType) => string;
-  getChildColor: (childId?: string) => string; // Updated: Changed from number to string
+  getChildColor: (childId?: string) => string; // Atualizado: Alterado de number para string
 }
 
 export function MonthView({
@@ -78,7 +78,7 @@ export function MonthView({
           ) : (
             <div className="space-y-4">
               {selectedDateEvents.map((event) => {
-                const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
+                const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Corrigido comparação
                 
                 return (
                   <div key={event.id} className="flex items-start">

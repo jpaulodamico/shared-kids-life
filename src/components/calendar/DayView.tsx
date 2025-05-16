@@ -13,7 +13,7 @@ interface DayViewProps {
   events: CalendarEvent[];
   onSelectDate: (date: Date) => void;
   getBackgroundColor: (type: EventType) => string;
-  getChildColor: (childId?: string) => string; // Updated: Changed from number to string
+  getChildColor: (childId?: string) => string; // Atualizado: Alterado de number para string
 }
 
 export function DayView({
@@ -97,7 +97,7 @@ export function DayView({
                     <div className="h-6"></div> // Empty space holder
                   ) : (
                     hourEvents.map(event => {
-                      const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
+                      const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Corrigido comparação
                       
                       return (
                         <div key={event.id} className="flex items-start bg-card border rounded-md p-2">

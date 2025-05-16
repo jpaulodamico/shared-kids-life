@@ -1,304 +1,332 @@
-
-import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { addDays, format, startOfWeek, startOfMonth, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, parse, isValid } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useState, useCallback, useEffect } from 'react';
+import { Calendar as CalendarUI } from "@/components/ui/calendar"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { MonthView } from '@/components/calendar/MonthView';
+import { DayView } from '@/components/calendar/DayView';
+import { EventList } from '@/components/calendar/EventList';
+import { Button } from "@/components/ui/button"
+import { PlusIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast";
+import { useChildren } from "@/hooks/use-supabase-data";
 import { cn } from "@/lib/utils";
-import { EventList } from "@/components/calendar/EventList";
-import { DayView } from "@/components/calendar/DayView";
-import { WeekView } from "@/components/calendar/WeekView";
-import { MonthView } from "@/components/calendar/MonthView";
-import { EventForm } from "@/components/calendar/EventForm";
-import { children } from "@/data/childrenData";
-import { toast } from "@/components/ui/use-toast";
-
-export type EventType = 'medical' | 'school' | 'activity' | 'family' | 'other';
 
 export interface CalendarEvent {
-  id: number;
+  id: string;
   title: string;
+  description?: string;
   date: Date;
   time: string;
-  description: string;
   type: EventType;
-  location: string;
+  location?: string;
+  childId?: string; // Atualizado: Alterado de number para string
   isRecurring?: boolean;
   recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
-  endRecurrenceDate?: Date;
-  childId?: string; // Updated: Changed from number to string
 }
 
-// Child color mapping
-export const CHILD_COLORS: Record<string, string> = { // Updated: Changed from number to string
-  "1": "bg-purple-500 text-white", // Sofia
-  "2": "bg-blue-500 text-white",   // Lucas
-  // Add more children colors as needed
-};
-
-// Function to get background color based on childId
-export const getChildColor = (childId?: string): string => { // Updated: Changed from number to string
-  if (childId === undefined) return "bg-gray-300"; // Default color for events without a child
-  return CHILD_COLORS[childId] || "bg-gray-300";
-};
+export type EventType = 'school' | 'health' | 'activity' | 'other';
 
 const CalendarPage = () => {
   const [date, setDate] = useState<Date>(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([
-    {
-      id: 1,
-      title: "Consulta Pediatra",
-      date: new Date(2025, 4, 13), // Current date
-      time: "14:30",
-      description: "Dra. Ana Silva",
-      type: "medical",
-      location: "Clínica Central",
-      childId: "1" // Updated: Changed from number to string
-    },
-    {
-      id: 2,
-      title: "Reunião Escolar",
-      date: new Date(2025, 4, 14), // Tomorrow
-      time: "10:00",
-      description: "Avaliação Semestral",
-      type: "school",
-      location: "Escola Miraflores",
-      childId: "1" // Updated: Changed from number to string
-    },
-    {
-      id: 3,
-      title: "Aula de Natação",
-      date: new Date(2025, 4, 18),
-      time: "16:00",
-      description: "Levar toalha e troca de roupa",
-      type: "activity",
-      location: "Academia Central",
-      isRecurring: true,
-      recurrencePattern: "weekly",
-      childId: "2" // Updated: Changed from number to string
-    },
-    {
-      id: 4,
-      title: "Visita Avós",
-      date: new Date(2025, 4, 19),
-      time: "11:00",
-      description: "Almoço em família",
-      type: "family",
-      location: "Casa dos avós",
-      childId: "2" // Updated: Changed from number to string
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [view, setView] = useState<'month' | 'day'>('month');
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [time, setTime] = useState('08:00');
+  const [type, setType] = useState<EventType>('school');
+  const [location, setLocation] = useState('');
+  const [childId, setChildId] = useState<string | undefined>(undefined);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrencePattern, setRecurrencePattern] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('weekly');
+  const { toast } = useToast();
+  const { children } = useChildren();
+
+  useEffect(() => {
+    // Mock events for testing
+    const mockEvents: CalendarEvent[] = [
+      {
+        id: '1',
+        title: 'Reunião Escolar',
+        description: 'Reunião com os pais na escola',
+        date: new Date(),
+        time: '10:00',
+        type: 'school',
+        location: 'Escola Municipal',
+        childId: children[0]?.id,
+        isRecurring: false,
+      },
+      {
+        id: '2',
+        title: 'Consulta Médica',
+        description: 'Consulta de rotina com o pediatra',
+        date: new Date(),
+        time: '14:00',
+        type: 'health',
+        location: 'Consultório Médico',
+        childId: children[0]?.id,
+        isRecurring: true,
+        recurrencePattern: 'weekly',
+      },
+      {
+        id: '3',
+        title: 'Aula de Natação',
+        description: 'Aula de natação na piscina do clube',
+        date: new Date(),
+        time: '16:00',
+        type: 'activity',
+        location: 'Clube Aquático',
+        childId: children[0]?.id,
+        isRecurring: true,
+        recurrencePattern: 'weekly',
+      },
+    ];
+
+    setEvents(mockEvents);
+  }, [children]);
+
+  const formatDate = useCallback((date: Date) => {
+    return format(date, "PPPP", { locale: ptBR });
+  }, []);
+
+  const handleSelectDate = (date: Date) => {
+    setDate(date);
+  };
+
+  const getBackgroundColor = useCallback((type: EventType) => {
+    switch (type) {
+      case 'school':
+        return 'bg-red-500';
+      case 'health':
+        return 'bg-green-500';
+      case 'activity':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
     }
-  ]);
+  }, []);
 
-  const [view, setView] = useState<'day' | 'week' | 'month'>('month');
-  const [showDialog, setShowDialog] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<EventType[]>(['medical', 'school', 'activity', 'family', 'other']);
-  
-  // Filter events based on selected types
-  const filteredEvents = events.filter(event => activeFilters.includes(event.type));
-
-  // Filter events for the selected date
-  const selectedDateEvents = filteredEvents.filter(
-    (event) => 
-      date && 
-      event.date.getDate() === date.getDate() && 
-      event.date.getMonth() === date.getMonth() && 
-      event.date.getFullYear() === date.getFullYear()
-  );
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    }).format(date);
-  };
-
-  const handleAddEvent = (event: Omit<CalendarEvent, "id">) => {
-    const newEvent = {
-      ...event,
-      id: events.length + 1
-    };
-    setEvents([...events, newEvent]);
-    setShowDialog(false);
+  const getChildColor = useCallback((childId?: string) => {
+    if (!childId) return 'bg-gray-400';
     
-    toast(`${newEvent.title} foi adicionado ao calendário.`);
-  };
+    const index = children.findIndex(child => child.id === childId);
+    if (index === -1) return 'bg-gray-400';
+    
+    const colors = [
+      'bg-blue-500',
+      'bg-red-500',
+      'bg-green-500',
+      'bg-yellow-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-orange-500',
+    ];
+    
+    return colors[index % colors.length];
+  }, [children]);
 
-  const toggleFilter = (type: EventType) => {
-    setActiveFilters(prev => {
-      if (prev.includes(type)) {
-        return prev.filter(t => t !== type);
-      } else {
-        return [...prev, type];
-      }
+  const selectedDateEvents = events.filter(event => {
+    return event.date.toDateString() === date.toDateString();
+  });
+
+  const handleCreateEvent = () => {
+    if (!title || !time || !type) {
+      toast({
+        title: "Erro ao criar evento",
+        description: "Preencha todos os campos obrigatórios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newEvent: CalendarEvent = {
+      id: Math.random().toString(36).substring(7),
+      title,
+      description,
+      date,
+      time,
+      type,
+      location,
+      childId,
+      isRecurring,
+      recurrencePattern,
+    };
+
+    setEvents([...events, newEvent]);
+    setOpen(false);
+    setTitle('');
+    setDescription('');
+    setTime('08:00');
+    setType('school');
+    setLocation('');
+    setChildId(undefined);
+    setIsRecurring(false);
+    setRecurrencePattern('weekly');
+
+    toast({
+      title: "Evento criado",
+      description: "Seu evento foi criado com sucesso.",
     });
   };
 
-  // Original type color function (kept for type-based coloring)
-  const getBackgroundColor = (type: EventType) => {
-    switch(type) {
-      case "medical": return "bg-destructive";
-      case "school": return "bg-family-600";
-      case "activity": return "bg-accent-green-500";
-      case "family": return "bg-warm-500";
-      default: return "bg-muted";
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Calendário</h1>
-          <p className="text-muted-foreground">
-            Gerencie os compromissos e eventos das crianças
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Dialog open={showDialog} onOpenChange={setShowDialog}>
+    <div className="container py-10">
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Calendário</h1>
+        <div className="space-x-2">
+          <Button variant="outline" onClick={() => setView(view === 'month' ? 'day' : 'month')}>
+            Alternar para visão {view === 'month' ? 'diária' : 'mensal'}
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button>
-                <FilePlus2 className="mr-2 h-4 w-4" />
-                Novo Evento
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Criar Evento
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar Novo Evento</DialogTitle>
+                <DialogTitle>Criar Evento</DialogTitle>
                 <DialogDescription>
-                  Preencha os detalhes do evento abaixo.
+                  Crie um novo evento para o seu calendário.
                 </DialogDescription>
               </DialogHeader>
-              <EventForm onSubmit={handleAddEvent} />
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="title" className="text-right">
+                    Título
+                  </Label>
+                  <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="description" className="text-right">
+                    Descrição
+                  </Label>
+                  <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="date" className="text-right">
+                    Data
+                  </Label>
+                  <Card className="col-span-3">
+                    <CardContent className="grid gap-4 p-2">
+                      <CalendarUI
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        className="rounded-md border"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="time" className="text-right">
+                    Hora
+                  </Label>
+                  <Input type="time" id="time" value={time} onChange={(e) => setTime(e.target.value)} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="type" className="text-right">
+                    Tipo
+                  </Label>
+                  <Select onValueChange={(value) => setType(value as EventType)}>
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Selecione um tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="school">Escola</SelectItem>
+                      <SelectItem value="health">Saúde</SelectItem>
+                      <SelectItem value="activity">Atividade</SelectItem>
+                      <SelectItem value="other">Outro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="location" className="text-right">
+                    Localização
+                  </Label>
+                  <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="child" className="text-right">
+                    Criança
+                  </Label>
+                  <Select onValueChange={(value) => setChildId(value)}>
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Selecione uma criança" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {children.map((child) => (
+                        <SelectItem key={child.id} value={child.id}>{child.name}</SelectItem>
+                      ))}
+                      <SelectItem value={undefined}>Nenhuma</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="isRecurring" className="text-right">
+                    Recorrente
+                  </Label>
+                  <Input type="checkbox" id="isRecurring" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} className="col-span-3" />
+                </div>
+                {isRecurring && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="recurrencePattern" className="text-right">
+                      Repetição
+                    </Label>
+                    <Select onValueChange={(value) => setRecurrencePattern(value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Selecione uma repetição" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Diariamente</SelectItem>
+                        <SelectItem value="weekly">Semanalmente</SelectItem>
+                        <SelectItem value="monthly">Mensalmente</SelectItem>
+                        <SelectItem value="yearly">Anualmente</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+              <Button onClick={handleCreateEvent}>Criar Evento</Button>
             </DialogContent>
           </Dialog>
-          
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">
-                <Filter className="mr-2 h-4 w-4" />
-                Filtrar
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56">
-              <div className="space-y-2">
-                <h4 className="font-medium">Tipos de Evento</h4>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    variant={activeFilters.includes('medical') ? "default" : "outline"}
-                    className={cn(
-                      "flex items-center gap-1",
-                      activeFilters.includes('medical') ? "text-white" : ""
-                    )}
-                    onClick={() => toggleFilter('medical')}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-destructive" />
-                    Médico
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={activeFilters.includes('school') ? "default" : "outline"}
-                    className={cn(
-                      "flex items-center gap-1",
-                      activeFilters.includes('school') ? "text-white" : ""
-                    )}
-                    onClick={() => toggleFilter('school')}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-family-600" />
-                    Escola
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={activeFilters.includes('activity') ? "default" : "outline"}
-                    className={cn(
-                      "flex items-center gap-1",
-                      activeFilters.includes('activity') ? "text-white" : ""
-                    )}
-                    onClick={() => toggleFilter('activity')}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-accent-green-500" />
-                    Atividade
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={activeFilters.includes('family') ? "default" : "outline"}
-                    className={cn(
-                      "flex items-center gap-1",
-                      activeFilters.includes('family') ? "text-white" : ""
-                    )}
-                    onClick={() => toggleFilter('family')}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-warm-500" />
-                    Família
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={activeFilters.includes('other') ? "default" : "outline"}
-                    className={cn(
-                      "flex items-center gap-1",
-                      activeFilters.includes('other') ? "text-white" : ""
-                    )}
-                    onClick={() => toggleFilter('other')}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-muted" />
-                    Outro
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
         </div>
       </div>
-      
-      <Tabs value={view} onValueChange={(v) => setView(v as 'day' | 'week' | 'month')} className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="day">Dia</TabsTrigger>
-          <TabsTrigger value="week">Semana</TabsTrigger>
-          <TabsTrigger value="month">Mês</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="day" className="w-full">
-          <DayView 
-            date={date} 
-            events={filteredEvents} 
-            onSelectDate={setDate}
-            getBackgroundColor={getBackgroundColor}
-            getChildColor={getChildColor}
-          />
-        </TabsContent>
-        
-        <TabsContent value="week" className="w-full">
-          <WeekView 
-            date={date} 
-            events={filteredEvents} 
-            onSelectDate={setDate}
-            getBackgroundColor={getBackgroundColor}
-            getChildColor={getChildColor}
-          />
-        </TabsContent>
-        
-        <TabsContent value="month" className="w-full">
-          <MonthView
-            date={date}
-            events={filteredEvents}
-            onSelectDate={setDate}
-            selectedDateEvents={selectedDateEvents}
-            formatDate={formatDate}
-            getBackgroundColor={getBackgroundColor}
-            getChildColor={getChildColor}
-          />
-        </TabsContent>
-      </Tabs>
+
+      {view === 'month' ? (
+        <MonthView
+          date={date}
+          events={events}
+          onSelectDate={handleSelectDate}
+          selectedDateEvents={selectedDateEvents}
+          formatDate={formatDate}
+          getBackgroundColor={getBackgroundColor}
+          getChildColor={getChildColor}
+        />
+      ) : (
+        <DayView
+          date={date}
+          events={events}
+          onSelectDate={handleSelectDate}
+          getBackgroundColor={getBackgroundColor}
+          getChildColor={getChildColor}
+        />
+      )}
     </div>
   );
 };
