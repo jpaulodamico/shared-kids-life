@@ -10,15 +10,15 @@ import { children } from "@/data/childrenData";
 import { CHILD_COLORS } from "@/pages/Calendar";
 
 interface ChildSelectorProps {
-  selectedChildId: number | undefined;
-  onChildSelect: (childId: number | undefined) => void;
+  selectedChildId: string | undefined;
+  onChildSelect: (childId: string | undefined) => void;
 }
 
 export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorProps) {
   const [open, setOpen] = useState(false);
 
   // Handler for child selection
-  const handleChildSelect = (id: number) => {
+  const handleChildSelect = (id: string) => {
     onChildSelect(id);
     setOpen(false);
   };

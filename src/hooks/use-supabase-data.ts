@@ -55,12 +55,12 @@ export const useChildren = () => {
         }
         
         // Mapeia os dados para o formato esperado pela aplicação
-        const formattedChildren = childrenData.map(child => ({
+        const formattedChildren: Child[] = childrenData.map(child => ({
           id: child.id,
           name: child.name,
           age: child.age,
           birthday: child.birthday,
-          gender: child.gender,
+          gender: child.gender as 'male' | 'female',
           school: child.school,
           grade: child.grade,
           teacher: child.teacher,

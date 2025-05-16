@@ -20,7 +20,7 @@ export const eventFormSchema = z.object({
   ),
   // Only validate endRecurrenceDate if isRecurring is true
   endRecurrenceDate: z.date().optional().nullable(),
-  childId: z.number().optional(),
+  childId: z.string().optional(),
 }).refine((data) => {
   // If isRecurring is true, recurrencePattern must be provided
   if (data.isRecurring && !data.recurrencePattern) {
