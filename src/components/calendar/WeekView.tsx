@@ -96,7 +96,7 @@ export function WeekView({
                       "text-xs p-1 rounded truncate",
                       getChildColor(event.childId),
                     )}
-                    title={`${event.title} - ${event.time} - ${event.childId ? children.find(c => c.id === event.childId)?.name : 'Evento geral'}`} // Updated comparison
+                    title={`${event.title} - ${event.time} - ${event.childId ? children.find(c => c.id === event.childId)?.name : 'Evento geral'}`} // Fixed comparison
                   >
                     {event.time} {event.title}
                   </div>
@@ -121,7 +121,7 @@ export function WeekView({
               {events
                 .filter(event => isSameDay(event.date, date))
                 .map((event) => {
-                  const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Updated comparison
+                  const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
                   
                   return (
                     <div key={event.id} className="flex items-start">

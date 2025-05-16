@@ -97,7 +97,7 @@ export function DayView({
                     <div className="h-6"></div> // Empty space holder
                   ) : (
                     hourEvents.map(event => {
-                      const childName = event.childId ? children.find(c => c.id === event.childId) : ""; // Updated comparison
+                      const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
                       
                       return (
                         <div key={event.id} className="flex items-start bg-card border rounded-md p-2">

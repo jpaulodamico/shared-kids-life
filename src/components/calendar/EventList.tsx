@@ -20,7 +20,7 @@ export function EventList({ events, getBackgroundColor, getChildColor }: EventLi
   return (
     <div className="space-y-4">
       {events.map((event) => {
-        const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Updated comparison
+        const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Fixed comparison
         
         return (
           <div key={event.id} className="flex items-start">

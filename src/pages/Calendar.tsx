@@ -1,3 +1,4 @@
+
 import { CalendarIcon, FilePlus2, Filter } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -33,18 +34,18 @@ export interface CalendarEvent {
   isRecurring?: boolean;
   recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   endRecurrenceDate?: Date;
-  childId?: number;
+  childId?: string; // Updated: Changed from number to string
 }
 
 // Child color mapping
-export const CHILD_COLORS: Record<number, string> = {
-  1: "bg-purple-500 text-white", // Sofia
-  2: "bg-blue-500 text-white",   // Lucas
+export const CHILD_COLORS: Record<string, string> = { // Updated: Changed from number to string
+  "1": "bg-purple-500 text-white", // Sofia
+  "2": "bg-blue-500 text-white",   // Lucas
   // Add more children colors as needed
 };
 
 // Function to get background color based on childId
-export const getChildColor = (childId?: number): string => {
+export const getChildColor = (childId?: string): string => { // Updated: Changed from number to string
   if (childId === undefined) return "bg-gray-300"; // Default color for events without a child
   return CHILD_COLORS[childId] || "bg-gray-300";
 };
@@ -60,7 +61,7 @@ const CalendarPage = () => {
       description: "Dra. Ana Silva",
       type: "medical",
       location: "Clínica Central",
-      childId: 1 // Sofia
+      childId: "1" // Updated: Changed from number to string
     },
     {
       id: 2,
@@ -70,7 +71,7 @@ const CalendarPage = () => {
       description: "Avaliação Semestral",
       type: "school",
       location: "Escola Miraflores",
-      childId: 1 // Sofia
+      childId: "1" // Updated: Changed from number to string
     },
     {
       id: 3,
@@ -82,7 +83,7 @@ const CalendarPage = () => {
       location: "Academia Central",
       isRecurring: true,
       recurrencePattern: "weekly",
-      childId: 2 // Lucas
+      childId: "2" // Updated: Changed from number to string
     },
     {
       id: 4,
@@ -92,7 +93,7 @@ const CalendarPage = () => {
       description: "Almoço em família",
       type: "family",
       location: "Casa dos avós",
-      childId: 2 // Lucas
+      childId: "2" // Updated: Changed from number to string
     }
   ]);
 
