@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EventType } from "@/pages/Calendar";
+import { EventType } from "@/components/calendar/form/eventFormSchema";
 
 interface EventTypeSelectorProps {
   selectedType: EventType;
@@ -23,7 +23,7 @@ export function EventTypeSelector({ selectedType, onTypeSelect }: EventTypeSelec
     { label: "Atividade", value: "activity" },
     { label: "Família", value: "family" },
     { label: "Outro", value: "other" }
-  ];
+  ] as const;
 
   const handleTypeSelect = (value: string) => {
     onTypeSelect(value as EventType);

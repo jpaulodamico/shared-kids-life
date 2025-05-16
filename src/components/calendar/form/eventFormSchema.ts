@@ -1,6 +1,8 @@
 
 import { z } from "zod";
-import { EventType } from "@/pages/Calendar";
+
+// Define the event type as a string union type for clear TypeScript integration
+export type EventType = "medical" | "health" | "school" | "activity" | "family" | "other";
 
 // Define the recurrence pattern schema separately for better reusability
 const recurrencePatternSchema = z.enum(["daily", "weekly", "monthly", "yearly"]);

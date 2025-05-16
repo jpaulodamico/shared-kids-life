@@ -8,6 +8,18 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { children } from "@/data/childrenData";
 
+// Define child colors internally
+const CHILD_COLORS = [
+  'bg-blue-500',
+  'bg-red-500',
+  'bg-green-500',
+  'bg-yellow-500',
+  'bg-purple-500',
+  'bg-pink-500',
+  'bg-indigo-500',
+  'bg-orange-500',
+];
+
 interface ChildSelectorProps {
   selectedChildId: string | undefined;
   onChildSelect: (childId: string | undefined) => void;
@@ -35,18 +47,7 @@ export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorP
     const index = children.findIndex(child => child.id === childId);
     if (index === -1) return 'bg-gray-400';
     
-    const colors = [
-      'bg-blue-500',
-      'bg-red-500',
-      'bg-green-500',
-      'bg-yellow-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-orange-500',
-    ];
-    
-    return colors[index % colors.length];
+    return CHILD_COLORS[index % CHILD_COLORS.length];
   };
 
   return (
