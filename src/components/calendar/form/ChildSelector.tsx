@@ -10,8 +10,8 @@ import { children } from "@/data/childrenData";
 import { CHILD_COLORS } from "@/pages/Calendar";
 
 interface ChildSelectorProps {
-  selectedChildId: string | undefined;
-  onChildSelect: (childId: string | undefined) => void;
+  selectedChildId: string | undefined; // Updated: Changed from number to string
+  onChildSelect: (childId: string | undefined) => void; // Updated: Changed from number to string
 }
 
 export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorProps) {

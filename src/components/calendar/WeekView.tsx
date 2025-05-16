@@ -13,7 +13,7 @@ interface WeekViewProps {
   events: CalendarEvent[];
   onSelectDate: (date: Date) => void;
   getBackgroundColor: (type: EventType) => string;
-  getChildColor: (childId?: number) => string;
+  getChildColor: (childId?: string) => string; // Updated: Changed from number to string
 }
 
 export function WeekView({
@@ -96,7 +96,7 @@ export function WeekView({
                       "text-xs p-1 rounded truncate",
                       getChildColor(event.childId),
                     )}
-                    title={`${event.title} - ${event.time} - ${event.childId ? children.find(c => c.id === event.childId)?.name : 'Evento geral'}`}
+                    title={`${event.title} - ${event.time} - ${event.childId ? children.find(c => c.id === event.childId)?.name : 'Evento geral'}`} // Updated comparison
                   >
                     {event.time} {event.title}
                   </div>
@@ -121,7 +121,7 @@ export function WeekView({
               {events
                 .filter(event => isSameDay(event.date, date))
                 .map((event) => {
-                  const childName = event.childId ? children.find(c => c.id === event.childId)?.name : "";
+                  const childName = event.childId ? children.find(c => c.id === event.childId)?.name : ""; // Updated comparison
                   
                   return (
                     <div key={event.id} className="flex items-start">

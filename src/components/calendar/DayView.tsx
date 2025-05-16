@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format, addDays, subDays, isSameDay } from "date-fns";
@@ -12,7 +13,7 @@ interface DayViewProps {
   events: CalendarEvent[];
   onSelectDate: (date: Date) => void;
   getBackgroundColor: (type: EventType) => string;
-  getChildColor: (childId?: number) => string;
+  getChildColor: (childId?: string) => string; // Updated: Changed from number to string
 }
 
 export function DayView({
@@ -96,7 +97,7 @@ export function DayView({
                     <div className="h-6"></div> // Empty space holder
                   ) : (
                     hourEvents.map(event => {
-                      const childName = event.childId ? children.find(c => c.id === event.childId)?.name : "";
+                      const childName = event.childId ? children.find(c => c.id === event.childId) : ""; // Updated comparison
                       
                       return (
                         <div key={event.id} className="flex items-start bg-card border rounded-md p-2">
