@@ -18,6 +18,7 @@ export function EventTypeSelector({ selectedType, onTypeSelect }: EventTypeSelec
   
   const eventTypes = [
     { label: "Médico", value: "medical" },
+    { label: "Saúde", value: "health" },
     { label: "Escola", value: "school" },
     { label: "Atividade", value: "activity" },
     { label: "Família", value: "family" },
@@ -35,7 +36,7 @@ export function EventTypeSelector({ selectedType, onTypeSelect }: EventTypeSelec
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            type="button" // Explicitly set type to button to prevent form submission
+            type="button"
             variant="outline"
             role="combobox"
             aria-expanded={open}

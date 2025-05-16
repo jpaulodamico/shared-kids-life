@@ -32,12 +32,13 @@ export interface CalendarEvent {
   time: string;
   type: EventType;
   location?: string;
-  childId?: string; // Atualizado: Alterado de number para string
+  childId?: string;
   isRecurring?: boolean;
   recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  endRecurrenceDate?: Date | null;
 }
 
-export type EventType = 'school' | 'health' | 'activity' | 'other';
+export type EventType = 'school' | 'health' | 'medical' | 'activity' | 'family' | 'other';
 
 const CalendarPage = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -250,7 +251,9 @@ const CalendarPage = () => {
                     <SelectContent>
                       <SelectItem value="school">Escola</SelectItem>
                       <SelectItem value="health">Saúde</SelectItem>
+                      <SelectItem value="medical">Medicina</SelectItem>
                       <SelectItem value="activity">Atividade</SelectItem>
+                      <SelectItem value="family">Família</SelectItem>
                       <SelectItem value="other">Outro</SelectItem>
                     </SelectContent>
                   </Select>
@@ -332,3 +335,8 @@ const CalendarPage = () => {
 };
 
 export default CalendarPage;
+
+export const CHILD_COLORS: Record<string, string> = {
+  // Cores padrão para IDs de crianças específicos
+  // Estas cores serão usadas no componente ChildSelector
+};

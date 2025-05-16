@@ -11,7 +11,7 @@ export const eventFormSchema = z.object({
   time: z.string().min(1, { message: "O horário é obrigatório" }),
   description: z.string().optional(),
   location: z.string().min(1, { message: "O local é obrigatório" }),
-  type: z.enum(["medical", "school", "activity", "family", "other"] as const),
+  type: z.enum(["medical", "health", "school", "activity", "family", "other"] as const),
   isRecurring: z.boolean().default(false),
   // Only validate recurrencePattern if isRecurring is true
   recurrencePattern: z.preprocess(
@@ -20,7 +20,7 @@ export const eventFormSchema = z.object({
   ),
   // Only validate endRecurrenceDate if isRecurring is true
   endRecurrenceDate: z.date().optional().nullable(),
-  childId: z.string().optional(), // Updated: Changed from number to string
+  childId: z.string().optional(),
 }).refine((data) => {
   // If isRecurring is true, recurrencePattern must be provided
   if (data.isRecurring && !data.recurrencePattern) {

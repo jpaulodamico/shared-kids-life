@@ -7,11 +7,10 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { children } from "@/data/childrenData";
-import { CHILD_COLORS } from "@/pages/Calendar";
 
 interface ChildSelectorProps {
-  selectedChildId: string | undefined; // Updated: Changed from number to string
-  onChildSelect: (childId: string | undefined) => void; // Updated: Changed from number to string
+  selectedChildId: string | undefined;
+  onChildSelect: (childId: string | undefined) => void;
 }
 
 export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorProps) {
@@ -29,13 +28,34 @@ export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorP
     setOpen(false);
   };
 
+  // Função para obter a cor da criança
+  const getChildColor = (childId?: string) => {
+    if (!childId) return 'bg-gray-400';
+    
+    const index = children.findIndex(child => child.id === childId);
+    if (index === -1) return 'bg-gray-400';
+    
+    const colors = [
+      'bg-blue-500',
+      'bg-red-500',
+      'bg-green-500',
+      'bg-yellow-500',
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-orange-500',
+    ];
+    
+    return colors[index % colors.length];
+  };
+
   return (
     <div>
       <Label>Criança</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            type="button" // Explicitly set type to button to prevent form submission
+            type="button"
             variant="outline"
             role="combobox"
             aria-expanded={open}
@@ -58,7 +78,7 @@ export function ChildSelector({ selectedChildId, onChildSelect }: ChildSelectorP
                 >
                   <div className={cn(
                     "mr-2 h-4 w-4 rounded-full",
-                    CHILD_COLORS[child.id]?.split(" ")[0] || "bg-gray-300"
+                    getChildColor(child.id)
                   )}></div>
                   <Check
                     className={cn(
