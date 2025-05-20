@@ -38,14 +38,8 @@ export interface ExtendedDatabase extends Database {
           status?: string;
           created_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "invites_inviter_id_fkey";
-            columns: ["inviter_id"];
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
+        // The error was here: this needs to match what's in the original Database type
+        Relationships: [];
       };
       user_children: {
         Row: {
@@ -114,7 +108,13 @@ export interface ExtendedDatabase extends Database {
       };
     };
     Views: Database['public']['Views'];
-    Functions: Database['public']['Functions'];
+    Functions: Database['public']['Functions'] & {
+      // Add the missing is_primary_user function
+      is_primary_user: {
+        Args: Record<string, never>;
+        Returns: boolean;
+      };
+    };
     Enums: Database['public']['Enums'];
     CompositeTypes: Database['public']['CompositeTypes'];
   };
