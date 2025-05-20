@@ -20,7 +20,7 @@ const loadingHtml = `
 
 rootElement.innerHTML = loadingHtml;
 
-// Inicializa o app após um breve atraso
+// Inicializa o app após um breve atraso para garantir que o spinner apareça
 setTimeout(() => {
   createRoot(rootElement).render(
     <React.StrictMode>

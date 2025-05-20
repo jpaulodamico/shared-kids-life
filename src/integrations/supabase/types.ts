@@ -9,63 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      calendar_events: {
-        Row: {
-          all_day: boolean | null
-          child_id: string | null
-          created_at: string
-          description: string | null
-          end_time: string
-          id: string
-          location: string | null
-          start_time: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          all_day?: boolean | null
-          child_id?: string | null
-          created_at?: string
-          description?: string | null
-          end_time: string
-          id?: string
-          location?: string | null
-          start_time: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          all_day?: boolean | null
-          child_id?: string | null
-          created_at?: string
-          description?: string | null
-          end_time?: string
-          id?: string
-          location?: string | null
-          start_time?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "calendar_events_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       children: {
         Row: {
           activities: string[] | null
@@ -86,6 +29,7 @@ export type Database = {
           school: string | null
           teacher: string | null
           updated_at: string
+          user_id: string
           weight: string | null
         }
         Insert: {
@@ -107,6 +51,7 @@ export type Database = {
           school?: string | null
           teacher?: string | null
           updated_at?: string
+          user_id: string
           weight?: string | null
         }
         Update: {
@@ -128,192 +73,10 @@ export type Database = {
           school?: string | null
           teacher?: string | null
           updated_at?: string
+          user_id?: string
           weight?: string | null
         }
         Relationships: []
-      }
-      documents: {
-        Row: {
-          child_id: string | null
-          created_at: string
-          file_path: string
-          file_size: number
-          file_type: string
-          folder: string | null
-          id: string
-          name: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string
-          file_path: string
-          file_size: number
-          file_type: string
-          folder?: string | null
-          id?: string
-          name: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string
-          file_path?: string
-          file_size?: number
-          file_type?: string
-          folder?: string | null
-          id?: string
-          name?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "documents_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "documents_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expenses: {
-        Row: {
-          amount: number
-          attachment: string | null
-          category: string
-          child_id: string | null
-          created_at: string
-          description: string
-          id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          attachment?: string | null
-          category: string
-          child_id?: string | null
-          created_at?: string
-          description: string
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          attachment?: string | null
-          category?: string
-          child_id?: string | null
-          created_at?: string
-          description?: string
-          id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expenses_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expenses_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      invites: {
-        Row: {
-          code: string
-          created_at: string
-          email: string
-          id: string
-          inviter_id: string
-          relation: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          email: string
-          id?: string
-          inviter_id: string
-          relation: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          email?: string
-          id?: string
-          inviter_id?: string
-          relation?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      messages: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          read: boolean | null
-          receiver_id: string
-          sender_id: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          read?: boolean | null
-          receiver_id: string
-          sender_id: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          read?: boolean | null
-          receiver_id?: string
-          sender_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
@@ -322,7 +85,9 @@ export type Database = {
           created_at: string
           email: string | null
           first_name: string | null
+          full_name: string | null
           id: string
+          is_primary: boolean | null
           last_name: string | null
           phone: string | null
           updated_at: string
@@ -333,7 +98,9 @@ export type Database = {
           created_at?: string
           email?: string | null
           first_name?: string | null
+          full_name?: string | null
           id: string
+          is_primary?: boolean | null
           last_name?: string | null
           phone?: string | null
           updated_at?: string
@@ -344,70 +111,12 @@ export type Database = {
           created_at?: string
           email?: string | null
           first_name?: string | null
+          full_name?: string | null
           id?: string
+          is_primary?: boolean | null
           last_name?: string | null
           phone?: string | null
           updated_at?: string
-        }
-        Relationships: []
-      }
-      user_children: {
-        Row: {
-          child_id: string
-          created_at: string
-          id: string
-          relation: string
-          user_id: string
-        }
-        Insert: {
-          child_id: string
-          created_at?: string
-          id?: string
-          relation: string
-          user_id: string
-        }
-        Update: {
-          child_id?: string
-          created_at?: string
-          id?: string
-          relation?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_children_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_children_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          is_primary: boolean
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_primary?: boolean
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_primary?: boolean
-          user_id?: string
         }
         Relationships: []
       }
@@ -439,10 +148,6 @@ export type Database = {
       }
       has_child_access: {
         Args: { child_uuid: string }
-        Returns: boolean
-      }
-      is_primary_user: {
-        Args: { user_uuid?: string }
         Returns: boolean
       }
       shares_child_with: {
