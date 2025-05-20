@@ -93,14 +93,8 @@ export interface ExtendedDatabase extends Database {
           is_primary?: boolean;
           created_at?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey";
-            columns: ["user_id"];
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
+        // Fix: Update the Relationships to be an empty array to match the Database type
+        Relationships: [];
       };
     };
     Views: Database['public']['Views'];
