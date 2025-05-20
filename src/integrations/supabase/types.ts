@@ -233,6 +233,10 @@ export type Database = {
         Args: { child_uuid: string }
         Returns: boolean
       }
+      is_primary_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       shares_child_with: {
         Args: { other_user_uuid: string }
         Returns: boolean
