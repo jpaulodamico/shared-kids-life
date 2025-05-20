@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/database-types";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { inviteFormSchema, InviteFormValues } from "./InviteSchema";

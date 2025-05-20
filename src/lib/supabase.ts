@@ -1,6 +1,6 @@
 
-// Use the client from the integrations folder instead of duplicating
-import { supabase } from '@/integrations/supabase/client';
+// Export the client from our new extended definition
+import { supabase } from '@/lib/database-types';
 
 // Export the client
 export { supabase };

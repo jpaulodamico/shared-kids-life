@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/database-types";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -93,7 +93,7 @@ export function useGuardians() {
           
           return {
             id: profile.id,
-            email: profile.email,
+            email: profile.email || '',
             first_name: profile.first_name,
             last_name: profile.last_name,
             phone: profile.phone,
