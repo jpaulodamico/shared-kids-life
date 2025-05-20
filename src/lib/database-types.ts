@@ -38,7 +38,7 @@ export interface ExtendedDatabase extends Database {
           status?: string;
           created_at?: string;
         };
-        // The error was here: this needs to match what's in the original Database type
+        // This needs to match what's in the original Database type
         Relationships: [];
       };
       user_children: {
@@ -63,16 +63,12 @@ export interface ExtendedDatabase extends Database {
           relation?: string;
           created_at?: string;
         };
+        // Update to match the expected structure from Supabase's generated types
         Relationships: [
-          {
-            foreignKeyName: "user_children_user_id_fkey";
-            columns: ["user_id"];
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
           {
             foreignKeyName: "user_children_child_id_fkey";
             columns: ["child_id"];
+            isOneToOne: false;
             referencedRelation: "children";
             referencedColumns: ["id"];
           }
